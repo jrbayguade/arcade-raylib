@@ -7,6 +7,7 @@ interface Catalog {
   types: Record<string, string>;
   suggestion: string;
   ui: Record<string, string>;
+  params: Record<string, string[]>;
 }
 
 const catalogs: Record<string, Catalog> = { ca };
@@ -26,6 +27,12 @@ function lookup(section: Section, key: string): string | undefined {
 
 export function fill(template: string, params: DiagParams): string {
   return template.replace(/\{(\w+)\}/g, (m, k: string) => (Object.hasOwn(params, k) ? String(params[k]) : m));
+}
+
+export function paramNames(fn: string): string[] | undefined {
+  const own = catalogs[current].params;
+  if (Object.hasOwn(own, fn)) return own[fn];
+  return Object.hasOwn(catalogs.ca.params, fn) ? catalogs.ca.params[fn] : undefined;
 }
 
 export function t(key: string, params: DiagParams = {}): string {

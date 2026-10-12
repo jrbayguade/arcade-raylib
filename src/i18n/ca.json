@@ -87,6 +87,80 @@
     "stopped": "Aturat.",
     "finished": "El programa ha acabat.",
     "lineLabel": "Línia {line}: ",
-    "warningLabel": "Avís — "
+    "warningLabel": "Avís — ",
+    "lessonTitle": "Lliçó {number} · {title}",
+    "stepOf": "Pas {n} de {total}",
+    "hint": "💡 Pista",
+    "hintTitle": "Si mires una pista, aquest exercici et donarà ⭐ en lloc de ⭐⭐",
+    "hintLabel": "Pista {n}:",
+    "reset": "↺ Torna a començar",
+    "continue": "Continua →",
+    "nextLesson": "Següent lliçó →",
+    "lessonDone": "Has acabat la lliçó! 🎉",
+    "allDone": "Has acabat totes les lliçons que hi ha de moment. Aviat n'hi haurà més! 🏆",
+    "checksTitle": "Gairebé! He provat el teu codi i això és el que he vist:",
+    "success": "Molt bé! Ho has aconseguit! 🎉",
+    "compileErrorIntro": "Uf, a la línia {line} (marcada en vermell) hi ha alguna cosa que no entenc:",
+    "runtimeErrorIntro": "El joc s'ha aturat a la línia {line}:",
+    "mouseCoords": "x: {x}   y: {y}",
+    "variablesTitle": "Les teves variables",
+    "foldLines": "▸ {label} ({lines} línies amagades)",
+    "starsLabel": "Estrelles d'aquest exercici:"
+  },
+  "params": {
+    "InitWindow": [
+      "amplada",
+      "alçada",
+      "títol"
+    ],
+    "SetTargetFPS": [
+      "fps"
+    ],
+    "WindowShouldClose": [],
+    "CloseWindow": [],
+    "GetScreenWidth": [],
+    "GetScreenHeight": [],
+    "BeginDrawing": [],
+    "EndDrawing": [],
+    "ClearBackground": [
+      "color"
+    ],
+    "DrawRectangle": [
+      "x",
+      "y",
+      "amplada",
+      "alçada",
+      "color"
+    ],
+    "DrawCircle": [
+      "x",
+      "y",
+      "radi",
+      "color"
+    ],
+    "DrawLine": [
+      "x1",
+      "y1",
+      "x2",
+      "y2",
+      "color"
+    ],
+    "DrawText": [
+      "text",
+      "x",
+      "y",
+      "mida",
+      "color"
+    ],
+    "IsKeyDown": [
+      "tecla"
+    ],
+    "IsKeyPressed": [
+      "tecla"
+    ],
+    "GetRandomValue": [
+      "mínim",
+      "màxim"
+    ]
   }
 }

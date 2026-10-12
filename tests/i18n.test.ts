@@ -43,3 +43,30 @@ describe('t', () => {
     expect(t('lineLabel', { line: 7 })).toBe('Línia 7: ');
   });
 });
+
+import { paramNames } from '../src/i18n/i18n';
+import { RaylibHost } from '../src/runtime/raylib';
+
+describe('paramNames', () => {
+  it('names the parameters in Catalan', () => {
+    expect(paramNames('DrawRectangle')).toEqual(['x', 'y', 'amplada', 'alçada', 'color']);
+    expect(paramNames('NoExisteix')).toBeUndefined();
+  });
+  it('covers every non-variadic raylib function with the right count', () => {
+    const host = new RaylibHost({ seed: 1 });
+    for (const [name, fn] of Object.entries(host.functions)) {
+      if (fn.variadic) continue;
+      expect(paramNames(name), name).toHaveLength(fn.params.length);
+    }
+  });
+});
+
+describe('lesson UI strings', () => {
+  it('has the strings the lesson screen uses', () => {
+    for (const key of ['lessonTitle', 'stepOf', 'hint', 'hintTitle', 'hintLabel', 'reset', 'continue', 'nextLesson',
+      'lessonDone', 'allDone', 'checksTitle', 'success', 'compileErrorIntro', 'runtimeErrorIntro',
+      'mouseCoords', 'variablesTitle', 'foldLines', 'starsLabel']) {
+      expect(t(key), key).not.toBe(key);
+    }
+  });
+});
