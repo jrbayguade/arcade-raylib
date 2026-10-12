@@ -99,3 +99,18 @@ describe('errorLineField', () => {
     expect(s.field(errorLineField).size).toBe(0);
   });
 });
+
+import { lessonExtensions } from '../src/editor/editor';
+import { parseLessonSource } from '../src/lessons/source';
+
+describe('lessonExtensions', () => {
+  it('builds a state where only the lesson zone is editable and reports changes', () => {
+    const source = parseLessonSource('int main(void) {\n//@edit\n    int x = 1;\n//@end\n    return 0;\n}\n');
+    const seen: string[] = [];
+    const state = EditorState.create({ doc: source.code, extensions: lessonExtensions(source, (c) => seen.push(c)) });
+    const zoneStart = source.editable.from;
+    expect(state.update({ changes: { from: 0, insert: '//' } }).state.doc.toString()).toBe(source.code);
+    expect(state.update({ changes: { from: zoneStart + 12, to: zoneStart + 13, insert: '7' } }).state.doc.toString())
+      .toContain('int x = 7;');
+  });
+});
