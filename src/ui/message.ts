@@ -5,5 +5,6 @@ import type { Feedback } from '../lessons/feedback';
 export type BitMessage =
   | null
   | { kind: 'hint'; n: number; text: string }
+  | { kind: 'note'; text: string }
   | { kind: 'result'; feedback: Feedback; stars: number; maxStars: number }
   | { kind: 'live'; diagnostic: Diagnostic };

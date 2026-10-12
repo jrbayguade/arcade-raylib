@@ -8,6 +8,7 @@ int main(void)
 
 //@edit
     int palaY = 185;
+    // ✏️ crea aquí la caixa alcada
 //@end
 
 //@fold bucle

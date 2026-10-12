@@ -127,7 +127,9 @@
     "introGoText": "Comencem per la més fàcil: el Pong.",
     "introGo": "Som-hi! ▶",
     "introBrokenLabel": "AVARIADA",
-    "introNext": "Toca o prem una tecla per continuar"
+    "introNext": "Toca o prem una tecla per continuar",
+    "outsideZone": "Aquí no hi pots escriure: només a la zona groga. La resta del codi ja funciona!",
+    "runLabel": "Executa"
   },
   "params": {
     "InitWindow": [

@@ -9,6 +9,7 @@ int main(void)
 //@edit
     int palaY = 185;
     int alcada = 80;
+    // ✏️ crea aquí pilotaX i pilotaY
 //@end
 
 //@fold bucle

@@ -7,8 +7,7 @@
   "steps": {
     "observe": {
       "prompt": [
-        "Hola! Sóc en Bit 🤖.",
-        "Aquesta màquina està espatllada i l'arreglarem junts.",
+        "Comencem! Aquesta màquina està espatllada i l'arreglarem junts.",
         "Només pots escriure a la zona groga. La resta del codi ja està fet: les barres grises amaguen trossos, i si hi fas clic, s'obren.",
         "Les paraules grises x:, y:... no són codi: només t'expliquen què vol dir cada número.",
         "La línia groga dibuixa la pala de l'esquerra. Canvia el 185 per un 50 i prem ▶ Executa. Què passa?"
@@ -26,13 +25,13 @@
         "Cada punt té dues coordenades: la x compta cap a la dreta des de l'esquerra, i la y compta cap avall des de dalt.",
         "Compte: la y creix cap avall! Per això, quan has posat un número més petit, la pala ha pujat.",
         "La x i la y d'un rectangle marquen la seva cantonada de dalt a l'esquerra.",
-        "Passa el ratolí per sobre del joc i mira els números. Quan ho tinguis clar, prem Continua."
+        "Passa el ratolí (o el dit) per sobre del joc i mira els números. Quan ho tinguis clar, prem Continua."
       ]
     },
     "floor": {
       "prompt": [
-        "Ara posa la pala tocant a terra, a baix de tot.",
-        "Pista de detectiu: la pantalla fa 450 d'alt i la pala en fa 80. On ha de començar la pala?"
+        "Pista de detectiu: la pantalla fa 450 d'alt i la pala en fa 80.",
+        "Posa la pala tocant a terra, a baix de tot. On ha de començar la pala?"
       ],
       "hints": [
         "Has de canviar la y, que és el segon número.",
@@ -81,12 +80,12 @@
     }
   },
   "checks": {
-    "paddleMoved": "La pala de l'esquerra s'ha mogut",
-    "paddleOnFloor": "La pala toca a terra",
-    "paddleHeight80": "La pala es veu i fa 80 d'alt",
-    "paddleTall": "La pala fa 160 d'alt",
-    "paddleVisible": "La pala de l'esquerra es veu",
-    "ballExists": "Hi ha una pilota que es veu (radi de 3 o més, i no negra)",
-    "ballCentered": "La pilota és al mig de la pantalla"
+    "paddleMoved": "La pala de l'esquerra encara no ha pujat: canvia la y (el segon número), no la x.",
+    "paddleOnFloor": "La pala encara no toca a terra: la y ha de ser 450 − 80 = 370.",
+    "paddleHeight80": "L'alçada de la pala ha de continuar sent 80.",
+    "paddleTall": "La pala encara no fa 160 d'alt: canvia l'alçada (el quart número).",
+    "paddleVisible": "La pala encara no es veu: el `ClearBackground` ha d'anar abans del `DrawRectangle`.",
+    "ballExists": "Encara no hi ha cap pilota que es vegi: escriu un `DrawCircle` amb un radi de 3 o més i un color que no sigui `BLACK`.",
+    "ballCentered": "La pilota encara no és al mig: el centre ha de ser x = 400, y = 225."
   }
 }

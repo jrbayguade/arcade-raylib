@@ -160,3 +160,15 @@ describe('selection clamping', () => {
     expect([s.selection.main.from, s.selection.main.to]).toEqual([0, doc.length]);
   });
 });
+
+describe('blocked edits', () => {
+  it('reports edits the kid tries outside the zone, but not programmatic ones', async () => {
+    let blocked = 0;
+    const state = EditorState.create({ doc: 'AAA\nzone\nBBB\n', extensions: editableZone({ from: 4, to: 8 }, () => blocked++) });
+    state.update({ changes: { from: 0, insert: 'x' }, userEvent: 'input.type' });
+    state.update({ changes: { from: 0, insert: 'x' } });
+    state.update({ changes: { from: 5, insert: 'x' }, userEvent: 'input.type' });
+    await Promise.resolve();
+    expect(blocked).toBe(1);
+  });
+});

@@ -80,6 +80,11 @@
         </div>
         {#if !lit}<div class="press">{t('introPress')}</div>{/if}
       {:else if beat === 'bit'}
+        <div class="row ghost">
+          {#each MACHINES as m (m)}
+            <div class="cab"><div class="roof">{m}</div><div class="body"></div><div class="scr"><div class="noise dim"></div></div></div>
+          {/each}
+        </div>
         <div class="say-line" style="top: 34vh">
           <div class="roll"><BitFace size={130} /></div>
           <div class="bubble"><TypedText text={t('introBit')} cps={45} /></div>
@@ -97,7 +102,7 @@
       {:else if beat === 'demo'}
         <div class="demo">
           <div class="line"><span class="zone"><span class="fn">DrawRectangle</span>(<span class="num">20</span>, <span class="swap"><span class="num a">185</span><span class="num b">50</span></span>, <span class="num">10</span>, <span class="num">80</span>, <span class="k">WHITE</span>);</span></div>
-          <button class="run-glow" data-sound="none" tabindex="-1">▶</button>
+          <button class="run-glow" data-sound="none" tabindex="-1">{t('run')}</button>
           <div class="mini"><i class="p l up"></i><i class="p r"></i></div>
         </div>
         <div class="say-line" style="bottom: 8vh">
@@ -115,19 +120,19 @@
           <div class="bubble"><TypedText text={t('introPromise')} cps={45} /></div>
         </div>
       {:else if beat === 'go'}
-        <div class="row" style="bottom: 22vh">
-          <div class="cab" style="width: clamp(140px, 18vw, 220px)">
+        <div class="row go-row">
+          <div class="cab">
             <div class="roof">PONG</div><div class="body"></div>
             <div class="scr"><div class="mini" style="border: none; box-shadow: none; height: 100%"><i class="p l play-l"></i><i class="p r play-r"></i><i class="b bounce"></i></div></div>
           </div>
         </div>
-        <div class="say-line" style="top: 8vh; justify-content: center">
+        <div class="say-line go-say">
           <BitFace mood="happy" size={70} />
-          <div class="bubble" style="flex: none"><TypedText text={t('introGoText')} cps={45} /></div>
+          <div class="bubble"><TypedText text={t('introGoText')} cps={45} /></div>
         </div>
         <div class="go"><button class="primary" data-sound="none" onclick={(e) => { e.stopPropagation(); finish(); }}>{t('introGo')}</button></div>
       {/if}
-      {#if lit && beat !== 'go' && INTRO_BEATS.length}<div class="press" style="animation: none; opacity: .6; font-size: 13px">{t('introNext')}</div>{/if}
+      {#if lit && beat !== 'go' && INTRO_BEATS.length}<div class="press soft">{t('introNext')}</div>{/if}
     </div>
   {/key}
 </div>

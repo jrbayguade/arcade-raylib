@@ -55,10 +55,15 @@ describe('intro', () => {
     expect(p.atEnd).toBe(true);
   });
 
-  it('a press later on jumps to the next beat', () => {
+  it('a press later on jumps to the next beat, but not right after a beat starts', () => {
     const p = new IntroPlayer();
     p.press();
     p.press();
     expect(p.beat).toBe(1);
+    p.press();
+    expect(p.beat).toBe(1);
+    p.tick(1300);
+    p.press();
+    expect(p.beat).toBe(2);
   });
 });

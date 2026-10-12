@@ -28,7 +28,9 @@
   let page = $state(0);
   let typing = $state(untrack(() => pages.length > 0));
   /** On a small landscape phone the bubble folds into a one-line ticket; tapping it opens the bubble. */
-  let open = $state(false);
+  // Open while Bit narrates (on phones the folded ticket would hide it), folded again once he has finished.
+  let open = $state(untrack(() => pages.length > 0));
+  let folded = false;
 
   function sync(): void {
     text = tw.text;
@@ -37,7 +39,6 @@
   }
 
   onMount(() => {
-    if (pages.length === 0) return;
     let last = performance.now();
     let lastTick = 0;
     let raf = 0;
@@ -50,10 +51,20 @@
         lastTick = now;
       }
       sync();
+      if (tw.finished && !folded) {
+        folded = true;
+        setTimeout(() => { if (!message) open = false; }, 2500);
+      }
       raf = requestAnimationFrame(frame);
     };
-    raf = requestAnimationFrame(frame);
-    return () => cancelAnimationFrame(raf);
+    if (pages.length > 0) raf = requestAnimationFrame(frame);
+    // Touching the code folds the bubble away so it never covers what the kid is editing.
+    const onDown = (e: PointerEvent) => { if ((e.target as Element | null)?.closest?.('.work')) open = false; };
+    addEventListener('pointerdown', onDown, { capture: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      removeEventListener('pointerdown', onDown, { capture: true });
+    };
   });
 
   // A new answer from Bit opens the folded bubble on phones.
@@ -73,7 +84,7 @@
 <div class="talk" class:open>
   <button class="ticket" data-sound="page" onclick={() => (open = !open)} aria-expanded={open}>
     <BitFace {mood} size={26} />
-    <span class="ticket-text">{mission ?? pages[pages.length - 1] ?? ''}</span>
+    <span class="ticket-text"><RichText text={mission ?? pages[pages.length - 1] ?? ''} /></span>
     <span class="ticket-more" aria-hidden="true">{open ? '▴' : '▾'}</span>
   </button>
   <BitFace {mood} size={70} jump={celebrating} />
@@ -103,7 +114,9 @@
     {#if message}
       {#key message}
         <div class="answer">
-          {#if message.kind === 'hint'}
+          {#if message.kind === 'note'}
+            <p class="almost"><TypedText text={message.text} /></p>
+          {:else if message.kind === 'hint'}
             <p class="hint"><strong>{t('hintLabel', { n: message.n })}</strong> <TypedText text={message.text} cps={80} /></p>
           {:else if message.kind === 'live'}
             <p class="error"><TypedText text={diagnosticText(t('runtimeErrorIntro', { line: message.diagnostic.line }), message.diagnostic)} /></p>

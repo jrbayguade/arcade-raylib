@@ -103,6 +103,18 @@
     });
   });
 
+  // Typing outside the yellow zone: a beep every time, Bit explains it once per step.
+  let toldAboutZone = false;
+  let lastBlockedBeep = 0;
+  function blocked(): void {
+    const now = performance.now();
+    if (now - lastBlockedBeep > 400) { sounds.play('error'); lastBlockedBeep = now; }
+    if (!toldAboutZone) {
+      toldAboutZone = true;
+      message = { kind: 'note', text: t('outsideZone') };
+    }
+  }
+
   function changed(code: string): void {
     engine.setCode(code);
     errorLine = null;
@@ -177,6 +189,7 @@
     errorLine = null;
     message = null;
     symbolsOpen = false;
+    toldAboutZone = false;
     history.replaceState(null, '', routeHash({ lesson: lessonIndex, step: engine.stepIndex }));
     version++;
   }
@@ -223,21 +236,21 @@
       {/if}
       {#key `${view.step.id}/${resetCount}`}
         <CodePane bind:this={codePane} source={view.exercise.source} foldLabels={lesson.texts.folds}
-          {errorLine} onChange={changed} onRun={run} />
+          {errorLine} onChange={changed} onRun={run} onBlocked={blocked} />
       {/key}
     {:else if view.step.kind === 'explain'}
       <ExplainCard card={view.step.card} />
     {/if}
   </div>
 
-  <div class="actions">
+  <div class="actions" class:solved={view.canContinue}>
     {#if view.canContinue && !view.isLast}
       {#key view.step.id}<button class="primary next" data-sound="next" onclick={next}>{t('continue')}</button>{/key}
     {:else if view.canContinue && hasNextLesson}
       <button class="primary next" data-sound="next" onclick={nextLesson}>{t('nextLesson')}</button>
     {/if}
     {#if isExercise(view.step)}
-      <button class="run" class:secondary={view.canContinue} data-sound="none" onclick={run} title={t('runShortcut')}>{t('run')}</button>
+      <button class="run" class:secondary={view.canContinue} data-sound="none" onclick={run} title={t('runShortcut')} aria-label={t('run')}><span aria-hidden="true">▶</span> <span class="run-label" aria-hidden="true">{t('runLabel')}</span></button>
       <button class="hint-btn" data-sound="hint" onclick={hint} disabled={!view.moreHints} title={t('hintTitle')}>
         {t('hintCount', { n: view.hintsShown, total: view.hintsTotal })}
       </button>

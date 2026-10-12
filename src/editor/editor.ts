@@ -42,7 +42,7 @@ const paramHints = ViewPlugin.fromClass(class {
 
 const completions = buildCompletions(new RaylibHost({ seed: 1 }), paramNames);
 
-export function lessonExtensions(source: LessonSource, onChange: (code: string) => void): Extension[] {
+export function lessonExtensions(source: LessonSource, onChange: (code: string) => void, onBlocked?: () => void): Extension[] {
   return [
     lineNumbers(),
     EditorView.lineWrapping, // long calls wrap: no sideways scrolling that hides the start of lines
@@ -53,7 +53,7 @@ export function lessonExtensions(source: LessonSource, onChange: (code: string) 
     oneDark,
     autocompletion({ override: [completionSource(completions)], activateOnTyping: true }),
     keymap.of([...closeBracketsKeymap, ...completionKeymap, ...defaultKeymap, ...historyKeymap, indentWithTab]),
-    editableZone(source.editable),
+    editableZone(source.editable, onBlocked),
     errorLineField,
     paramHints,
     EditorView.updateListener.of((u) => { if (u.docChanged) onChange(u.state.doc.toString()); }),
@@ -88,6 +88,7 @@ export function createLessonEditor(opts: {
   onChange: (code: string) => void;
   /** Ctrl+Enter (Cmd+Enter on Mac) runs the program from the editor. */
   onRun?: () => void;
+  onBlocked?: () => void;
 }): LessonEditor {
   const { source } = opts;
   const labels = new Map(source.folds.map((f) => [f.from, opts.foldLabel(f.key, f.lines)]));
@@ -104,7 +105,7 @@ export function createLessonEditor(opts: {
   const view = new EditorView({
     parent: opts.parent,
     state: EditorState.create({ doc: source.code, extensions: [
-      ...lessonExtensions(source, opts.onChange),
+      ...lessonExtensions(source, opts.onChange, opts.onBlocked),
       folding,
       Prec.highest(keymap.of([{ key: 'Mod-Enter', run: () => { opts.onRun?.(); return true; } }])),
     ] }),

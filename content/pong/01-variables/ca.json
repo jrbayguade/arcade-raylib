@@ -77,13 +77,13 @@
     }
   },
   "checks": {
-    "paddleAt100": "La pala de l'esquerra és a la y = 100",
-    "paddleMoved": "La pala de l'esquerra s'ha mogut",
-    "bothTogether": "Les dues pales són a la mateixa altura",
-    "bothUp": "Les pales són a dalt de tot (y de 100 o menys)",
-    "declaresHeight": "Has creat la caixa `alcada` (int)",
-    "heightUsed": "Les pales es veuen i fan l'alçada que diu `alcada`",
-    "declaresBall": "Has creat les caixes `pilotaX` i `pilotaY` (int)",
-    "ballCentered": "La pilota és al mig de la pantalla"
+    "paddleAt100": "La pala de l'esquerra encara no és a la y = 100.",
+    "paddleMoved": "La pala encara és a 185: canvia el número de la línia groga.",
+    "bothTogether": "Les dues pales no són a la mateixa altura.",
+    "bothUp": "Les pales encara no són a dalt de tot: la y ha de ser entre 0 i 100.",
+    "declaresHeight": "Encara no has creat la caixa `alcada`: escriu `int alcada = 120;`",
+    "heightUsed": "La caixa `alcada` ha de guardar un número més gran que 0.",
+    "declaresBall": "Encara falten les caixes `pilotaX` i `pilotaY` (de tipus `int`).",
+    "ballCentered": "La pilota encara no és al mig: `pilotaX` ha de valer 400 i `pilotaY` 225."
   }
 }

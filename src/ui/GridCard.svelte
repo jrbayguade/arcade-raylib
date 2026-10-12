@@ -17,10 +17,15 @@
   <line x1="-15" y1="0" x2="-15" y2="430" class="axis" marker-end="url(#arrow)" />
   <text x="-25" y="455" class="axis-label">y</text>
   <text x="4" y="16" class="origin">(0, 0)</text>
-  <line x1={p.x} y1="0" x2={p.x} y2={p.y} class="grid-guide" />
-  <line x1="0" y1={p.y} x2={p.x} y2={p.y} class="grid-guide" />
-  <circle cx={p.x} cy={p.y} r="10" class="dot" />
-  <text x={p.x + 16} y={p.y - 12} class="coord">({p.x}, {p.y})</text>
+  <!-- Dot, label and guides change together (no sliding): the numbers always match where the dot is. -->
+  {#key i}
+    <g class="point" data-x={p.x} data-y={p.y}>
+      <line x1={p.x} y1="0" x2={p.x} y2={p.y} class="grid-guide" />
+      <line x1="0" y1={p.y} x2={p.x} y2={p.y} class="grid-guide" />
+      <circle cx={p.x} cy={p.y} r="10" class="dot" />
+      <text x={p.x + 16} y={p.y - 12} class="coord">({p.x}, {p.y})</text>
+    </g>
+  {/key}
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
       <path d="M0,0 L10,5 L0,10 z" class="arrowhead" />

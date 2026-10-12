@@ -26,7 +26,8 @@ function zoneDecorations(state: EditorState): DecorationSet {
 }
 
 /** Only text inside the zone can change; a transaction touching anything else is rejected whole. */
-export function editableZone(zone: Zone): Extension {
+/** `onBlocked` hears about edits the kid tried outside the zone, so the UI can say why nothing happened. */
+export function editableZone(zone: Zone, onBlocked?: () => void): Extension {
   return [
     zoneField.init(() => zone),
     EditorState.changeFilter.of((tr) => {
@@ -39,7 +40,11 @@ export function editableZone(zone: Zone): Extension {
         else if (toA === z.to + 1 && doc.sliceString(z.to, z.to + 1) === '\n') touchesNewlineAfterZone = true;
         else if (toA > z.to) inside = false;
       });
-      if (!inside) return false;
+      if (!inside) {
+        const byKid = ['input', 'delete', 'move'].some((e) => tr.isUserEvent(e));
+        if (byKid && onBlocked) queueMicrotask(onBlocked);
+        return false;
+      }
       // Triple-click, or Ctrl+X with no selection, takes the zone's last line *with* its newline: keep only the newline.
       return touchesNewlineAfterZone ? [z.to, z.to + 1] : true;
     }),

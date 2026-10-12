@@ -33,7 +33,7 @@ export const lesson1: Lesson = {
       kind: 'practice', id: 'together', source: together, solution: togetherSolution, showVariables: true,
       checks: [
         check('bothTogether', (ctx) => paddle(ctx, 20) !== undefined && paddle(ctx, 20)?.y === paddle(ctx, 770)?.y),
-        check('bothUp', (ctx) => (paddle(ctx, 20)?.y ?? 999) <= 100),
+        check('bothUp', (ctx) => { const y = paddle(ctx, 20)?.y ?? 999; return y >= 0 && y <= 100; }),
       ],
     },
     {

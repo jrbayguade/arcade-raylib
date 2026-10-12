@@ -32,11 +32,17 @@ try {
       const label = `lesson ${lesson} step ${i}`;
       if (kind === 'explain') {
         check(`${label}: explain card`, await visible(page.locator('.explain svg')));
+        if (lesson === 0) {
+          await page.waitForTimeout(1700);
+          const pt = await page.evaluate(() => { const g = document.querySelector('.grid-card .point'); return [g.dataset.x, g.dataset.y, g.querySelector('.coord').textContent, g.querySelector('.dot').getAttribute('cx'), g.querySelector('.dot').getAttribute('cy')]; });
+          check(`${label}: grid label matches the dot`, pt[2] === `(${pt[0]}, ${pt[1]})` && pt[3] === pt[0] && pt[4] === pt[1], JSON.stringify(pt));
+        }
       } else if (kind === 'type185') {
         const before = await code();
         await page.locator('.cm-line').first().click();
         await page.keyboard.type('xx');
         check(`${label}: locked line cannot be edited`, (await code()) === before);
+        check(`${label}: Bit says why typing there does nothing`, await visible(page.locator('.bubble .almost', { hasText: 'Aquí no hi pots escriure' })));
         await page.keyboard.press('Control+A');
         await page.keyboard.type('hola');
         check(`${label}: select-all + typing changes nothing`, (await code()) === before);
@@ -88,7 +94,7 @@ try {
   await page.locator('.cm-zone span', { hasText: /^20$/ }).first().dblclick();
   await page.keyboard.type('60');
   await button('▶ Executa').click();
-  check('a wrong answer gets one gentle message', await visible(page.locator('.bubble .almost', { hasText: 'Ja gairebé!' })) && (await page.locator('.bubble .checks').count()) === 0);
+  check('a wrong answer gets one gentle message that says what is missing', await visible(page.locator('.bubble .almost', { hasText: 'encara no ha pujat' })) && (await page.locator('.bubble .checks').count()) === 0);
   check('Bit looks thoughtful', (await page.locator('.talk > .bit-face .feature').count()) === 3 && (await page.locator('.talk > .bit-face .eye').count()) === 0);
   const edited = await code();
   await page.locator('.actions .reset').click();
@@ -97,18 +103,20 @@ try {
   check('reset after confirming restores the code', !(await code()).includes('(60,'));
 
   // Bit types the first bubble, then moves on by itself; a click skips the wait
+  await page.reload();
+  await page.locator('.cm-editor').waitFor();
   const say = page.locator('.bubble .say');
   const bubbleSize = async () => { const b = await page.locator('.bubble').boundingBox(); return `${Math.round(b.width)}x${Math.round(b.height)}`; };
   const sizeWhileTyping = await bubbleSize();
-  check('Bit starts typing', (await say.innerText()).length < 'Hola! Sóc en Bit 🤖.'.length + 2);
-  check('Bit finishes the first bubble', await visible(page.locator('.bubble .say', { hasText: 'Sóc en Bit' })));
-  check('one dot per bubble', (await page.locator('.pager .dot').count()) === 4);
+  check('Bit starts typing', (await say.innerText()).length < 20);
+  check('Bit finishes the first bubble', await visible(page.locator('.bubble .say', { hasText: 'Comencem!' })));
+  check('one dot per bubble', (await page.locator('.pager .dot').count()) === 3);
   await say.click();
   await say.click();
   check('the bubble keeps its size while typing', (await bubbleSize()) === sizeWhileTyping, `${sizeWhileTyping} → ${await bubbleSize()}`);
-  check('a click jumps to the next bubble', await visible(page.locator('.bubble .say', { hasText: 'espatllada' }), 1500));
+  check('a click jumps to the next bubble', await visible(page.locator('.bubble .say', { hasText: 'zona groga' }), 1500));
   check('the bubble keeps its size on the next page', (await bubbleSize()) === sizeWhileTyping);
-  check('bubbles move on by themselves', await visible(page.locator('.bubble .say', { hasText: 'zona groga' }), 9000));
+  check('bubbles move on by themselves', await visible(page.locator('.bubble .say', { hasText: 'paraules grises' }), 12000));
   const runBox = await button('▶ Executa').boundingBox();
   check('Run button in view at 1600×900', runBox !== null && runBox.y >= 0 && runBox.y + runBox.height <= 900);
   await page.setViewportSize({ width: 1366, height: 768 });
@@ -193,13 +201,15 @@ try {
       await phone.setViewportSize({ width: h, height: w });
       await phone.locator('.cm-editor').waitFor();
       const first = await phone.locator('.bubble .say .typed').innerText();
-      check('phone: Bit waits while the rotate message is shown', (await phone.locator('.pager .dot').first().getAttribute('class')).includes('on') && first.length < 'Hola! Sóc en Bit 🤖.'.length + 2, JSON.stringify(first));
+      check('phone: Bit waits while the rotate message is shown', (await phone.locator('.pager .dot').first().getAttribute('class')).includes('on') && first.length < 15, JSON.stringify(first));
     } else {
       await phone.locator('.cm-editor').waitFor();
       check('phone sideways: no rotate message', !(await phone.locator('.rotate').isVisible()));
       check('phone sideways: nothing wider than the screen', (await phone.evaluate(() => document.documentElement.scrollWidth)) <= w);
       const run = await phone.getByRole('button', { name: '▶ Executa', exact: true }).boundingBox();
       check('phone sideways: Run in view', run !== null && run.y + run.height <= h);
+      check('phone sideways: buttons are at least 44 px tall', run !== null && run.height >= 44);
+      check('phone sideways: Bit opens his bubble while he talks', await visible(phone.locator('.talk.open .bubble')));
       await phone.locator('.cm-zone').getByText('WHITE').first().click();
       await phone.keyboard.press('End');
       check('phone sideways: symbols hidden until ⌨️ is tapped', !(await phone.locator('.symbols').isVisible()));
@@ -232,7 +242,7 @@ try {
     await fresh.goto(`${base}#/intro`);
     await fresh.reload();
     check('#/intro replays it', await visible(fresh.locator('.intro')));
-    for (let i = 0; i < 6; i++) { await fresh.keyboard.press('Space'); await fresh.waitForTimeout(250); }
+    for (let i = 0; i < 6; i++) { await fresh.keyboard.press('Space'); await fresh.waitForTimeout(1350); }
     check('the last beat offers Som-hi!', await visible(fresh.getByRole('button', { name: 'Som-hi! ▶' })));
     await fresh.getByRole('button', { name: 'Som-hi! ▶' }).click();
     check('Som-hi! starts lesson 0', await visible(fresh.locator('.cm-editor'), 5000));

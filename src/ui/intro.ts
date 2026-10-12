@@ -14,6 +14,8 @@ export const INTRO_BEATS: IntroBeat[] = [
   { id: 'go', ms: Infinity },
 ];
 
+export const MIN_BEAT_MS = 1200;
+
 export function shouldShowIntro(hash: string, seen: boolean): boolean {
   if (hash === '#/intro') return true;
   return !seen && (hash === '' || hash === '#' || hash === '#/');
@@ -35,12 +37,14 @@ export class IntroPlayer {
     if (this.elapsed >= INTRO_BEATS[this.index].ms) this.next();
   }
 
-  /** A key or a tap: switches the lights on the first time, then hurries to the next beat. */
+  /** A key or a tap: switches the lights on the first time, then hurries to the next beat —
+   *  but not in the first moments of a beat, so a double press does not skip what Bit is saying. */
   press(): void {
     if (!this.lights) {
       this.lights = true;
       return;
     }
+    if (this.index > 0 && this.elapsed < MIN_BEAT_MS) return;
     this.next();
   }
 
