@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - uses: actions/upload-pages-artifact@v3
+        if: github.event_name == 'push'
+        with:
+          path: dist
+
+  c-compat:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Descarregar raylib.h 5.5
+        run: |
+          mkdir -p /tmp/raylib
+          curl -fsSL https://raw.githubusercontent.com/raysan5/raylib/5.5/src/raylib.h -o /tmp/raylib/raylib.h
+      - name: Tot el mini-C de content/ ha de ser C vàlid
+        run: |
+          find content -name '*.c' -print0 | while IFS= read -r -d '' f; do
+            echo "gcc $f"
+            gcc -std=c99 -Wall -Werror -fsyntax-only -I/tmp/raylib "$f"
+          done
+
+  deploy:
+    if: github.event_name == 'push'
+    needs: [test, c-compat]
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
