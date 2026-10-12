@@ -40,8 +40,9 @@ export function convert(v: Value, to: A.ValueType): Value {
 export class Interpreter {
   private scopes: Map<string, Slot>[] = [];
   private ops = 0;
-  private loopLines: number[] = [];
+  private loops: { line: number; iterations: number }[] = [];
   private warned = new Set<number>();
+  private lastLine = 1;
 
   constructor(
     private readonly program: A.Program,
@@ -64,10 +65,22 @@ export class Interpreter {
     return [...visible.values()];
   }
 
+  /** Line of the statement being executed (for errors that do not come from the program itself). */
+  get currentLine(): number {
+    return this.lastLine;
+  }
+
   private count(line: number): void {
-    if (++this.ops > OPS_PER_FRAME) {
-      throw error('LOOP_TOO_LONG', this.loopLines[this.loopLines.length - 1] ?? line, 1);
-    }
+    this.lastLine = line;
+    if (++this.ops > OPS_PER_FRAME) throw error('LOOP_TOO_LONG', this.endlessLoopLine() ?? line, 1);
+  }
+
+  /** The active loop that has spun the most since it was entered: an inner loop that restarts on every pass of
+   *  a frame loop without EndDrawing() stays small, while a truly endless inner loop grows without bound. */
+  private endlessLoopLine(): number | undefined {
+    let worst: { line: number; iterations: number } | undefined;
+    for (const loop of this.loops) if (!worst || loop.iterations > worst.iterations) worst = loop;
+    return worst?.line;
   }
 
   private *block(b: A.Block): Exec {
@@ -147,19 +160,20 @@ export class Interpreter {
   }
 
   private *loop(node: A.While | A.For, cond: A.Expr | null, update: A.Stmt | null, body: A.Block): Exec {
-    this.loopLines.push(node.line);
+    const active = { line: node.line, iterations: 0 };
+    this.loops.push(active);
     try {
-      let iteration = 0;
       while (cond === null || truthy(this.eval(cond))) {
+        active.iterations++;
         this.count(node.line);
-        this.onEvent({ type: 'loop', id: node.id, line: node.line, iteration: ++iteration });
+        this.onEvent({ type: 'loop', id: node.id, line: node.line, iteration: active.iterations });
         const signal = yield* this.block(body);
         if (signal) return signal;
         if (update) yield* this.stmt(update);
       }
       return undefined;
     } finally {
-      this.loopLines.pop();
+      this.loops.pop();
     }
   }
 

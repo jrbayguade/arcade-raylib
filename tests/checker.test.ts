@@ -56,6 +56,11 @@ describe('check: errors', () => {
     expect(fails('RED = 1;')).toMatchObject({ code: 'ASSIGN_TO_CONST', params: { name: 'RED' } });
     expect(fails('int x = IsKeyDown;')).toMatchObject({ code: 'NOT_A_VARIABLE' });
   });
+  it('rejects names that are raylib.h macros or types (they would break real C)', () => {
+    for (const name of ['PI', 'DEG2RAD', 'MAROON', 'BLANK', 'MAGENTA', 'Color', 'RAYLIB_VERSION']) {
+      expect(fails(`int ${name} = 1;`), name).toMatchObject({ code: 'RESERVED_NAME', params: { name } });
+    }
+  });
   it('checks assignment and operator types', () => {
     expect(fails('int x = RED;')).toMatchObject({ code: 'ASSIGN_TYPE', params: { name: 'x', foundType: 'Color', expectedType: 'int' } });
     expect(fails('int x = RED + 1;')).toMatchObject({ code: 'TYPE_MISMATCH', params: { op: '+', leftType: 'Color', rightType: 'int' } });

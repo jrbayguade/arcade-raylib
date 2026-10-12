@@ -6,6 +6,7 @@
     "UNTERMINATED_COMMENT": "Has obert un comentari amb /* però no l'has tancat amb */.",
     "UNSUPPORTED_INCLUDE": "Aquí només es pot fer #include \"raylib.h\" (has posat «{file}»).",
     "UNSUPPORTED_DIRECTIVE": "Les instruccions que comencen amb # (com «{directive}») encara no les fem servir.",
+    "LEADING_ZERO": "Els nombres enters no poden començar amb 0: en C, un 0 al davant canvia el número (010 val 8!). Escriu «{fixed}».",
     "MISSING_SEMICOLON": "Falta un ; al final de la línia {line}.",
     "EXPECTED_TOKEN": "Esperava «{expected}» però he trobat «{found}».",
     "EXPECTED_NAME": "Aquí esperava el nom d'una variable, però he trobat «{found}».",
@@ -44,6 +45,7 @@
     "DIVISION_BY_ZERO": "Divisió per zero! Un enter no es pot dividir entre 0.",
     "LOOP_TOO_LONG": "El bucle de la línia {line} ha donat massa voltes sense acabar el frame. Potser no s'acaba mai, o falta EndDrawing()?",
     "NO_WINDOW": "Abans de {name} has de cridar InitWindow per crear la finestra.",
+    "INTERNAL_ERROR": "Alguna cosa ha fallat dins de Bit Arcade mentre executava aquesta línia. No és culpa teva: torna-ho a provar.",
     "INT_DIVISION_TRUNCATES": "Compte: {a} / {b} dona {result} i no {exact}, perquè amb enters (int) es perden els decimals."
   },
   "features": {

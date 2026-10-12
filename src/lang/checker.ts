@@ -4,6 +4,13 @@ import { parseFormat, type FormatSpec } from './format';
 import type { HostSignature } from './host';
 import { suggest } from './suggest';
 
+/** Macros and types from raylib.h (5.5) that a variable must not be named after, or gcc would reject the program. */
+const RAYLIB_RESERVED = new Set([
+  'PI', 'DEG2RAD', 'RAD2DEG', 'RLAPI', 'RAYLIB_VERSION', 'RAYLIB_VERSION_MAJOR', 'RAYLIB_VERSION_MINOR',
+  'RAYLIB_VERSION_PATCH', 'MAROON', 'DARKGREEN', 'DARKBLUE', 'VIOLET', 'DARKPURPLE', 'BEIGE', 'BROWN',
+  'DARKBROWN', 'BLANK', 'MAGENTA', 'Color',
+]);
+
 const NUMERIC = new Set<A.ValueType>(['int', 'float', 'bool']);
 const isNumeric = (t: A.ValueType) => NUMERIC.has(t);
 
@@ -66,7 +73,7 @@ class Checker {
       case 'Block':
         return this.block(s);
       case 'VarDecl': {
-        if (this.isConstant(s.name) || this.isFunction(s.name)) throw error('RESERVED_NAME', s.line, s.col, { name: s.name });
+        if (this.isConstant(s.name) || this.isFunction(s.name) || RAYLIB_RESERVED.has(s.name)) throw error('RESERVED_NAME', s.line, s.col, { name: s.name });
         const scope = this.scopes[this.scopes.length - 1];
         const prev = scope.get(s.name);
         if (prev) throw error('ALREADY_DECLARED', s.line, s.col, { name: s.name, prevLine: prev.line });

@@ -11,6 +11,10 @@ describe('TextFormat formatting', () => {
     expect(parseFormat('%s')).toEqual({ bad: '%s' });
     expect(parseFormat('100%')).toEqual({ bad: '%' });
   });
+  it('rejects absurd precisions', () => {
+    expect(parseFormat('%.200f')).toEqual({ bad: '%.200f' });
+    expect(parseFormat('%.20f')).not.toHaveProperty('bad');
+  });
   it('formats values', () => {
     const parts = parseFormat('%d - %.2f');
     if (!Array.isArray(parts)) throw new Error('bad format');

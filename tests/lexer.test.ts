@@ -51,6 +51,16 @@ describe('lex', () => {
     expect(lexError('int ç = 0;')).toMatchObject({ code: 'ACCENT_IN_NAME', params: { char: 'ç' } });
   });
 
+  it('rejects integers with a leading zero (octal in C)', () => {
+    expect(lexError('int x = 010;')).toMatchObject({ code: 'LEADING_ZERO', params: { fixed: '10' }, col: 9 });
+    expect(lexError('int x = 09;')).toMatchObject({ code: 'LEADING_ZERO', params: { fixed: '9' } });
+    expect(lex('0 0.5 00.5').map((t) => t.kind)).toEqual(['int', 'float', 'float', 'eof']);
+  });
+
+  it('treats C keywords outside the subset as keywords, not names', () => {
+    expect(lex('auto register volatile extern inline restrict union').every((t) => t.kind !== 'ident')).toBe(true);
+  });
+
   it('reports unterminated strings and comments', () => {
     expect(lexError('x = "hola\n";')).toMatchObject({ code: 'UNTERMINATED_STRING', line: 1, col: 5 });
     expect(lexError('/* x')).toMatchObject({ code: 'UNTERMINATED_COMMENT', line: 1, col: 1 });

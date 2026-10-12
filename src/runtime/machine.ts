@@ -41,7 +41,9 @@ export class Machine {
     } catch (e) {
       this.finished = true;
       if (e instanceof LangError) return { status: 'error', diagnostic: e.diagnostic };
-      throw e;
+      console.error(e);
+      const line = this.interpreter.currentLine;
+      return { status: 'error', diagnostic: { code: 'INTERNAL_ERROR', params: {}, line, col: 1, severity: 'error' } };
     }
   }
 

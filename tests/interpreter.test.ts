@@ -124,6 +124,10 @@ describe('runtime errors and warnings', () => {
     expect(runError('int i = 0;\nwhile (i >= 0) {\ni = 1;\n}')).toMatchObject({ code: 'LOOP_TOO_LONG', line: 3 });
   });
 
+  it('blames a truly endless inner loop over the frame loop', () => {
+    expect(runError('while (1) {\nint i = 0;\nwhile (i >= 0) {\ni = 1;\n}\nEndDrawing();\n}')).toMatchObject({ code: 'LOOP_TOO_LONG', line: 4 });
+  });
+
   it('resets the budget at each frame', () => {
     const { interpreter } = start('while (1) {\nfor (int i = 0; i < 20000; i++) { }\nEndDrawing();\n}');
     const gen = interpreter.run();

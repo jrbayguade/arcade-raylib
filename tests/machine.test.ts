@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { COLORS } from '../src/runtime/colors';
 import { KEYS } from '../src/runtime/keys';
 import { holding, pressing } from '../src/runtime/input';
-import { runHeadless } from '../src/runtime/machine';
+import { Machine, runHeadless } from '../src/runtime/machine';
+import { RaylibHost } from '../src/runtime/raylib';
+import { compile } from '../src/lang/compile';
 
 const GAME = `#include "raylib.h"
 int main(void) {
@@ -58,6 +60,35 @@ describe('Machine', () => {
   it('points at the game loop when EndDrawing is missing', () => {
     const src = 'int main(void) {\nInitWindow(100, 100, "x");\nwhile (!WindowShouldClose()) {\nBeginDrawing();\n}\nreturn 0;\n}';
     expect(runHeadless(src, { frames: 1 })).toMatchObject({ status: 'error', diagnostic: { code: 'LOOP_TOO_LONG', line: 3 } });
+  });
+
+  it('blames the frame loop, not an inner for, when EndDrawing is missing', () => {
+    const src = [
+      'int main(void) {',
+      'InitWindow(800, 450, "x");',
+      'while (!WindowShouldClose())', // line 3
+      '{',
+      'BeginDrawing();',
+      'ClearBackground(BLACK);',
+      'for (int y = 0; y < 450; y += 30)',
+      '{',
+      'DrawRectangle(398, y, 4, 15, WHITE);',
+      '}',
+      '}',
+      'return 0;',
+      '}',
+    ].join('\n');
+    expect(runHeadless(src, { frames: 1 })).toMatchObject({ status: 'error', diagnostic: { code: 'LOOP_TOO_LONG', line: 3 } });
+  });
+
+  it('turns internal failures into an error instead of throwing', () => {
+    const host = new RaylibHost({ seed: 1 });
+    const compiled = compile('int main(void) {\nInitWindow(100, 100, "x");\nBeginDrawing();\nDrawText("hola", 0, 0, 10, RED);\nEndDrawing();\nreturn 0;\n}', host);
+    if (!compiled.ok) throw new Error('compile');
+    host.functions.DrawText.call = () => { throw new Error('boom'); };
+    const machine = new Machine(compiled.program, host);
+    expect(machine.runFrame()).toMatchObject({ status: 'error', diagnostic: { code: 'INTERNAL_ERROR', line: 4 } });
+    expect(machine.done).toBe(true);
   });
 
   it('formats text and draws it', () => {

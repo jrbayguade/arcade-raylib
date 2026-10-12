@@ -13,4 +13,5 @@ export const KEYWORDS = new Set([
   // C keywords we recognise only to give a friendly "not supported" error
   'double', 'char', 'long', 'short', 'unsigned', 'signed', 'const', 'switch', 'case', 'default',
   'do', 'break', 'continue', 'goto', 'struct', 'typedef', 'static', 'enum', 'sizeof',
+  'auto', 'register', 'volatile', 'extern', 'inline', 'restrict', 'union',
 ]);

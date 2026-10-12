@@ -55,6 +55,9 @@ export function lex(source: string): Token[] {
         text += '.'; advance();
         while (/[0-9]/.test(peek())) { text += peek(); advance(); }
       }
+      if (!isFloat && text.length > 1 && text[0] === '0') {
+        throw error('LEADING_ZERO', startLine, startCol, { fixed: String(parseInt(text, 10)) });
+      }
       let full = text;
       if (isFloat && (peek() === 'f' || peek() === 'F')) { full += peek(); advance(); }
       tokens.push({
