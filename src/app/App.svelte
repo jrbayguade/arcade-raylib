@@ -1,17 +1,33 @@
 <script lang="ts">
   import { LESSONS } from '../../content/pong';
   import { t } from '../i18n/i18n';
+  import Intro from '../ui/Intro.svelte';
+  import { INTRO_KEY, shouldShowIntro } from '../ui/intro';
   import LessonScreen from '../ui/LessonScreen.svelte';
   import { sounds, type SoundName } from '../ui/sound';
-  import { parseRoute } from './route';
+  import { parseRoute, routeHash } from './route';
+
+  const introSeen = () => { try { return localStorage.getItem(INTRO_KEY) === '1'; } catch { return false; } };
 
   let route = $state(parseRoute(location.hash, LESSONS.length));
+  let showIntro = $state(shouldShowIntro(location.hash, introSeen()));
 
   $effect(() => {
-    const onHash = () => (route = parseRoute(location.hash, LESSONS.length));
+    const onHash = () => {
+      route = parseRoute(location.hash, LESSONS.length);
+      if (location.hash === '#/intro') showIntro = true;
+    };
     addEventListener('hashchange', onHash);
     return () => removeEventListener('hashchange', onHash);
   });
+
+  function introDone(): void {
+    try { localStorage.setItem(INTRO_KEY, '1'); } catch { /* private mode: the intro will show again */ }
+    showIntro = false;
+    const start = routeHash({ lesson: 0, step: 0 });
+    if (location.hash !== start) location.hash = start;
+    route = parseRoute(start, LESSONS.length);
+  }
 
   // Audio may only start after a user gesture; every button then clicks (or plays its own data-sound).
   $effect(() => {
@@ -36,17 +52,20 @@
     (window as unknown as { __bitArcadeSounds: string[] }).__bitArcadeSounds = heard;
     sounds.onPlay = (name) => heard.push(name);
   }
-
 </script>
 
-{#key `${route.lesson}/${route.step}`}
-  <LessonScreen
-    lesson={LESSONS[route.lesson]}
-    lessonIndex={route.lesson}
-    startStep={route.step}
-    hasNextLesson={route.lesson < LESSONS.length - 1}
-  />
-{/key}
+{#if showIntro}
+  <Intro onDone={introDone} />
+{:else}
+  {#key `${route.lesson}/${route.step}`}
+    <LessonScreen
+      lesson={LESSONS[route.lesson]}
+      lessonIndex={route.lesson}
+      startStep={route.step}
+      hasNextLesson={route.lesson < LESSONS.length - 1}
+    />
+  {/key}
+{/if}
 
 <div class="rotate" role="alert">
   <div class="rotate-phone" aria-hidden="true">📱</div>

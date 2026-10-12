@@ -7,11 +7,14 @@
   import { KeyboardInput } from '../runtime/keyboard';
   import { Runner } from '../runtime/runner';
 
-  let { onVariables, onError }: {
+  let { broken, onVariables, onError }: {
+    /** No working program on screen: show TV static instead of a black screen. */
+    broken: boolean;
     onVariables: (variables: VariableView[]) => void;
     onError: (diagnostic: Diagnostic) => void;
   } = $props();
 
+  let frame: HTMLDivElement;
   let canvas: HTMLCanvasElement;
   let runner: Runner | null = null;
   let mouse = $state<{ x: number; y: number } | null>(null);
@@ -42,7 +45,11 @@
     };
   });
 
+  /** Runs a program, with the old-TV "switching on" effect (restarted by toggling the class). */
   export function start(code: string): void {
+    frame.classList.remove('power');
+    void frame.offsetWidth;
+    frame.classList.add('power');
     runner?.start(code);
   }
 
@@ -59,9 +66,10 @@
   }
 </script>
 
-<div class="machine">
+<div class="machine" bind:this={frame}>
   <!-- svelte-ignore a11y_mouse_events_have_key_events, a11y_no_noninteractive_tabindex -->
   <canvas bind:this={canvas} width="800" height="450" tabindex="0"
     onmousemove={track} onmouseleave={() => (mouse = null)}></canvas>
-  {#if mouse}<span class="coords">{t('mouseCoords', mouse)}</span>{/if}
+  {#if broken}<div class="tv-static" aria-hidden="true"></div>{/if}
+  {#if mouse && !broken}<span class="coords">{t('mouseCoords', mouse)}</span>{/if}
 </div>

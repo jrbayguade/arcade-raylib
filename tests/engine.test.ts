@@ -105,3 +105,15 @@ describe('MAX_STARS', () => {
     expect(e.exercise!.stars).toBeLessThanOrEqual(MAX_STARS);
   });
 });
+
+describe('starsOf', () => {
+  it('reports the stars of any exercise, 0 when not done', () => {
+    const e = new LessonEngine(lesson);
+    expect(e.starsOf('move')).toBe(0);
+    e.setCode(e.exercise!.code.replace('185', '50'));
+    e.run();
+    e.next();
+    expect(e.starsOf('move')).toBe(2);
+    expect(e.starsOf('nope')).toBe(0);
+  });
+});

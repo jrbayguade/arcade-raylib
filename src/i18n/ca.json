@@ -98,7 +98,6 @@
     "nextLesson": "Següent lliçó →",
     "lessonDone": "Has acabat la lliçó! 🎉",
     "allDone": "Has acabat totes les lliçons que hi ha de moment. Aviat n'hi haurà més! 🏆",
-    "checksTitle": "Gairebé! He provat el teu codi i això és el que he vist:",
     "success": "Molt bé! Ho has aconseguit! 🎉",
     "compileErrorIntro": "Uf, a la línia {line} (marcada en vermell) hi ha alguna cosa que no entenc:",
     "runtimeErrorIntro": "El joc s'ha aturat a la línia {line}:",
@@ -112,7 +111,23 @@
     "runShortcut": "Ctrl+Enter",
     "starsEarned": "{n} de {max} estrelles",
     "rotate": "Gira el mòbil per programar!",
-    "symbolsLabel": "Símbols per escriure codi"
+    "symbolsLabel": "Símbols per escriure codi",
+    "lessonShort": "lliçó {n}",
+    "missionLabel": "🎯 La teva missió",
+    "almost": "Ja gairebé!",
+    "hintCount": "💡 Pista {n}/{total}",
+    "resetConfirm": "Segur? ⟲",
+    "resetTitle": "Torna a començar l'exercici",
+    "introSkip": "Salta ⏭",
+    "introPress": "Prem qualsevol tecla (o toca la pantalla) per encendre els llums",
+    "introBit": "Hola! Sóc en Bit 🤖. Benvingut a la meva sala recreativa… bé, al que en queda.",
+    "introBroken": "Totes les màquines tenen el codi trencat. Jo sé llegir-lo, però no tinc dits per teclejar. Necessito un programador. Tu!",
+    "introDemo": "Tu canvies el codi groc, prems ▶ Executa, i la màquina fa cas. És codi C de debò!",
+    "introPromise": "Quan l'arreglis del tot, la màquina s'encén i hi podràs jugar. I després, a per la següent!",
+    "introGoText": "Comencem per la més fàcil: el Pong.",
+    "introGo": "Som-hi! ▶",
+    "introBrokenLabel": "AVARIADA",
+    "introNext": "Toca o prem una tecla per continuar"
   },
   "params": {
     "InitWindow": [

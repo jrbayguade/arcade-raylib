@@ -64,7 +64,7 @@ describe('paramNames', () => {
 describe('lesson UI strings', () => {
   it('has the strings the lesson screen uses', () => {
     for (const key of ['lessonTitle', 'stepOf', 'hint', 'hintTitle', 'hintLabel', 'reset', 'continue', 'nextLesson',
-      'lessonDone', 'allDone', 'checksTitle', 'success', 'compileErrorIntro', 'runtimeErrorIntro',
+      'lessonDone', 'allDone', 'almost', 'missionLabel', 'hintCount', 'resetConfirm', 'resetTitle', 'lessonShort', 'introSkip', 'introPress', 'introGo', 'success', 'compileErrorIntro', 'runtimeErrorIntro',
       'mouseCoords', 'variablesTitle', 'foldLines', 'starsLabel']) {
       expect(t(key), key).not.toBe(key);
     }

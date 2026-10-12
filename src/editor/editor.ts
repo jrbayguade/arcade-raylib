@@ -13,7 +13,7 @@ import type { LessonSource } from '../lessons/source';
 import { RaylibHost } from '../runtime/raylib';
 import { buildCompletions, completionSource } from './completions';
 import { errorLineField, setErrorLine } from './errorLine';
-import { computeParamHints } from './paramHints';
+import { computeParamHints, hintsInRange } from './paramHints';
 import { editableZone, zoneField } from './zone';
 
 class HintWidget extends WidgetType {
@@ -29,7 +29,8 @@ class HintWidget extends WidgetType {
 }
 
 function hintDecorations(view: EditorView): DecorationSet {
-  const hints = computeParamHints(view.state.doc.toString(), paramNames);
+  const zone = view.state.field(zoneField);
+  const hints = hintsInRange(computeParamHints(view.state.doc.toString(), paramNames), zone.from, zone.to);
   return Decoration.set(hints.map((h) => Decoration.widget({ widget: new HintWidget(h.label), side: -1 }).range(h.pos)), true);
 }
 

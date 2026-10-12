@@ -32,7 +32,14 @@ export interface LessonTexts {
   folds: Record<string, string>;
 }
 
-export interface Lesson { id: string; number: number; steps: Step[]; texts: LessonTexts }
+export interface Lesson {
+  id: string;
+  number: number;
+  /** Name on the arcade cabinet's sign, e.g. PONG. */
+  machine?: string;
+  steps: Step[];
+  texts: LessonTexts;
+}
 
 export function isExercise(step: Step): step is ExerciseStep {
   return step.kind !== 'explain';

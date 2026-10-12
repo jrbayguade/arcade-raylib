@@ -48,11 +48,14 @@ try {
         await page.keyboard.type('50');
         await runAndExpectSuccess(label);
         check(`${label}: confetti on success`, await visible(page.locator('.confetti[data-active="true"]'), 1000).catch(() => false) || (await page.locator('.confetti').getAttribute('data-active')) === 'true');
-        check(`${label}: Continue button appears`, await visible(page.locator('.toolbar .next')));
+        check(`${label}: Continue button appears`, await visible(page.locator('.actions .next')));
         check(`${label}: two stars without hints`, (await page.locator('.star.earned').count()) === 2);
+        await page.waitForTimeout(1200);
+        const px = await page.evaluate(() => { const c = document.querySelector('.cabinet canvas'); const d = c.getContext('2d'); const at = (x, y) => d.getImageData(x, y, 1, 1).data[0]; return [at(25, 60), at(25, 220)]; });
+        check(`${label}: the machine runs the kid's code after a success`, px[0] > 200 && px[1] < 50, JSON.stringify(px));
       } else {
         if (kind === 'hint') {
-          await button('💡 Pista').click();
+          await page.locator('.hint-btn').click();
           check(`${label}: hint shown`, await visible(page.locator('.bubble .hint')));
         }
         await page.evaluate(() => window.__bitArcade.solve());
@@ -77,6 +80,21 @@ try {
   await page.locator('.cm-editor').waitFor();
   check('fold placeholders shown', await visible(page.locator('.cm-lesson-fold')));
   check('parameter hints shown', (await page.locator('.cm-param-hint').allInnerTexts()).includes('alçada:'));
+  check('parameter hints only inside the yellow zone', (await page.locator('.cm-line:not(.cm-zone) .cm-param-hint').count()) === 0);
+  check('the mission is always visible', await visible(page.locator('.bubble .mission', { hasText: 'Canvia el 185 per un 50' })));
+  check('the machine is on at the start of an exercise', await visible(page.locator('.cabinet .machine.power')));
+
+  // A wrong answer: one gentle message, not a list; ⟲ asks before wiping the code
+  await page.locator('.cm-zone span', { hasText: /^20$/ }).first().dblclick();
+  await page.keyboard.type('60');
+  await button('▶ Executa').click();
+  check('a wrong answer gets one gentle message', await visible(page.locator('.bubble .almost', { hasText: 'Ja gairebé!' })) && (await page.locator('.bubble .checks').count()) === 0);
+  check('Bit looks thoughtful', (await page.locator('.talk > .bit-face .feature').count()) === 3 && (await page.locator('.talk > .bit-face .eye').count()) === 0);
+  const edited = await code();
+  await page.locator('.actions .reset').click();
+  check('reset asks first', await visible(page.locator('.actions .reset.armed', { hasText: 'Segur?' })) && (await code()) === edited);
+  await page.locator('.actions .reset').click();
+  check('reset after confirming restores the code', !(await code()).includes('(60,'));
 
   // Bit types the first bubble, then moves on by itself; a click skips the wait
   const say = page.locator('.bubble .say');
@@ -84,7 +102,7 @@ try {
   const sizeWhileTyping = await bubbleSize();
   check('Bit starts typing', (await say.innerText()).length < 'Hola! Sóc en Bit 🤖.'.length + 2);
   check('Bit finishes the first bubble', await visible(page.locator('.bubble .say', { hasText: 'Sóc en Bit' })));
-  check('one dot per bubble', (await page.locator('.pager .dot').count()) === 5);
+  check('one dot per bubble', (await page.locator('.pager .dot').count()) === 4);
   await say.click();
   await say.click();
   check('the bubble keeps its size while typing', (await bubbleSize()) === sizeWhileTyping, `${sizeWhileTyping} → ${await bubbleSize()}`);
@@ -102,7 +120,7 @@ try {
   check('lesson 0 done', await visible(page.getByText('Has acabat la lliçó!')));
   await button('Següent lliçó →').click();
   // The hash change re-mounts the screen in a later task: wait for the new lesson, not the old editor.
-  check('lesson 1 shown', await visible(page.getByRole('heading', { name: /Lliçó 1/ })));
+  check('lesson 1 shown', await visible(page.getByRole('heading', { name: /lliçó 1/ })));
   await page.locator('.cm-editor').waitFor();
   await playLesson(1, ['solve', 'vars', 'explain', 'vars', 'vars', 'vars']);
   check('all lessons done', await visible(page.getByText('Has acabat totes les lliçons')));
@@ -141,6 +159,12 @@ try {
   await page.keyboard.press('Home');
   await page.keyboard.press('Control+V');
   await runAndExpectSuccess('order hint (cut and paste)');
+
+  // A starting code that does not compile shows TV static
+  await page.goto(`${base}#/pong/1/4`);
+  await page.reload();
+  await page.locator('.cm-editor').waitFor();
+  check('broken starting code shows TV static', await visible(page.locator('.cabinet .tv-static')));
 
   // Sounds: run, success and stars are heard; the mute button silences and is remembered
   await page.goto(`${base}#/pong/0/0`);
@@ -186,6 +210,32 @@ try {
       await phone.locator('.symbols button', { hasText: /^;$/ }).click();
       check('phone sideways: symbol bar types into the zone', (await phone.evaluate(() => window.__bitArcade.code())).includes('WHITE);;'));
     }
+    await ctx.close();
+  }
+
+  // Intro: first visit to the front page, skippable, remembered; #/intro replays it to the end
+  {
+    const ctx = await browser.newContext({ viewport: { width: 1366, height: 768 } });
+    const fresh = await ctx.newPage();
+    fresh.on('pageerror', (e) => errors.push(String(e)));
+    await fresh.goto(base);
+    check('intro on the first visit', await visible(fresh.locator('.intro')));
+    check('intro starts in the dark', !(await fresh.locator('.intro.lit').count()));
+    await fresh.keyboard.press('Space');
+    check('a key switches the lights on', await visible(fresh.locator('.intro.lit')));
+    await fresh.locator('.intro .skip').click();
+    check('skip goes to lesson 0', await visible(fresh.locator('.cm-editor'), 5000) && (await fresh.evaluate(() => location.hash)) === '#/pong/0/0');
+    await fresh.goto(base);
+    await fresh.reload();
+    await fresh.waitForTimeout(800);
+    check('no intro on the next visit', (await fresh.locator('.intro').count()) === 0);
+    await fresh.goto(`${base}#/intro`);
+    await fresh.reload();
+    check('#/intro replays it', await visible(fresh.locator('.intro')));
+    for (let i = 0; i < 6; i++) { await fresh.keyboard.press('Space'); await fresh.waitForTimeout(250); }
+    check('the last beat offers Som-hi!', await visible(fresh.getByRole('button', { name: 'Som-hi! ▶' })));
+    await fresh.getByRole('button', { name: 'Som-hi! ▶' }).click();
+    check('Som-hi! starts lesson 0', await visible(fresh.locator('.cm-editor'), 5000));
     await ctx.close();
   }
 

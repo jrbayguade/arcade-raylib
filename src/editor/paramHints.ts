@@ -44,3 +44,8 @@ export function computeParamHints(code: string, names: (fn: string) => string[] 
   });
   return hints;
 }
+
+/** Hints are only shown where the kid can write: everywhere else the code stays clean. */
+export function hintsInRange(hints: ParamHint[], from: number, to: number): ParamHint[] {
+  return hints.filter((h) => h.pos >= from && h.pos <= to);
+}

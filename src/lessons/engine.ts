@@ -40,6 +40,10 @@ export class LessonEngine {
     return state;
   }
 
+  starsOf(stepId: string): number {
+    return this.states.get(stepId)?.stars ?? 0;
+  }
+
   setCode(code: string): void {
     const ex = this.exercise;
     if (ex) ex.code = code;

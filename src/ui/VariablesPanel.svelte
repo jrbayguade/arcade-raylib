@@ -24,6 +24,7 @@
   const show = (v: VariableView) => (typeof v.value === 'object' ? 'Color' : String(v.value));
 </script>
 
+{#if variables.length > 0}
 <section class="vars">
   <h3>{t('variablesTitle')}</h3>
   <div class="boxes">
@@ -36,3 +37,4 @@
     {/each}
   </div>
 </section>
+{/if}

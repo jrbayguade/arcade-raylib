@@ -1,18 +1,23 @@
 <script lang="ts">
+  import { untrack } from 'svelte';
   import { t } from '../i18n/i18n';
+  import { compile } from '../lang/compile';
   import type { Diagnostic } from '../lang/diagnostics';
   import type { VariableView } from '../lang/interpreter';
   import { LessonEngine, MAX_STARS } from '../lessons/engine';
+  import { feedbackFor } from '../lessons/feedback';
   import { isExercise, promptPages, type Lesson } from '../lessons/model';
   import { parseLessonSource, zoneText } from '../lessons/source';
+  import { RaylibHost } from '../runtime/raylib';
   import { routeHash } from '../app/route';
   import BitBubble from './BitBubble.svelte';
   import CodePane from './CodePane.svelte';
   import Confetti from './Confetti.svelte';
   import ExplainCard from './ExplainCard.svelte';
   import GamePane from './GamePane.svelte';
-  import VariablesPanel from './VariablesPanel.svelte';
+  import type { BitMessage } from './message';
   import { sounds } from './sound';
+  import VariablesPanel from './VariablesPanel.svelte';
 
   const SYMBOLS = [';', '(', ')', '{', '}', '=', ',', '"', '<', '>', '+', '-'];
 
@@ -23,30 +28,79 @@
     hasNextLesson: boolean;
   } = $props();
 
-  const engine = new LessonEngine(lesson, startStep);
+  // App re-keys this screen on every route change, so reading the initial props here is intended.
+  const engine = untrack(() => new LessonEngine(lesson, startStep));
   let version = $state(0);
   let resetCount = $state(0);
   let errorLine = $state<number | null>(null);
-  let liveError = $state<Diagnostic | null>(null);
+  let message = $state<BitMessage>(null);
   let variables = $state<VariableView[]>([]);
   let celebrations = $state(0);
   let celebrating = $state(false);
   let symbolsOpen = $state(false);
+  let resetArmed = $state(false);
+  let broken = $state(false);
   let game: ReturnType<typeof GamePane> | undefined = $state();
   let codePane: ReturnType<typeof CodePane> | undefined = $state();
 
   const view = $derived.by(() => {
     version;
+    const pages = promptPages(engine.texts);
+    const exercise = isExercise(engine.step);
     return {
       step: engine.step,
       index: engine.stepIndex,
       exercise: engine.exercise,
       texts: engine.texts,
-      hints: engine.shownHints(),
+      // On exercises the last page is the mission: always visible, so it is not typed among the others.
+      pages: exercise ? pages.slice(0, -1) : pages,
+      mission: exercise ? pages[pages.length - 1] : null,
+      hintsShown: engine.shownHints().length,
+      hintsTotal: engine.texts.hints?.length ?? 0,
       moreHints: engine.hasMoreHints,
       canContinue: engine.canContinue,
       isLast: engine.isLastStep,
     };
+  });
+
+  // A primitive: effects that read it only re-run when the step really changes (not on every engine update).
+  const stepId = $derived(view.step.id);
+
+  const lessonStars = $derived.by(() => {
+    version;
+    let earned = 0;
+    let max = 0;
+    for (const s of lesson.steps) {
+      if (!isExercise(s)) continue;
+      max += MAX_STARS;
+      earned += engine.starsOf(s.id);
+    }
+    return { earned, max };
+  });
+
+  const mood = $derived.by((): 'normal' | 'happy' | 'thinking' => {
+    if (message?.kind === 'live') return 'thinking';
+    if (message?.kind === 'result') {
+      return message.feedback?.kind === 'success' ? 'happy' : 'thinking';
+    }
+    return 'normal';
+  });
+
+  // Entering an exercise switches the machine on with its starting code, so the kid sees what is broken;
+  // starting code that does not compile (the challenge is to fix it) shows TV static instead.
+  $effect(() => {
+    stepId;
+    untrack(() => {
+      if (!game || !isExercise(view.step) || !view.exercise) return;
+      const code = view.exercise.source.code;
+      if (compile(code, new RaylibHost({ seed: 1 })).ok) {
+        broken = false;
+        game.start(code);
+      } else {
+        broken = true;
+        game.stop();
+      }
+    });
   });
 
   function changed(code: string): void {
@@ -56,7 +110,7 @@
 
   function showLiveError(d: Diagnostic): void {
     sounds.play('error');
-    liveError = d;
+    message = { kind: 'live', diagnostic: d };
     errorLine = d.line;
   }
 
@@ -69,48 +123,60 @@
   }
 
   function gameCenter(): { x: number; y: number } {
-    const r = document.querySelector('.game .machine')?.getBoundingClientRect();
+    const r = document.querySelector('.cabinet .machine')?.getBoundingClientRect();
     return r ? { x: r.left + r.width / 2, y: r.top + r.height / 2 } : { x: innerWidth / 2, y: innerHeight / 2 };
   }
 
   function run(): void {
-    const wasDone = engine.exercise?.done ?? false;
     sounds.play('run');
+    const wasDone = engine.exercise?.done ?? false;
     const result = engine.run();
-    liveError = null;
     version++;
     if (!result) return;
+    const ex = engine.exercise!;
+    message = { kind: 'result', feedback: feedbackFor(result), stars: ex.stars, maxStars: MAX_STARS };
     if (result.kind === 'checked') {
       errorLine = null;
-      game?.start(engine.exercise!.code);
-      if (result.passed && !wasDone) celebrate(engine.exercise!.stars);
+      broken = false;
+      game?.start(ex.code);
+      if (result.passed && !wasDone) celebrate(ex.stars);
     } else {
       sounds.play('error');
       errorLine = result.diagnostic.line;
+      broken = result.kind === 'compile-error';
       game?.stop();
     }
   }
 
   function hint(): void {
-    engine.showHint();
+    const text = engine.showHint();
     version++;
+    if (text) message = { kind: 'hint', n: engine.shownHints().length, text };
   }
 
+  let resetTimer: ReturnType<typeof setTimeout> | undefined;
   function reset(): void {
+    if (!resetArmed) {
+      resetArmed = true;
+      clearTimeout(resetTimer);
+      resetTimer = setTimeout(() => (resetArmed = false), 3000);
+      return;
+    }
+    resetArmed = false;
+    clearTimeout(resetTimer);
     engine.reset();
-    game?.stop();
     errorLine = null;
-    liveError = null;
+    message = null;
     resetCount++;
     version++;
   }
 
   function next(): void {
     if (!engine.next()) return;
-    game?.stop();
     variables = [];
     errorLine = null;
-    liveError = null;
+    message = null;
+    symbolsOpen = false;
     history.replaceState(null, '', routeHash({ lesson: lessonIndex, step: engine.stepIndex }));
     version++;
   }
@@ -132,52 +198,28 @@
 
 <div class="screen">
   <header class="top">
-    <h1>{t('lessonTitle', { number: lesson.number, title: lesson.texts.title })}</h1>
-    <span class="progress">{t('stepOf', { n: view.index + 1, total: lesson.steps.length })}</span>
+    <h1 class="brand">BIT ARCADE <span>· {lesson.machine ?? ''} · {t('lessonShort', { n: lesson.number })} · {lesson.texts.title}</span></h1>
+    <div class="lights" role="img" aria-label={t('stepOf', { n: view.index + 1, total: lesson.steps.length })}>
+      {#each lesson.steps as s, i (s.id)}
+        <i class="light" class:done={i < view.index} class:now={i === view.index}></i>
+      {/each}
+    </div>
+    <span class="total">⭐ {lessonStars.earned}/{lessonStars.max}</span>
   </header>
 
-  <aside class="guide">
-    {#key view.step.id}
-      <BitBubble pages={promptPages(view.texts)} hints={view.hints} result={view.exercise?.result ?? null}
-        {liveError} checkTexts={lesson.texts.checks} success={view.texts.success} {celebrating} />
-    {/key}
-    {#if view.exercise}
-      <div class="actions">
-        <button data-sound="hint" onclick={hint} disabled={!view.moreHints} title={t('hintTitle')}>{t('hint')}</button>
-        <button onclick={reset}>{t('reset')}</button>
-      </div>
-      {#if view.exercise.done}
-        <p class="stars" aria-label={t('starsEarned', { n: view.exercise.stars, max: MAX_STARS })}>
-          {#each Array.from({ length: MAX_STARS }) as _, i (i)}<span class="star" class:earned={i < view.exercise.stars} style="animation-delay: {i * 300}ms">⭐</span>{/each}
-        </p>
-      {/if}
-    {/if}
-    {#if view.canContinue && view.isLast}
-      <p class="done">{t('lessonDone')}</p>
-      {#if !hasNextLesson}<p class="done">{t('allDone')}</p>{/if}
-    {/if}
-  </aside>
+  {#key view.step.id}
+    <BitBubble pages={view.pages} mission={view.mission} {message} checkTexts={lesson.texts.checks}
+      success={view.texts.success} {mood} {celebrating} />
+  {/key}
 
-  <main class="code">
-    <div class="toolbar">
-      {#if isExercise(view.step)}
-        <button class="keys-toggle" class:on={symbolsOpen} aria-expanded={symbolsOpen} aria-label={t('symbolsLabel')}
-          title={t('symbolsLabel')} onpointerdown={(e) => e.preventDefault()} onclick={() => (symbolsOpen = !symbolsOpen)}>⌨️</button>
-        <button class="run" data-sound="none" onclick={run} title={t('runShortcut')}>{t('run')}</button>
-      {/if}
-      {#if view.canContinue && !view.isLast}
-        {#key view.step.id}<button class="primary next" data-sound="next" onclick={next}>{t('continue')}</button>{/key}
-      {:else if view.canContinue && hasNextLesson}
-        <button class="primary next" data-sound="next" onclick={nextLesson}>{t('nextLesson')}</button>
-      {/if}
-    </div>
+  <div class="work">
     {#if isExercise(view.step) && view.exercise}
       {#if symbolsOpen}
-      <div class="symbols" aria-label={t('symbolsLabel')}>
-        {#each SYMBOLS as s (s)}
-          <button data-sound="type" onpointerdown={(e) => e.preventDefault()} onclick={() => codePane?.insert(s)}>{s}</button>
-        {/each}
-      </div>
+        <div class="symbols" aria-label={t('symbolsLabel')}>
+          {#each SYMBOLS as s (s)}
+            <button data-sound="type" onpointerdown={(e) => e.preventDefault()} onclick={() => codePane?.insert(s)}>{s}</button>
+          {/each}
+        </div>
       {/if}
       {#key `${view.step.id}/${resetCount}`}
         <CodePane bind:this={codePane} source={view.exercise.source} foldLabels={lesson.texts.folds}
@@ -186,13 +228,38 @@
     {:else if view.step.kind === 'explain'}
       <ExplainCard card={view.step.card} />
     {/if}
-  </main>
+  </div>
 
-  <section class="game">
-    <GamePane bind:this={game} onVariables={(v) => (variables = v)} onError={showLiveError} />
-    {#if isExercise(view.step) && view.step.showVariables}
-      <VariablesPanel {variables} />
+  <div class="actions">
+    {#if view.canContinue && !view.isLast}
+      {#key view.step.id}<button class="primary next" data-sound="next" onclick={next}>{t('continue')}</button>{/key}
+    {:else if view.canContinue && hasNextLesson}
+      <button class="primary next" data-sound="next" onclick={nextLesson}>{t('nextLesson')}</button>
     {/if}
+    {#if isExercise(view.step)}
+      <button class="run" class:secondary={view.canContinue} data-sound="none" onclick={run} title={t('runShortcut')}>{t('run')}</button>
+      <button class="hint-btn" data-sound="hint" onclick={hint} disabled={!view.moreHints} title={t('hintTitle')}>
+        {t('hintCount', { n: view.hintsShown, total: view.hintsTotal })}
+      </button>
+      <button class="keys-toggle" class:on={symbolsOpen} aria-expanded={symbolsOpen} aria-label={t('symbolsLabel')}
+        title={t('symbolsLabel')} onpointerdown={(e) => e.preventDefault()} onclick={() => (symbolsOpen = !symbolsOpen)}>⌨️</button>
+      <button class="reset" class:armed={resetArmed} onclick={reset} title={t('resetTitle')} aria-label={t('resetTitle')}>
+        {resetArmed ? t('resetConfirm') : '⟲'}
+      </button>
+    {/if}
+    {#if view.canContinue && view.isLast}
+      <span class="done">{t('lessonDone')}{hasNextLesson ? '' : ' ' + t('allDone')}</span>
+    {/if}
+  </div>
+
+  <section class="machine-area">
+    <div class="cabinet">
+      <div class="marquee">{lesson.machine ?? ''}</div>
+      <GamePane bind:this={game} {broken} onVariables={(v) => (variables = v)} onError={showLiveError} />
+      {#if isExercise(view.step) && view.step.showVariables}
+        <VariablesPanel {variables} />
+      {/if}
+    </div>
   </section>
 </div>
 
