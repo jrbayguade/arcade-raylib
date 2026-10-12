@@ -16,7 +16,7 @@
 - Una sola zona editable per exercici; fora de la zona l'editor no accepta cap canvi.
 - Les etiquetes de paràmetre són decoracions: mai formen part del text del document.
 - Tot text visible per l'alumne surt de `src/i18n/ca.json` o del `ca.json` de la lliçó. Cap text en català escrit al codi TS/Svelte.
-- Cada fitxer `.c` de `content/` (inici i solució) és C vàlid amb raylib.h: la CI existent els compila tots.
+- Cada `*.solution.c` de `content/pong/` i cada altre `.c` de `content/` és C vàlid amb raylib.h (`gcc -std=c99 -Wall -Werror`): la CI els compila. Un fitxer d'inici d'exercici pot **no** compilar a propòsit quan el repte és justament arreglar-lo (p. ex. una variable que encara no existeix); la CI se'ls salta.
 - Les comprovacions són determinístiques: llavor 1, 2 frames per defecte, sense entrada de teclat real.
 - Estrelles: ⭐ si l'exercici passa, ⭐⭐ si passa sense haver vist cap pista. Les estrelles d'un exercici no baixen mai.
 - 3 pistes per exercici.
@@ -65,7 +65,7 @@ tests/e2e/lessons.mjs               prova al navegador (Edge)
 ### Task 1: Svelte, CodeMirror, dues pàgines i Runner compartit
 
 **Files:**
-- Create: `svelte.config.js`, `src/env.d.ts`, `src/app/main.ts`, `src/app/App.svelte`, `index.html` (nou), `demo.html`
+- Create: `src/env.d.ts`, `src/app/main.ts`, `src/app/App.svelte`, `index.html` (nou), `demo.html`
 - Move: `src/demo/runner.ts` → `src/runtime/runner.ts`
 - Modify: `vite.config.ts`, `tsconfig.json`, `package.json`, `src/demo/main.ts:7`, `tests/runner.test.ts:3`
 - Test: `tests/runner.test.ts`
@@ -76,8 +76,10 @@ tests/e2e/lessons.mjs               prova al navegador (Edge)
 
 - [ ] **Step 1: Instal·lar dependències**
 
-Run: `npm install svelte codemirror @codemirror/lang-cpp @codemirror/theme-one-dark` i després `npm install -D @sveltejs/vite-plugin-svelte svelte-check playwright-core`
-Expected: `package.json` amb `dependencies` (svelte, codemirror, @codemirror/lang-cpp, @codemirror/theme-one-dark) i les noves `devDependencies`.
+Run: `npm install svelte codemirror @codemirror/lang-cpp @codemirror/theme-one-dark @codemirror/state @codemirror/view @codemirror/language @codemirror/commands @codemirror/autocomplete` i després `npm install -D @sveltejs/vite-plugin-svelte playwright-core`
+Expected: `package.json` amb aquestes `dependencies` i `devDependencies`; una sola còpia de `@codemirror/state` (`npm ls @codemirror/state` sense duplicats).
+
+(`svelte-check` no s'instal·la al projecte: demana TypeScript ≤ 6 i el projecte en fa servir el 7. S'executa aïllat amb `npx`, vegeu el script `check`.)
 
 - [ ] **Step 2: Moure el Runner i escriure el test que falla**
 
@@ -123,28 +125,19 @@ A `src/runtime/runner.ts`, afegir l'import `import type { ExecEvent, VariableVie
 
 - [ ] **Step 5: Configurar Svelte i dues pàgines**
 
-`svelte.config.js`:
-```js
-import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
-
-export default { preprocess: vitePreprocess() };
-```
-
-`vite.config.ts`:
+`vite.config.ts` (sense `node:url`: el projecte no té `@types/node`; Vite resol les rutes des de l'arrel):
 ```ts
-import { fileURLToPath } from 'node:url';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { defineConfig } from 'vitest/config';
-
-const page = (file: string) => fileURLToPath(new URL(file, import.meta.url));
 
 export default defineConfig({
   base: './',
   plugins: [svelte()],
-  build: { rollupOptions: { input: { main: page('./index.html'), demo: page('./demo.html') } } },
+  build: { rolldownOptions: { input: { main: 'index.html', demo: 'demo.html' } } },
   test: { include: ['tests/**/*.test.ts'] },
 });
 ```
+(Svelte 5 entén `<script lang="ts">` sense preprocessador: no cal `svelte.config.js`.)
 
 `tsconfig.json`: canviar `"include"` per `["src", "tests", "content", "vite.config.ts"]` i `"types"` per `["vite/client", "svelte"]`.
 
@@ -154,7 +147,7 @@ export default defineConfig({
 /// <reference types="vite/client" />
 ```
 
-`package.json`, a `scripts`, afegir: `"check": "svelte-check --tsconfig ./tsconfig.json"` i `"e2e": "node tests/e2e/lessons.mjs"`.
+`package.json`, a `scripts`, afegir: `"check": "npx -y -p typescript@6 -p svelte-check@4 svelte-check --tsconfig ./tsconfig.json"` i `"e2e": "node tests/e2e/lessons.mjs"`.
 
 Run: `git mv index.html demo.html`. A `demo.html`, canviar `<title>Bit Arcade</title>` per `<title>Bit Arcade — demo</title>`.
 
@@ -238,7 +231,7 @@ describe('paramNames', () => {
 
 describe('lesson UI strings', () => {
   it('has the strings the lesson screen uses', () => {
-    for (const key of ['lessonTitle', 'stepOf', 'hint', 'hintLabel', 'reset', 'continue', 'nextLesson',
+    for (const key of ['lessonTitle', 'stepOf', 'hint', 'hintTitle', 'hintLabel', 'reset', 'continue', 'nextLesson',
       'lessonDone', 'allDone', 'checksTitle', 'success', 'compileErrorIntro', 'runtimeErrorIntro',
       'mouseCoords', 'variablesTitle', 'foldLines', 'starsLabel']) {
       expect(t(key), key).not.toBe(key);
@@ -286,13 +279,14 @@ i, dins de `"ui"`, aquestes claus:
     "nextLesson": "Següent lliçó →",
     "lessonDone": "Has acabat la lliçó! 🎉",
     "allDone": "Has acabat totes les lliçons que hi ha de moment. Aviat n'hi haurà més! 🏆",
-    "checksTitle": "He mirat el teu codi i això és el que he vist:",
+    "hintTitle": "Si mires una pista, aquest exercici et donarà ⭐ en lloc de ⭐⭐",
+    "checksTitle": "Gairebé! He provat el teu codi i això és el que he vist:",
     "success": "Molt bé! Ho has aconseguit! 🎉",
-    "compileErrorIntro": "Uf, a la línia {line} hi ha alguna cosa que no entenc:",
+    "compileErrorIntro": "Uf, a la línia {line} (marcada en vermell) hi ha alguna cosa que no entenc:",
     "runtimeErrorIntro": "El joc s'ha aturat a la línia {line}:",
     "mouseCoords": "x: {x}   y: {y}",
     "variablesTitle": "Les teves variables",
-    "foldLines": "▸ {lines} línies: {label}",
+    "foldLines": "▸ {label} ({lines} línies amagades)",
     "starsLabel": "Estrelles d'aquest exercici:"
 ```
 
@@ -1045,7 +1039,8 @@ describe.each(LESSONS.map((l) => [l.id, l] as const))('lesson %s', (_id, lesson)
       });
 
       it('does not pass with the starting code', () => {
-        expect(evaluate(start.code, step.checks, step.run)).toMatchObject({ kind: 'checked', passed: false });
+        const r = evaluate(start.code, step.checks, step.run);
+        expect(r.kind === 'checked' && r.passed).toBe(false);
       });
 
       it('passes with the solution', () => {
@@ -1136,7 +1131,7 @@ int main(void)
   },
   "steps": {
     "observe": {
-      "prompt": "Hola! Sóc en Bit 🤖. Aquesta màquina està espatllada i l'arreglarem junts. La línia groga dibuixa la pala de l'esquerra. Canvia el número 185 per un 50 i prem ▶ Executa. Què passa?",
+      "prompt": "Hola! Sóc en Bit 🤖. Aquesta màquina està espatllada i l'arreglarem junts. Només pots escriure a la zona groga; la resta del codi ja està fet (les barres grises amaguen trossos: fes-hi clic per obrir-los). Les paraules grises x:, y:... no són codi: només t'expliquen què vol dir cada número. La línia groga dibuixa la pala de l'esquerra. Canvia el 185 per un 50 i prem ▶ Executa. Què passa?",
       "hints": [
         "Busca el número 185 a la línia groga. És el segon número.",
         "Fes doble clic damunt del 185 per seleccionar-lo i escriu 50.",
@@ -1145,7 +1140,7 @@ int main(void)
       "success": "La pala ha pujat! Acabes de moure el teu primer objecte. 🎉"
     },
     "grid": {
-      "prompt": "La pantalla del joc és com un full quadriculat de 800 × 450 punts. Cada punt té dues coordenades: la x diu com de a la dreta és, i la y com d'avall és. Compte: la y creix cap avall! Per això, quan has posat un número més petit, la pala ha pujat. Passa el ratolí per sobre del joc i mira els números."
+      "prompt": "La pantalla del joc és com un full quadriculat de 800 × 450 punts. Cada punt té dues coordenades: la x compta cap a la dreta des de l'esquerra, i la y compta cap avall des de dalt. Compte: la y creix cap avall! Per això, quan has posat un número més petit, la pala ha pujat. La x i la y d'un rectangle marquen la seva cantonada de dalt a l'esquerra. Passa el ratolí per sobre del joc i mira els números."
     },
     "floor": {
       "prompt": "Ara posa la pala tocant a terra, a baix de tot. Pista de detectiu: la pantalla fa 450 d'alt i la pala en fa 80.",
@@ -1159,7 +1154,7 @@ int main(void)
     "tall": {
       "prompt": "Aquesta pala és massa petita per parar res. Fes-la el doble d'alta.",
       "hints": [
-        "Mira les etiquetes grises: quin número diu alçada?",
+        "Quin número té l'etiqueta grisa alçada: al davant?",
         "L'alçada ara és 80. El doble de 80 és...",
         "Posa 160 a l'alçada: `DrawRectangle(20, 185, 10, 160, WHITE);`"
       ],
@@ -1170,12 +1165,12 @@ int main(void)
       "hints": [
         "ClearBackground pinta tota la pantalla de negre.",
         "Si primer dibuixes la pala i després ho pintes tot de negre, què queda?",
-        "Posa la línia de `ClearBackground(BLACK);` a sobre de la del `DrawRectangle`."
+        "Selecciona la línia de `ClearBackground(BLACK);`, talla-la amb Ctrl+X, posa el cursor a l'inici de la línia del `DrawRectangle` i enganxa-la amb Ctrl+V."
       ],
       "success": "Exacte: l'ordre importa! Primer s'esborra la pantalla, després es dibuixa."
     },
     "ball": {
-      "prompt": "Un Pong sense pilota no és un Pong! Dibuixa una pilota al mig de la pantalla amb `DrawCircle`. Comença a escriure Draw... i et sortiran ajudes.",
+      "prompt": "Un Pong sense pilota no és un Pong! Dibuixa una pilota al mig de la pantalla amb `DrawCircle`. S'escriu com `DrawRectangle`, però amb 4 valors: x, y, radi i color. Atenció: en un cercle, la x i la y són el centre. Escriu Draw..., tria `DrawCircle` de la llista amb Enter i omple els forats (Tab salta al següent). Els colors van en anglès i en majúscules: `YELLOW`. Les línies que comencen amb // són notes per a persones: l'ordinador se les salta.",
       "hints": [
         "El mig de la pantalla és la meitat de 800 i la meitat de 450.",
         "`DrawCircle` necessita x, y, radi i color. Un radi de 8 queda bé.",
@@ -1187,10 +1182,10 @@ int main(void)
   "checks": {
     "paddleMoved": "La pala de l'esquerra s'ha mogut",
     "paddleOnFloor": "La pala toca a terra",
-    "paddleHeight80": "La pala fa 80 d'alt",
+    "paddleHeight80": "La pala es veu i fa 80 d'alt",
     "paddleTall": "La pala fa 160 d'alt",
     "paddleVisible": "La pala de l'esquerra es veu",
-    "ballExists": "Hi ha una pilota",
+    "ballExists": "Hi ha una pilota que es veu (radi de 3 o més, i no negra)",
     "ballCentered": "La pilota és al mig de la pantalla"
   }
 }
@@ -1238,12 +1233,12 @@ export const lesson0: Lesson = {
     },
     {
       kind: 'practice', id: 'order', source: order, solution: orderSolution,
-      checks: [check('paddleVisible', (ctx) => leftPaddle(ctx) !== undefined)],
+      checks: [check('paddleVisible', (ctx) => ctx.frame.some((c) => c.op === 'clear') && leftPaddle(ctx) !== undefined)],
     },
     {
       kind: 'apply', id: 'ball', source: ball, solution: ballSolution,
       checks: [
-        check('ballExists', (ctx) => circles(ctx).length > 0),
+        check('ballExists', (ctx) => circles(ctx).some((c) => c.r >= 3 && (c.color.r + c.color.g + c.color.b) > 0)),
         check('ballCentered', (ctx) => circles(ctx).some((c) => Math.hypot(c.x - 400, c.y - 225) <= 10)),
       ],
     },
@@ -1280,11 +1275,11 @@ git commit -m "feat(content): lliçó 0 — la pantalla és una quadrícula"
 
 **Files:**
 - Create: `content/pong/01-variables/{lesson.ts, ca.json, warmup.c, warmup.solution.c, observe.c, observe.solution.c, together.c, together.solution.c, height.c, height.solution.c, ball.c, ball.solution.c}`
-- Modify: `content/pong/index.ts`
+- Modify: `content/pong/index.ts`, `.github/workflows/ci.yml`
 - Test: `tests/content.test.ts` (ja existent; cobreix la lliçó nova automàticament)
 
 **Interfaces:**
-- Consumes: `check`, `visibleRects`, `circles`, `variable`, `declares`, `callsOf`, `argIsVar` (Task 4); `Lesson` (Task 5)
+- Consumes: `check`, `visibleRects`, `variable`, `declares` (Task 4); `Lesson` (Task 5)
 - Produces: `lesson1`; `LESSONS = [lesson0, lesson1]`
 
 - [ ] **Step 1: Afegir la lliçó a l'índex (el test falla)**
@@ -1302,6 +1297,8 @@ Run: `npx vitest run tests/content.test.ts`
 Expected: FAIL — no es pot resoldre `./01-variables/lesson`.
 
 - [ ] **Step 2: Fitxers `.c` de la lliçó 1**
+
+Decisió de disseny (revisió docent): les variables es declaren **sempre abans del bucle**, mai a dins. Així la lliçó següent (moure la pilota) no haurà de desfer res. Als exercicis `height` i `ball`, el codi bloquejat ja fa servir una variable que encara no existeix: el primer ▶ dona l'error "La variable no existeix", i el repte és crear-la a la zona groga. Per això aquests dos fitxers d'inici **no compilen a propòsit** (la CI només compila les solucions).
 
 `warmup.c` / `warmup.solution.c`: idèntics a `content/pong/00-quadricula/observe.c`; la solució té la zona `        DrawRectangle(20, 100, 10, 80, WHITE);`.
 
@@ -1340,7 +1337,7 @@ int main(void)
 
 `together.c`: igual que `observe.c` però la segona pala també fa servir la variable: `        DrawRectangle(770, palaY, 10, 80, WHITE);`. `together.solution.c`: zona `    int palaY = 60;`.
 
-`height.c`: igual que `together.c` (zona `    int palaY = 185;` sense canvis possibles a l'alçada des de fora), però amb la zona moguda a les dues línies de dibuix:
+`height.c` (les pales ja fan servir `alcada`, que no existeix):
 ```c
 #include "raylib.h"
 //@fold preparar
@@ -1348,18 +1345,20 @@ int main(void)
 {
     InitWindow(800, 450, "Pong");
     SetTargetFPS(60);
+//@endfold
 
+//@edit
     int palaY = 185;
+//@end
 
+//@fold bucle
     while (!WindowShouldClose())
     {
         BeginDrawing();
         ClearBackground(BLACK);
 //@endfold
-//@edit
-        DrawRectangle(20, palaY, 10, 80, WHITE);
-        DrawRectangle(770, palaY, 10, 80, WHITE);
-//@end
+        DrawRectangle(20, palaY, 10, alcada, WHITE);
+        DrawRectangle(770, palaY, 10, alcada, WHITE);
         EndDrawing();
 //@fold tancar
     }
@@ -1371,26 +1370,49 @@ int main(void)
 ```
 `height.solution.c`: zona
 ```c
-        int alcada = 120;
-        DrawRectangle(20, palaY, 10, alcada, WHITE);
-        DrawRectangle(770, palaY, 10, alcada, WHITE);
+    int palaY = 185;
+    int alcada = 120;
 ```
 
-`ball.c`: igual que `height.c` però la zona és només la pilota, i les pales queden fora:
+`ball.c` (la pilota ja fa servir `pilotaX` i `pilotaY`, que no existeixen):
 ```c
+#include "raylib.h"
+//@fold preparar
+int main(void)
+{
+    InitWindow(800, 450, "Pong");
+    SetTargetFPS(60);
 //@endfold
-        DrawRectangle(20, palaY, 10, 80, WHITE);
-        DrawRectangle(770, palaY, 10, 80, WHITE);
+
 //@edit
-        DrawCircle(400, 225, 8, YELLOW);
+    int palaY = 185;
+    int alcada = 80;
 //@end
+
+//@fold bucle
+    while (!WindowShouldClose())
+    {
+        BeginDrawing();
+        ClearBackground(BLACK);
+//@endfold
+        DrawRectangle(20, palaY, 10, alcada, WHITE);
+        DrawRectangle(770, palaY, 10, alcada, WHITE);
+        DrawCircle(pilotaX, pilotaY, 8, YELLOW);
         EndDrawing();
+//@fold tancar
+    }
+
+    CloseWindow();
+    return 0;
+}
+//@endfold
 ```
 `ball.solution.c`: zona
 ```c
-        int pilotaX = 400;
-        int pilotaY = 225;
-        DrawCircle(pilotaX, pilotaY, 8, YELLOW);
+    int palaY = 185;
+    int alcada = 80;
+    int pilotaX = 400;
+    int pilotaY = 225;
 ```
 
 - [ ] **Step 3: `content/pong/01-variables/ca.json`**
@@ -1400,7 +1422,7 @@ int main(void)
   "title": "Variables",
   "folds": {
     "preparar": "preparar el joc",
-    "bucle": "començar a dibuixar cada frame",
+    "bucle": "es repeteix a cada fotograma: comença a dibuixar",
     "tancar": "tancar el joc"
   },
   "steps": {
@@ -1414,54 +1436,53 @@ int main(void)
       "success": "Com un rellotge! Ja domines les coordenades."
     },
     "observe": {
-      "prompt": "Mira el codi: ara la pala no fa servir un número, fa servir `palaY`. Canvia el 185 de la línia groga per un 300, prem ▶ i mira la caixa palaY a la dreta, a sota del joc.",
+      "prompt": "Mira el codi: ara la pala de l'esquerra no fa servir un número, fa servir `palaY`. Canvia el 185 de la línia groga per un 300, prem ▶ i mira la caixa `palaY` a la dreta, a sota del joc.",
       "hints": [
         "Només has de canviar el número de la línia groga.",
         "Fes doble clic al 185 i escriu 300.",
         "La línia ha de quedar `int palaY = 300;`"
       ],
-      "success": "La caixa palaY ara guarda un 300, i la pala ha anat on diu la caixa!"
+      "success": "La caixa `palaY` ara guarda un 300, i la pala ha anat on diu la caixa!"
     },
     "box": {
-      "prompt": "Una variable és com una caixa amb un nom escrit a fora. A dins hi guardes un valor. Quan el codi diu palaY, l'ordinador obre la caixa i fa servir el que hi ha a dins. La paraula int vol dir que a la caixa només hi caben nombres enters."
+      "prompt": "Una variable és com una caixa amb un nom escrit a fora. A dins hi guardes un valor. Quan el codi diu `palaY`, l'ordinador obre la caixa i fa servir el que hi ha a dins. La paraula `int` vol dir que a la caixa només hi caben nombres enters. El signe = vol dir «guarda-hi»: `int palaY = 185;` es llegeix «crea una caixa d'enters que es diu palaY i guarda-hi 185». Compte: l'ordinador distingeix majúscules i minúscules, així que `palaY` i `palay` són caixes diferents."
     },
     "together": {
-      "prompt": "Ara totes dues pales fan servir la mateixa caixa, palaY. Fes que pugin totes dues fins a dalt de tot canviant un sol número.",
+      "prompt": "Ara totes dues pales fan servir la mateixa caixa, `palaY`. Fes que pugin totes dues cap a dalt de tot (una y de 100 o menys) canviant un sol número.",
       "hints": [
-        "Totes dues pales llegeixen la caixa palaY.",
+        "Totes dues pales llegeixen la caixa `palaY`.",
         "Dalt de tot vol dir una y petita. Prova un número entre 0 i 100.",
         "Per exemple: `int palaY = 60;`"
       ],
       "success": "Un sol canvi i s'han mogut totes dues! Aquest és el superpoder de les variables. 🦸"
     },
     "height": {
-      "prompt": "Les dues pales fan 80 d'alt i el número està repetit. Crea una variable alcada (sense accent!) amb el valor que vulguis i fes que totes dues pales la facin servir per a l'alçada.",
+      "prompt": "Ara les dues pales fan servir una caixa `alcada` per saber com d'altes són... però aquesta caixa encara no existeix! Prem ▶ i veuràs l'error. Crea-la a la zona groga amb un valor diferent de 80, per exemple 120, i així veuràs el canvi. Escriu `alcada` amb c, sense ç: als noms no s'hi poden posar ç ni accents.",
       "hints": [
-        "Una variable es crea així: `int nom = valor;` Posa-la a dalt de la zona groga.",
-        "Escriu `int alcada = 120;` i després canvia el 80 de cada pala per alcada.",
-        "Ha de quedar: `int alcada = 120;` i dues línies amb `DrawRectangle(..., 10, alcada, WHITE);`"
+        "Fes-ho igual que `palaY`: `int nom = valor;`",
+        "Afegeix una línia nova a sota de la de `palaY`, amb el nom `alcada`.",
+        "La zona groga ha de quedar: `int palaY = 185;` i a sota `int alcada = 120;`"
       ],
-      "success": "Ara, si vols pales més altes o més baixes, només canvies un número. Això és programar amb cap! 🧠"
+      "success": "Ara, si vols pales més altes o més baixes, només canvies un número i canvien totes dues. Això és programar amb cap! 🧠"
     },
     "ball": {
-      "prompt": "Últim repte: fes que la pilota guardi la seva posició en dues variables, pilotaX i pilotaY, i que DrawCircle les faci servir. La pilota s'ha de quedar al mig.",
+      "prompt": "Últim repte! El `DrawCircle` ja fa servir `pilotaX` i `pilotaY`, però aquestes caixes encara no existeixen. Crea-les a la zona groga perquè la pilota quedi al mig de la pantalla.",
       "hints": [
-        "Necessites dues línies noves abans del `DrawCircle`, una per a cada variable.",
-        "`int pilotaX = 400;` i `int pilotaY = 225;`",
-        "Després: `DrawCircle(pilotaX, pilotaY, 8, YELLOW);`"
+        "Fes com amb `alcada`: una línia `int nom = valor;` per a cada variable.",
+        "El mig de la pantalla és x = 400 i y = 225.",
+        "Afegeix `int pilotaX = 400;` i `int pilotaY = 225;` al final de la zona groga."
       ],
-      "success": "Molt bé! Aviat aquestes variables canviaran soles i la pilota es mourà. Però això és la lliçó següent... 😉"
+      "success": "Molt bé! Aviat aquestes caixes canviaran de valor soles i la pilota es mourà. Però això és la lliçó següent... 😉"
     }
   },
   "checks": {
     "paddleAt100": "La pala de l'esquerra és a la y = 100",
     "paddleMoved": "La pala de l'esquerra s'ha mogut",
     "bothTogether": "Les dues pales són a la mateixa altura",
-    "bothMoved": "Les pales s'han mogut",
-    "declaresHeight": "Has creat la variable alcada (int)",
-    "bothUseHeight": "Les dues pales fan servir alcada per a l'alçada",
-    "declaresBall": "Has creat les variables pilotaX i pilotaY (int)",
-    "circleUsesVars": "DrawCircle fa servir pilotaX i pilotaY",
+    "bothUp": "Les pales són a dalt de tot (y de 100 o menys)",
+    "declaresHeight": "Has creat la caixa `alcada` (int)",
+    "heightUsed": "Les pales es veuen i fan l'alçada que diu `alcada`",
+    "declaresBall": "Has creat les caixes `pilotaX` i `pilotaY` (int)",
     "ballCentered": "La pilota és al mig de la pantalla"
   }
 }
@@ -1472,7 +1493,7 @@ Nota: el pas d'explicació té l'id `box` i targeta `variable-box`.
 - [ ] **Step 4: `content/pong/01-variables/lesson.ts`**
 
 ```ts
-import { argIsVar, callsOf, check, circles, declares, visibleRects, type CheckContext } from '../../../src/lessons/checks';
+import { check, declares, variable, visibleRects, type CheckContext } from '../../../src/lessons/checks';
 import type { Lesson } from '../../../src/lessons/model';
 import texts from './ca.json';
 import ball from './ball.c?raw';
@@ -1506,16 +1527,16 @@ export const lesson1: Lesson = {
       kind: 'practice', id: 'together', source: together, solution: togetherSolution, showVariables: true,
       checks: [
         check('bothTogether', (ctx) => paddle(ctx, 20) !== undefined && paddle(ctx, 20)?.y === paddle(ctx, 770)?.y),
-        check('bothMoved', (ctx) => (paddle(ctx, 20)?.y ?? 185) !== 185),
+        check('bothUp', (ctx) => (paddle(ctx, 20)?.y ?? 999) <= 100),
       ],
     },
     {
       kind: 'practice', id: 'height', source: height, solution: heightSolution, showVariables: true,
       checks: [
         check('declaresHeight', (ctx) => declares(ctx.program, 'alcada', 'int')),
-        check('bothUseHeight', (ctx) => {
-          const calls = callsOf(ctx.program, 'DrawRectangle');
-          return calls.length === 2 && calls.every((c) => argIsVar(c, 3, 'alcada'));
+        check('heightUsed', (ctx) => {
+          const h = variable(ctx, 'alcada') ?? 0;
+          return h > 0 && paddle(ctx, 20)?.h === h && paddle(ctx, 770)?.h === h;
         }),
       ],
     },
@@ -1523,31 +1544,39 @@ export const lesson1: Lesson = {
       kind: 'apply', id: 'ball', source: ball, solution: ballSolution, showVariables: true,
       checks: [
         check('declaresBall', (ctx) => declares(ctx.program, 'pilotaX', 'int') && declares(ctx.program, 'pilotaY', 'int')),
-        check('circleUsesVars', (ctx) => {
-          const call = callsOf(ctx.program, 'DrawCircle')[0];
-          return argIsVar(call, 0, 'pilotaX') && argIsVar(call, 1, 'pilotaY');
-        }),
-        check('ballCentered', (ctx) => circles(ctx).some((c) => Math.hypot(c.x - 400, c.y - 225) <= 10)),
+        check('ballCentered', (ctx) =>
+          Math.hypot((variable(ctx, 'pilotaX') ?? -99) - 400, (variable(ctx, 'pilotaY') ?? -99) - 225) <= 10),
       ],
     },
   ],
 };
 ```
 
-- [ ] **Step 5: Tests i C real**
+- [ ] **Step 5: La CI només compila les solucions de les lliçons; tests i C real**
+
+A `.github/workflows/ci.yml`, substituir el bucle del pas "Tot el mini-C de content/ ha de ser C vàlid" per:
+```yaml
+        run: |
+          find content -name '*.c' -print0 | while IFS= read -r -d '' f; do
+            case "$f" in
+              content/pong/*.solution.c) ;;
+              content/pong/*) echo "skip $f (exercici d'inici)"; continue ;;
+            esac
+            echo "gcc $f"
+            gcc -std=c99 -Wall -Werror -fsyntax-only -I/tmp/raylib "$f"
+          done
+```
 
 Run: `npx vitest run tests/content.test.ts && npx tsc --noEmit`
 Expected: PASS (2 + 10×4 = 42 tests); `tsc` net.
 
-Run: `for f in content/pong/*/*.c; do /c/msys64/ucrt64/bin/gcc.exe -std=c99 -Wall -fsyntax-only "$f" || echo "FAIL $f"; done`
+Run: `for f in content/pong/*/*.solution.c content/demo/*.c; do /c/msys64/ucrt64/bin/gcc.exe -std=c99 -Wall -Werror -fsyntax-only "$f" || echo "FAIL $f"; done`
 Expected: cap línia `FAIL`.
-
-Nota: aquí sense `-Werror`, perquè els codis d'inici poden tenir variables que encara no es fan servir (per exemple, a mig exercici). La CI fa servir `-Werror`; si algun fitxer fallés per un avís, s'ha de corregir el fitxer, no la CI.
 
 - [ ] **Step 6: Commit**
 
 ```bash
-git add content/pong tests/content.test.ts
+git add content/pong tests/content.test.ts .github/workflows/ci.yml
 git commit -m "feat(content): lliçó 1 — variables"
 ```
 
@@ -1572,7 +1601,8 @@ git commit -m "feat(content): lliçó 1 — variables"
 `tests/editor.test.ts`:
 ```ts
 import { CompletionContext } from '@codemirror/autocomplete';
-import { EditorState } from '@codemirror/state';
+import { history, redo, undo } from '@codemirror/commands';
+import { EditorState, type Transaction } from '@codemirror/state';
 import { describe, expect, it } from 'vitest';
 import { buildCompletions, completionSource, declaredVariables } from '../src/editor/completions';
 import { errorLineField, setErrorLine } from '../src/editor/errorLine';
@@ -1643,6 +1673,22 @@ describe('editableZone', () => {
     expect(s.doc.toString()).toBe('AAA\n\nBBB\n');
     s = s.update({ changes: { from: 4, insert: 'new' } }).state;
     expect(s.doc.toString()).toBe('AAA\nnew\nBBB\n');
+  });
+
+  it('keeps the locked text and the zone through undo and redo', () => {
+    const run = (st: EditorState, cmd: typeof undo) => {
+      let next = st;
+      cmd({ state: st, dispatch: (tr: Transaction) => { next = tr.state; } });
+      return next;
+    };
+    let s = EditorState.create({ doc, extensions: [editableZone({ from: 4, to: 8 }), history()] });
+    s = s.update({ changes: { from: 4, to: 8, insert: 'ZONA!' } }).state;
+    s = run(s, undo);
+    expect(s.doc.toString()).toBe(doc);
+    expect(s.field(zoneField)).toEqual({ from: 4, to: 8 });
+    s = run(s, redo);
+    expect(s.doc.toString()).toBe('AAA\nZONA!\nBBB\n');
+    expect(s.field(zoneField)).toEqual({ from: 4, to: 9 });
   });
 });
 
@@ -1825,7 +1871,7 @@ export const errorLineField = StateField.define<DecorationSet>({
 - [ ] **Step 6: Tests**
 
 Run: `npx vitest run tests/editor.test.ts && npx tsc --noEmit`
-Expected: PASS (10 tests); `tsc` net.
+Expected: PASS (11 tests); `tsc` net.
 
 - [ ] **Step 7: Commit**
 
@@ -1985,12 +2031,10 @@ export function createLessonEditor(opts: {
 }
 ```
 
-Si `@codemirror/commands` o `@codemirror/language` no són accessibles com a dependència directa (venen amb `codemirror`), afegir-los amb `npm install @codemirror/commands @codemirror/language @codemirror/autocomplete @codemirror/state @codemirror/view` (mateixes versions que ja hi ha a `node_modules`).
-
 - [ ] **Step 4: Tests**
 
 Run: `npx vitest run tests/editor.test.ts && npx tsc --noEmit`
-Expected: PASS (11 tests); `tsc` net.
+Expected: PASS (12 tests); `tsc` net.
 
 - [ ] **Step 5: Commit**
 
@@ -2110,13 +2154,15 @@ mount(App, { target: document.getElementById('app')! });
 ```svelte
 <script lang="ts">
   import { formatDiagnostic, t } from '../i18n/i18n';
+  import type { Diagnostic } from '../lang/diagnostics';
   import type { Evaluation } from '../lessons/checks';
   import RichText from './RichText.svelte';
 
-  let { prompt, hints, result, checkTexts, success }: {
+  let { prompt, hints, result, liveError, checkTexts, success }: {
     prompt: string;
     hints: string[];
     result: Evaluation | null;
+    liveError: Diagnostic | null;
     checkTexts: Record<string, string>;
     success?: string;
   } = $props();
@@ -2144,6 +2190,9 @@ mount(App, { target: document.getElementById('app')! });
           {/each}
         </ul>
       {/if}
+    {/if}
+    {#if liveError}
+      <p class="error">{t('runtimeErrorIntro', { line: liveError.line })} {formatDiagnostic(liveError)}</p>
     {/if}
   </div>
 </div>
@@ -2201,12 +2250,16 @@ mount(App, { target: document.getElementById('app')! });
 <script lang="ts">
   import { onMount } from 'svelte';
   import { t } from '../i18n/i18n';
+  import type { Diagnostic } from '../lang/diagnostics';
   import type { VariableView } from '../lang/interpreter';
   import { renderFrame } from '../render/canvas';
   import { KeyboardInput } from '../runtime/keyboard';
   import { Runner } from '../runtime/runner';
 
-  let { onVariables }: { onVariables: (variables: VariableView[]) => void } = $props();
+  let { onVariables, onError }: {
+    onVariables: (variables: VariableView[]) => void;
+    onError: (diagnostic: Diagnostic) => void;
+  } = $props();
 
   let canvas: HTMLCanvasElement;
   let runner: Runner | null = null;
@@ -2229,7 +2282,8 @@ mount(App, { target: document.getElementById('app')! });
         renderFrame(ctx, drawList);
         onVariables(runner?.variables() ?? []);
       },
-      onStatus: () => {},
+      // The checks only run 2 frames: a later runtime error in the live game must still reach Bit.
+      onStatus: (s) => { if (s.kind === 'error') onError(s.diagnostic); },
     });
     return () => {
       runner?.stop();
@@ -2255,7 +2309,8 @@ mount(App, { target: document.getElementById('app')! });
 </script>
 
 <div class="machine">
-  <canvas bind:this={canvas} width="800" height="450" tabindex="0"
+  <!-- svelte-ignore a11y_mouse_events_have_key_events -->
+  <canvas bind:this={canvas} width="800" height="450" tabindex="0" role="application"
     onmousemove={track} onmouseleave={() => (mouse = null)}></canvas>
   {#if mouse}<span class="coords">{t('mouseCoords', mouse)}</span>{/if}
 </div>
@@ -2271,16 +2326,20 @@ mount(App, { target: document.getElementById('app')! });
 
   let previous = new Map<string, unknown>();
   let flashing = $state(new Set<string>());
+  // Not tied to the effect's cleanup: `variables` changes every frame, which would cancel the timer at once.
+  let timer: ReturnType<typeof setTimeout> | undefined;
 
   $effect(() => {
     const changed = new Set<string>();
     for (const v of variables) if (previous.has(v.name) && previous.get(v.name) !== v.value) changed.add(v.name);
     previous = new Map(variables.map((v) => [v.name, v.value]));
     if (changed.size === 0) return;
+    clearTimeout(timer);
     flashing = changed;
-    const timer = setTimeout(() => (flashing = new Set()), 600);
-    return () => clearTimeout(timer);
+    timer = setTimeout(() => (flashing = new Set()), 600);
   });
+
+  $effect(() => () => clearTimeout(timer));
 
   const show = (v: VariableView) => (typeof v.value === 'object' ? 'Color' : String(v.value));
 </script>
@@ -2336,8 +2395,8 @@ mount(App, { target: document.getElementById('app')! });
   <line x1="-15" y1="0" x2="-15" y2="430" class="axis" marker-end="url(#arrow)" />
   <text x="-25" y="455" class="axis-label">y</text>
   <text x="4" y="16" class="origin">(0, 0)</text>
-  <line x1={p.x} y1="0" x2={p.x} y2={p.y} class="guide" />
-  <line x1="0" y1={p.y} x2={p.x} y2={p.y} class="guide" />
+  <line x1={p.x} y1="0" x2={p.x} y2={p.y} class="grid-guide" />
+  <line x1="0" y1={p.y} x2={p.x} y2={p.y} class="grid-guide" />
   <circle cx={p.x} cy={p.y} r="10" class="dot" />
   <text x={p.x + 16} y={p.y - 12} class="coord">({p.x}, {p.y})</text>
   <defs>
@@ -2362,7 +2421,7 @@ mount(App, { target: document.getElementById('app')! });
 
 <svg viewBox="0 0 800 450" class="box-card" role="img" aria-label="palaY">
   <g transform="translate(120 150)">
-    <rect width="220" height="150" rx="14" class="box" />
+    <rect width="220" height="150" rx="14" class="var-box" />
     <rect x="-10" y="-40" width="240" height="44" rx="8" class="lid" />
     <text x="110" y="-10" class="box-name">palaY</text>
     {#key value}<text x="110" y="95" class="box-value">{value}</text>{/key}
@@ -2377,7 +2436,8 @@ mount(App, { target: document.getElementById('app')! });
 
 ```svelte
 <script lang="ts">
-  import { formatDiagnostic, t } from '../i18n/i18n';
+  import { t } from '../i18n/i18n';
+  import type { Diagnostic } from '../lang/diagnostics';
   import type { VariableView } from '../lang/interpreter';
   import { LessonEngine } from '../lessons/engine';
   import { isExercise, type Lesson } from '../lessons/model';
@@ -2400,6 +2460,7 @@ mount(App, { target: document.getElementById('app')! });
   let version = $state(0);
   let resetCount = $state(0);
   let errorLine = $state<number | null>(null);
+  let liveError = $state<Diagnostic | null>(null);
   let variables = $state<VariableView[]>([]);
   let game: ReturnType<typeof GamePane> | undefined = $state();
   let codePane: ReturnType<typeof CodePane> | undefined = $state();
@@ -2423,8 +2484,14 @@ mount(App, { target: document.getElementById('app')! });
     errorLine = null;
   }
 
+  function showLiveError(d: Diagnostic): void {
+    liveError = d;
+    errorLine = d.line;
+  }
+
   function run(): void {
     const result = engine.run();
+    liveError = null;
     version++;
     if (!result) return;
     if (result.kind === 'checked') {
@@ -2443,7 +2510,9 @@ mount(App, { target: document.getElementById('app')! });
 
   function reset(): void {
     engine.reset();
+    game?.stop();
     errorLine = null;
+    liveError = null;
     resetCount++;
     version++;
   }
@@ -2453,6 +2522,7 @@ mount(App, { target: document.getElementById('app')! });
     game?.stop();
     variables = [];
     errorLine = null;
+    liveError = null;
     history.replaceState(null, '', routeHash({ lesson: lessonIndex, step: engine.stepIndex }));
     version++;
   }
@@ -2480,10 +2550,10 @@ mount(App, { target: document.getElementById('app')! });
 
   <aside class="guide">
     <BitBubble prompt={view.texts.prompt} hints={view.hints} result={view.exercise?.result ?? null}
-      checkTexts={lesson.texts.checks} success={view.texts.success} />
+      {liveError} checkTexts={lesson.texts.checks} success={view.texts.success} />
     {#if view.exercise}
       <div class="actions">
-        <button onclick={hint} disabled={!view.moreHints}>{t('hint')}</button>
+        <button onclick={hint} disabled={!view.moreHints} title={t('hintTitle')}>{t('hint')}</button>
         <button onclick={reset}>{t('reset')}</button>
       </div>
       {#if view.exercise.done}
@@ -2517,7 +2587,7 @@ mount(App, { target: document.getElementById('app')! });
   </main>
 
   <section class="game">
-    <GamePane bind:this={game} onVariables={(v) => (variables = v)} />
+    <GamePane bind:this={game} onVariables={(v) => (variables = v)} onError={showLiveError} />
     {#if isExercise(view.step) && view.step.showVariables}
       <VariablesPanel {variables} />
     {/if}
@@ -2580,7 +2650,7 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 
 .code-pane { flex: 1; min-height: 0; border: 2px solid #3a3358; border-radius: 8px; overflow: hidden; }
 .code-pane .cm-editor { height: 100%; font-size: 15px; }
-.code-pane .cm-zone { background: rgba(255, 225, 77, 0.12); }
+.code-pane .cm-zone { background: rgba(255, 225, 77, 0.22); box-shadow: inset 4px 0 0 var(--yellow); }
 .code-pane .cm-error-line { background: rgba(255, 80, 80, 0.25); text-decoration: underline wavy var(--red); }
 .code-pane .cm-param-hint { color: #7d76a8; font-style: italic; font-size: 0.8em; margin-right: 2px; }
 .code-pane .cm-lesson-fold { color: var(--muted); background: #1d1446; border-radius: 4px; padding: 0 8px; cursor: pointer; }
@@ -2607,10 +2677,10 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 .grid-card .arrowhead { fill: var(--yellow); }
 .grid-card .axis-label { fill: var(--yellow); font-size: 28px; font-weight: 700; }
 .grid-card .origin { fill: var(--muted); font-size: 18px; }
-.grid-card .guide { stroke: var(--pink); stroke-dasharray: 6 6; transition: all 0.6s; }
+.grid-card .grid-guide { stroke: var(--pink); stroke-dasharray: 6 6; transition: all 0.6s; }
 .grid-card .dot { fill: var(--pink); transition: all 0.6s; }
 .grid-card .coord { fill: var(--text); font-size: 26px; font-family: ui-monospace, monospace; transition: all 0.6s; }
-.box-card .box { fill: #1d1446; stroke: var(--cyan); stroke-width: 4; }
+.box-card .var-box { fill: #1d1446; stroke: var(--cyan); stroke-width: 4; }
 .box-card .lid { fill: #2a1d5e; stroke: var(--cyan); stroke-width: 3; }
 .box-card .box-name { fill: var(--muted); font-size: 26px; text-anchor: middle; font-family: ui-monospace, monospace; }
 .box-card .box-value { fill: var(--yellow); font-size: 64px; text-anchor: middle; font-family: ui-monospace, monospace; animation: pop 0.4s; }
@@ -2624,7 +2694,7 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 - [ ] **Step 10: Typecheck, comprovació de Svelte, tests i build**
 
 Run: `npx tsc --noEmit && npm run check && npx vitest run && npm run build`
-Expected: `tsc` net; `svelte-check` amb 0 errors (els avisos `state_referenced_locally` per a `lesson`/`startStep` a `LessonScreen` són esperats: el component es recrea amb `{#key}` quan canvien); tots els tests PASS; build correcte.
+Expected: `tsc` net; `svelte-check` amb 0 errors (els avisos `state_referenced_locally` per a `lesson`/`startStep` a `LessonScreen` són esperats: el component es recrea amb `{#key}` quan canvien; si `npx` no pot descarregar `svelte-check`, el `vite build` igualment detecta errors de compilació de Svelte); tots els tests PASS; build correcte.
 
 - [ ] **Step 11: Commit**
 
@@ -2641,7 +2711,7 @@ git commit -m "feat(ui): pantalla de lliçó amb Bit, editor, joc, variables i t
 - Create: `tests/e2e/lessons.mjs`
 
 **Interfaces:**
-- Consumes: servidor de desenvolupament de Vite (API `createServer`), `window.__bitArcade` (Task 10), Edge instal·lat (`channel: 'msedge'`)
+- Consumes: servidor de desenvolupament de Vite (API `createServer`, port lliure), `window.__bitArcade` (Task 10), Edge instal·lat (`channel: 'msedge'`)
 - Produces: `npm run e2e` → surt amb codi 0 si tot passa, 1 si no; llista de PASS/FAIL per consola.
 
 - [ ] **Step 1: Escriure la prova**
@@ -2652,80 +2722,97 @@ git commit -m "feat(ui): pantalla de lliçó amb Bit, editor, joc, variables i t
 import { chromium } from 'playwright-core';
 import { createServer } from 'vite';
 
-const server = await createServer({ server: { port: 5181, strictPort: true }, logLevel: 'error' });
-await server.listen();
-const browser = await chromium.launch({ channel: 'msedge', headless: true });
-const page = await browser.newPage({ viewport: { width: 1600, height: 900 } });
-const errors = [];
-page.on('pageerror', (e) => errors.push(String(e)));
-page.on('console', (m) => { if (m.type() === 'error' && !m.text().includes('favicon')) errors.push(m.text()); });
-
 const results = [];
 const check = (name, ok, detail = '') => results.push(`${ok ? 'PASS' : 'FAIL'}  ${name}${detail ? '  — ' + detail : ''}`);
-const code = () => page.evaluate(() => window.__bitArcade.code());
-const button = (text) => page.getByRole('button', { name: text, exact: true });
+// isVisible() never waits; waitFor() does.
+const visible = (locator, timeout = 3000) => locator.first().waitFor({ state: 'visible', timeout }).then(() => true, () => false);
 
-async function runAndExpectSuccess(label) {
-  await button('▶ Executa').click();
-  const ok = await page.locator('.bubble .success').isVisible({ timeout: 3000 }).catch(() => false);
-  check(`${label}: passes`, ok, ok ? '' : await page.locator('.bubble').innerText());
-}
+const server = await createServer({ server: { port: 0 }, logLevel: 'error' });
+let browser;
+try {
+  await server.listen();
+  const base = server.resolvedUrls.local[0];
+  browser = await chromium.launch({ channel: 'msedge', headless: true });
+  const page = await browser.newPage({ viewport: { width: 1600, height: 900 } });
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(String(e)));
+  page.on('console', (m) => { if (m.type() === 'error' && !m.text().includes('favicon')) errors.push(m.text()); });
 
-async function playLesson(lesson, steps) {
-  for (const [i, kind] of steps.entries()) {
-    const label = `lesson ${lesson} step ${i}`;
-    if (kind === 'explain') {
-      check(`${label}: explain card`, await page.locator('.explain svg').isVisible());
-    } else if (kind === 'type185') {
-      const before = await code();
-      await page.locator('.cm-line').first().click();
-      await page.keyboard.type('xx');
-      check(`${label}: locked code cannot be edited`, (await code()) === before);
-      await page.locator('.cm-zone span', { hasText: /^185$/ }).first().dblclick();
-      await page.keyboard.type('50');
-      await runAndExpectSuccess(label);
-      check(`${label}: two stars without hints`, (await page.locator('.stars').innerText()).includes('⭐⭐'));
-    } else {
-      if (kind === 'hint') {
-        await button('💡 Pista').click();
-        check(`${label}: hint shown`, await page.locator('.bubble .hint').first().isVisible());
-      }
-      await page.evaluate(() => window.__bitArcade.solve());
-      await runAndExpectSuccess(label);
-      if (kind === 'vars') check(`${label}: variables panel`, await page.locator('.vars .box').first().isVisible());
-    }
-    const isLast = i === steps.length - 1;
-    if (!isLast) await button('Continua →').click();
+  const code = () => page.evaluate(() => window.__bitArcade.code());
+  const button = (text) => page.getByRole('button', { name: text, exact: true });
+
+  async function runAndExpectSuccess(label) {
+    await button('▶ Executa').click();
+    const ok = await visible(page.locator('.bubble .success'));
+    check(`${label}: passes`, ok, ok ? '' : await page.locator('.bubble').innerText());
   }
+
+  async function playLesson(lesson, steps) {
+    for (const [i, kind] of steps.entries()) {
+      const label = `lesson ${lesson} step ${i}`;
+      if (kind === 'explain') {
+        check(`${label}: explain card`, await visible(page.locator('.explain svg')));
+      } else if (kind === 'type185') {
+        const before = await code();
+        await page.locator('.cm-line').first().click();
+        await page.keyboard.type('xx');
+        check(`${label}: locked line cannot be edited`, (await code()) === before);
+        await page.keyboard.press('Control+A');
+        await page.keyboard.type('hola');
+        check(`${label}: select-all + typing changes nothing`, (await code()) === before);
+        const folds = await page.locator('.cm-lesson-fold').count();
+        await page.locator('.cm-lesson-fold').first().click();
+        check(`${label}: clicking a fold opens it`, (await page.locator('.cm-lesson-fold').count()) === folds - 1);
+        check(`${label}: opening a fold does not change the code`, (await code()) === before);
+        await page.locator('.cm-zone span', { hasText: /^185$/ }).first().dblclick();
+        await page.keyboard.type('50');
+        await runAndExpectSuccess(label);
+        check(`${label}: two stars without hints`, (await page.locator('.stars').innerText()).includes('⭐⭐'));
+      } else {
+        if (kind === 'hint') {
+          await button('💡 Pista').click();
+          check(`${label}: hint shown`, await visible(page.locator('.bubble .hint')));
+        }
+        await page.evaluate(() => window.__bitArcade.solve());
+        await runAndExpectSuccess(label);
+        if (kind === 'hint') check(`${label}: one star after a hint`, (await page.locator('.stars').innerText()).trim() === '⭐');
+        if (kind === 'vars') check(`${label}: variables panel`, await visible(page.locator('.vars .box')));
+      }
+      if (i < steps.length - 1) await button('Continua →').click();
+    }
+  }
+
+  await page.goto(`${base}#/pong/0/0`);
+  await page.locator('.cm-editor').waitFor();
+  check('fold placeholders shown', await visible(page.locator('.cm-lesson-fold')));
+  check('parameter hints shown', (await page.locator('.cm-param-hint').allInnerTexts()).includes('alçada:'));
+
+  await playLesson(0, ['type185', 'explain', 'hint', 'solve', 'solve', 'solve']);
+  check('lesson 0 done', await visible(page.getByText('Has acabat la lliçó!')));
+  await button('Següent lliçó →').click();
+  await page.locator('.cm-editor').waitFor();
+  await playLesson(1, ['solve', 'vars', 'explain', 'vars', 'vars', 'vars']);
+  check('all lessons done', await visible(page.getByText('Has acabat totes les lliçons')));
+
+  // A compile error is explained and marked in the editor
+  await page.goto(`${base}#/pong/0/0`);
+  await page.reload();
+  await page.locator('.cm-editor').waitFor();
+  await page.locator('.cm-zone').first().click();
+  await page.keyboard.press('End');
+  await page.keyboard.press('Backspace');
+  await button('▶ Executa').click();
+  check('compile error explained', (await page.locator('.bubble .error').innerText()).includes('Falta un ;'));
+  check('error line marked', await visible(page.locator('.cm-error-line')));
+
+  check('no page errors', errors.length === 0, errors.join(' | '));
+} catch (e) {
+  check('script finished without exceptions', false, String(e));
+} finally {
+  console.log(results.join('\n'));
+  await browser?.close();
+  await server.close();
 }
-
-await page.goto('http://localhost:5181/#/pong/0/0');
-await page.locator('.cm-editor').waitFor();
-check('fold placeholders shown', await page.locator('.cm-lesson-fold').first().isVisible());
-check('parameter hints shown', (await page.locator('.cm-param-hint').allInnerTexts()).includes('alçada:'));
-
-await playLesson(0, ['type185', 'explain', 'hint', 'solve', 'solve', 'solve']);
-check('lesson 0 done', await page.getByText('Has acabat la lliçó!').isVisible());
-await button('Següent lliçó →').click();
-await page.locator('.cm-editor').waitFor();
-await playLesson(1, ['solve', 'vars', 'explain', 'vars', 'vars', 'vars']);
-check('all lessons done', await page.getByText('Has acabat totes les lliçons').isVisible());
-
-// A compile error is explained and marked in the editor
-await page.goto('http://localhost:5181/#/pong/0/0');
-await page.reload();
-await page.locator('.cm-editor').waitFor();
-await page.locator('.cm-zone').first().click();
-await page.keyboard.press('End');
-await page.keyboard.press('Backspace');
-await button('▶ Executa').click();
-check('compile error explained', (await page.locator('.bubble .error').innerText()).includes('Falta un ;'));
-check('error line marked', await page.locator('.cm-error-line').isVisible());
-
-check('no page errors', errors.length === 0, errors.join(' | '));
-console.log(results.join('\n'));
-await browser.close();
-await server.close();
 process.exit(results.some((r) => r.startsWith('FAIL')) ? 1 : 0);
 ```
 
