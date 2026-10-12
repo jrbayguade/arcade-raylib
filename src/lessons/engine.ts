@@ -2,6 +2,9 @@ import { evaluate, type Evaluation } from './checks';
 import { isExercise, type Lesson, type Step, type StepTexts } from './model';
 import { parseLessonSource, type LessonSource } from './source';
 
+/** Most stars an exercise can give: ⭐ it works, ⭐⭐ without hints. (The ⭐⭐⭐ extra challenge will raise this.) */
+export const MAX_STARS = 2;
+
 export interface ExerciseState {
   source: LessonSource;
   code: string;

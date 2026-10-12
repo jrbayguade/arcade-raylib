@@ -109,7 +109,8 @@
     "skipHint": "Fes clic per anar més de pressa",
     "pageLabel": "Bafarada {n}",
     "replay": "↺ Torna-m'ho a dir",
-    "runShortcut": "Ctrl+Enter"
+    "runShortcut": "Ctrl+Enter",
+    "starsEarned": "{n} de {max} estrelles"
   },
   "params": {
     "InitWindow": [

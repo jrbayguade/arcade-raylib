@@ -2,7 +2,7 @@
   import { t } from '../i18n/i18n';
   import type { Diagnostic } from '../lang/diagnostics';
   import type { VariableView } from '../lang/interpreter';
-  import { LessonEngine } from '../lessons/engine';
+  import { LessonEngine, MAX_STARS } from '../lessons/engine';
   import { isExercise, promptPages, type Lesson } from '../lessons/model';
   import { parseLessonSource, zoneText } from '../lessons/source';
   import { routeHash } from '../app/route';
@@ -138,8 +138,8 @@
         <button onclick={reset}>{t('reset')}</button>
       </div>
       {#if view.exercise.done}
-        <p class="stars" aria-label={t('starsLabel')}>
-          {#each Array.from({ length: view.exercise.stars }) as _, i (i)}<span style="animation-delay: {i * 200}ms">⭐</span>{/each}
+        <p class="stars" aria-label={t('starsEarned', { n: view.exercise.stars, max: MAX_STARS })}>
+          {#each Array.from({ length: MAX_STARS }) as _, i (i)}<span class="star" class:earned={i < view.exercise.stars} style="animation-delay: {i * 300}ms">⭐</span>{/each}
         </p>
       {/if}
     {/if}

@@ -93,3 +93,15 @@ describe('LessonEngine', () => {
     expect(e.shownHints()).toEqual(['h1']);
   });
 });
+
+import { MAX_STARS } from '../src/lessons/engine';
+
+describe('MAX_STARS', () => {
+  it('is the most an exercise can give (two today: works, and without hints)', () => {
+    expect(MAX_STARS).toBe(2);
+    const e = new LessonEngine(lesson);
+    e.setCode(e.exercise!.code.replace('185', '50'));
+    e.run();
+    expect(e.exercise!.stars).toBeLessThanOrEqual(MAX_STARS);
+  });
+});

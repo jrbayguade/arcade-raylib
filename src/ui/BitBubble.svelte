@@ -53,7 +53,11 @@
   <div class="bubble">
     <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_noninteractive_element_interactions -->
     <p class="say" onclick={skip} title={t('skipHint')}>
-      <RichText {text} /><span class="caret" class:hidden={!typing}>▌</span>
+      <!-- Every page laid out invisibly in the same cell: the bubble keeps the size of the longest one while typing. -->
+      <span class="sizer" aria-hidden="true">
+        {#each pages as p, i (i)}<span><RichText text={p} />▌</span>{/each}
+      </span>
+      <span class="typed"><RichText {text} /><span class="caret" class:hidden={!typing}>▌</span></span>
     </p>
     {#if pages.length > 1}
       <div class="pager">

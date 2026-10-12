@@ -49,7 +49,7 @@ try {
         await runAndExpectSuccess(label);
         check(`${label}: confetti on success`, await visible(page.locator('.confetti[data-active="true"]'), 1000).catch(() => false) || (await page.locator('.confetti').getAttribute('data-active')) === 'true');
         check(`${label}: Continue button appears`, await visible(page.locator('.toolbar .next')));
-        check(`${label}: two stars without hints`, (await page.locator('.stars').innerText()).includes('⭐⭐'));
+        check(`${label}: two stars without hints`, (await page.locator('.star.earned').count()) === 2);
       } else {
         if (kind === 'hint') {
           await button('💡 Pista').click();
@@ -63,7 +63,10 @@ try {
         } else {
           await runAndExpectSuccess(label);
         }
-        if (kind === 'hint') check(`${label}: one star after a hint`, (await page.locator('.stars').innerText()).trim() === '⭐');
+        if (kind === 'hint') {
+          check(`${label}: one star after a hint`, (await page.locator('.star.earned').count()) === 1);
+          check(`${label}: the missing star keeps its place`, (await page.locator('.star').count()) === 2);
+        }
         if (kind === 'vars') check(`${label}: variables panel`, await visible(page.locator('.vars .box')));
       }
       if (i < steps.length - 1) await button('Continua →').click();
@@ -77,12 +80,16 @@ try {
 
   // Bit types the first bubble, then moves on by itself; a click skips the wait
   const say = page.locator('.bubble .say');
+  const bubbleSize = async () => { const b = await page.locator('.bubble').boundingBox(); return `${Math.round(b.width)}x${Math.round(b.height)}`; };
+  const sizeWhileTyping = await bubbleSize();
   check('Bit starts typing', (await say.innerText()).length < 'Hola! Sóc en Bit 🤖.'.length + 2);
   check('Bit finishes the first bubble', await visible(page.locator('.bubble .say', { hasText: 'Sóc en Bit' })));
   check('one dot per bubble', (await page.locator('.pager .dot').count()) === 5);
   await say.click();
   await say.click();
+  check('the bubble keeps its size while typing', (await bubbleSize()) === sizeWhileTyping, `${sizeWhileTyping} → ${await bubbleSize()}`);
   check('a click jumps to the next bubble', await visible(page.locator('.bubble .say', { hasText: 'espatllada' }), 1500));
+  check('the bubble keeps its size on the next page', (await bubbleSize()) === sizeWhileTyping);
   check('bubbles move on by themselves', await visible(page.locator('.bubble .say', { hasText: 'zona groga' }), 9000));
   const runBox = await button('▶ Executa').boundingBox();
   check('Run button in view at 1600×900', runBox !== null && runBox.y >= 0 && runBox.y + runBox.height <= 900);

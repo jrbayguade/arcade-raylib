@@ -37,6 +37,7 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 .bit { display: flex; gap: 10px; align-items: flex-start; }
 .avatar { font-size: 34px; filter: drop-shadow(0 0 6px var(--pink)); }
 .avatar.jump { animation: bit-jump 0.8s ease-out; }
+.bit .bubble { flex: 1; min-width: 0; }
 .bubble { background: #1b1240; border: 2px solid var(--pink); border-radius: 12px; padding: 10px 14px; box-shadow: 0 0 8px var(--pink); line-height: 1.5; }
 .bubble p { margin: 6px 0; }
 .hint { color: var(--yellow); }
@@ -46,8 +47,9 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 .checks li { color: var(--red); animation: fade-up 0.3s ease-out both; }
 .checks li.ok { color: var(--green); }
 .actions { display: flex; gap: 8px; flex-wrap: wrap; }
-.stars { font-size: 26px; margin: 0; min-height: 34px; }
-.stars span { display: inline-block; animation: star-pop 0.5s cubic-bezier(0.3, 1.8, 0.5, 1) both; }
+.stars { font-size: 30px; margin: 0; min-height: 40px; display: flex; gap: 6px; }
+.star { display: inline-block; filter: grayscale(1) brightness(0.8); opacity: 0.3; animation: star-slot 0.4s ease-out both; }
+.star.earned { filter: none; opacity: 1; animation: star-pop 0.7s cubic-bezier(0.3, 1.8, 0.5, 1) both, star-shine 1.2s ease-out both; }
 .done { color: var(--green); font-weight: 600; }
 
 .code-pane { flex: 1; min-height: 0; border: 2px solid #3a3358; border-radius: 8px; overflow: hidden; }
@@ -92,7 +94,10 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 .box-card .box-value { transform-box: fill-box; transform-origin: center; }
 
 /* Bit types: click to hurry, dots to go back */
-.say { cursor: pointer; min-height: 3em; }
+.say { cursor: pointer; display: grid; }
+.say > .sizer, .say > .typed { grid-area: 1 / 1; }
+.say > .sizer { visibility: hidden; display: grid; }
+.say > .sizer > span { grid-area: 1 / 1; }
 .caret { color: var(--pink); animation: blink 0.8s steps(1) infinite; margin-left: 1px; }
 .caret.hidden { visibility: hidden; }
 .pager { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
@@ -111,7 +116,9 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 
 @keyframes blink { 50% { opacity: 0; } }
 @keyframes fade-up { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-@keyframes star-pop { from { transform: scale(0) rotate(-90deg); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes star-pop { 0% { transform: scale(0) rotate(-180deg); opacity: 0; } 70% { transform: scale(1.35) rotate(15deg); opacity: 1; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+@keyframes star-shine { 0%, 40% { filter: drop-shadow(0 0 0 transparent); } 60% { filter: drop-shadow(0 0 14px var(--yellow)) brightness(1.4); } 100% { filter: drop-shadow(0 0 4px var(--yellow)); } }
+@keyframes star-slot { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 0.3; } }
 @keyframes bit-jump { 0%, 100% { transform: none; } 30% { transform: translateY(-18px) rotate(-10deg); } 60% { transform: translateY(0) rotate(8deg); } }
 @keyframes next-in { from { transform: scale(0.3) translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
 @keyframes next-glow { 50% { box-shadow: 0 0 22px var(--yellow), 0 0 4px var(--yellow) inset; } }
