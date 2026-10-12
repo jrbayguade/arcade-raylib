@@ -1,11 +1,11 @@
 import { compile } from '../lang/compile';
 import type { Diagnostic } from '../lang/diagnostics';
-import type { ExecEvent } from '../lang/interpreter';
-import type { DrawCommand } from '../runtime/drawList';
-import { FrameClock } from '../runtime/frameClock';
-import type { InputState } from '../runtime/input';
-import { Machine } from '../runtime/machine';
-import { RaylibHost } from '../runtime/raylib';
+import type { ExecEvent, VariableView } from '../lang/interpreter';
+import type { DrawCommand } from './drawList';
+import { FrameClock } from './frameClock';
+import type { InputState } from './input';
+import { Machine } from './machine';
+import { RaylibHost } from './raylib';
 
 export interface Scheduler {
   request(cb: (now: number) => void): number;
@@ -37,6 +37,11 @@ export class Runner {
 
   get running(): boolean {
     return this.machine !== null;
+  }
+
+  /** Variables visible right now in the running program (empty when nothing runs). */
+  variables(): VariableView[] {
+    return this.machine?.variables() ?? [];
   }
 
   start(source: string): void {

@@ -6,23 +6,7 @@
     <title>Bit Arcade</title>
   </head>
   <body>
-    <header><h1 id="title"></h1></header>
-    <main class="layout">
-      <section class="code-pane">
-        <textarea id="code" spellcheck="false" autocomplete="off"></textarea>
-      </section>
-      <section class="game-pane">
-        <div class="toolbar">
-          <button id="run" type="button"></button>
-          <button id="stop" type="button"></button>
-          <button id="restore" type="button"></button>
-        </div>
-        <div class="machine">
-          <canvas id="screen" width="800" height="450" tabindex="0"></canvas>
-        </div>
-        <p id="status" role="status"></p>
-      </section>
-    </main>
-    <script type="module" src="/src/demo/main.ts"></script>
+    <div id="app"></div>
+    <script type="module" src="/src/app/main.ts"></script>
   </body>
 </html>

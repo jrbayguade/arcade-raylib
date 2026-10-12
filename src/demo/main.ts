@@ -4,7 +4,7 @@ import { formatDiagnostic, t } from '../i18n/i18n';
 import type { Diagnostic } from '../lang/diagnostics';
 import { renderFrame } from '../render/canvas';
 import { KeyboardInput } from '../runtime/keyboard';
-import { Runner } from './runner';
+import { Runner } from '../runtime/runner';
 
 const STORAGE_KEY = 'bitarcade:demo:code';
 const byId = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;

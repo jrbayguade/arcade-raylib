@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import pong from '../content/demo/pong.c?raw';
-import { Runner, type RunnerStatus, type Scheduler } from '../src/demo/runner';
+import { Runner, type RunnerStatus, type Scheduler } from '../src/runtime/runner';
 import { NO_INPUT } from '../src/runtime/input';
 import type { DrawCommand } from '../src/runtime/drawList';
 
@@ -86,5 +86,15 @@ describe('Runner', () => {
     runner.start('int main(void) {\nint z = 0;\nint x = 5 / z;\nreturn 0;\n}');
     scheduler.fire(0);
     expect(statuses.at(-1)).toMatchObject({ kind: 'error', diagnostic: { code: 'DIVISION_BY_ZERO', line: 3 } });
+  });
+
+  it('exposes the variables of the running program', () => {
+    const { runner, scheduler } = setup();
+    expect(runner.variables()).toEqual([]);
+    runner.start(pong);
+    scheduler.fire(0);
+    expect(runner.variables().map((v) => v.name)).toContain('palaEsquerraY');
+    runner.stop();
+    expect(runner.variables()).toEqual([]);
   });
 });
