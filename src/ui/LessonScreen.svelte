@@ -152,8 +152,7 @@
   <main class="code">
     <div class="toolbar">
       {#if isExercise(view.step)}
-        <span class="shortcut">{t('runShortcut')}</span>
-        <button class="run" onclick={run}>{t('run')}</button>
+        <button class="run" onclick={run} title={t('runShortcut')}>{t('run')}</button>
       {/if}
       {#if view.canContinue && !view.isLast}
         {#key view.step.id}<button class="primary next" onclick={next}>{t('continue')}</button>{/key}

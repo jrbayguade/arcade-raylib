@@ -64,7 +64,7 @@
         {#each pages as _, i (i)}
           <button class="dot" class:on={i === page} aria-label={t('pageLabel', { n: i + 1 })} onclick={() => goTo(i)}></button>
         {/each}
-        <button class="replay" onclick={replay}>{t('replay')}</button>
+        <button class="replay" onclick={replay} aria-label={t('replay')} title={t('replay')}>↺</button>
       </div>
     {/if}
     {#each hints as hint, i (hint)}
