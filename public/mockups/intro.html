@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maqueta · Intro</title>
+  <link rel="stylesheet" href="mock.css" />
+  <style>
+    .stage { position: relative; height: 100%; background: radial-gradient(ellipse at 50% 110%, #1b1240, #05030f 70%); overflow: hidden; }
+    .skip { position: absolute; top: 14px; right: 18px; color: var(--muted); font-size: 15px; border: 1px solid #3a3358; border-radius: 999px; padding: 4px 12px; }
+    .sign { position: absolute; top: 40px; left: 0; right: 0; text-align: center; font: 900 54px system-ui; letter-spacing: 12px; color: #2a2056; }
+    .sign.lit span { color: var(--pink); text-shadow: 0 0 12px var(--pink), 0 0 30px var(--pink); animation: flick 3s infinite; }
+    .sign.lit span:nth-child(2n) { animation-delay: .4s; } .sign.lit span:nth-child(3n) { animation-delay: .9s; }
+    .sign.ignite span { animation: ignite 5s infinite; }
+    .sign.ignite span:nth-child(2) { animation-delay: .15s; } .sign.ignite span:nth-child(3) { animation-delay: .3s; } .sign.ignite span:nth-child(4) { animation-delay: .45s; } .sign.ignite span:nth-child(5) { animation-delay: .6s; } .sign.ignite span:nth-child(6) { animation-delay: .75s; } .sign.ignite span:nth-child(7) { animation-delay: .9s; } .sign.ignite span:nth-child(8) { animation-delay: 1.05s; } .sign.ignite span:nth-child(9) { animation-delay: 1.2s; }
+    @keyframes ignite { 0%, 35% { color: #2a2056; text-shadow: none; } 38% { color: var(--pink); text-shadow: 0 0 12px var(--pink); } 41% { color: #2a2056; text-shadow: none; } 45%, 100% { color: var(--pink); text-shadow: 0 0 12px var(--pink), 0 0 30px var(--pink); } }
+    @keyframes flick { 0%, 6%, 10%, 100% { opacity: 1; } 8% { opacity: .2; } }
+    .row { position: absolute; bottom: 70px; left: 0; right: 0; display: flex; justify-content: center; gap: 46px; }
+    .cab { width: 130px; height: 230px; position: relative; }
+    .cab .roof { position: absolute; top: 0; left: 0; right: 0; height: 40px; border: 3px solid #3a3358; border-radius: 10px 10px 0 0; display: grid; place-items: center; font: 800 14px system-ui; letter-spacing: 3px; color: #3a3358; }
+    .cab .body { position: absolute; top: 40px; bottom: 0; left: 8px; right: 8px; border: 3px solid #3a3358; border-top: none; }
+    .cab .scr { position: absolute; top: 14px; left: 10px; right: 10px; height: 80px; background: #000; border: 2px solid #3a3358; overflow: hidden; }
+    .cab .pad { position: absolute; top: 110px; left: 30%; width: 40%; height: 10px; border-radius: 5px; background: #3a3358; }
+    .lit .cab .roof, .lit .cab .body, .lit .cab .scr { border-color: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
+    .lit .cab .roof { color: var(--yellow); text-shadow: 0 0 8px var(--yellow); }
+    .noise { position: absolute; inset: 0; background: repeating-linear-gradient(0deg, #222 0 2px, #555 2px 3px, #111 3px 5px); animation: noise .2s steps(3) infinite; opacity: .8; }
+    @keyframes noise { 50% { transform: translateY(2px); } }
+    .broken { position: absolute; top: 40%; left: -6px; right: -6px; transform: rotate(-8deg); background: #c0213a; color: #fff; font: 800 12px system-ui; text-align: center; letter-spacing: 2px; padding: 2px 0; box-shadow: 0 0 10px #ff4b6a; }
+    .press { position: absolute; bottom: 20px; left: 0; right: 0; text-align: center; color: var(--yellow); font-weight: 700; font-size: 20px; animation: bulb 1.2s infinite; }
+    .botline { position: absolute; left: 60px; right: 60px; top: 150px; display: flex; gap: 18px; align-items: flex-start; }
+    .botline .bubble { flex: 1; font-size: 20px; }
+    .roll { animation: roll 1.6s ease-out both; }
+    @keyframes roll { from { transform: translateX(600px) rotate(360deg); } to { transform: none; } }
+    .demo { position: absolute; left: 60px; right: 60px; top: 70px; display: grid; grid-template-columns: 1.4fr auto 1fr; gap: 24px; align-items: center; }
+    .demo .editor { font-size: 20px; }
+    .swap { display: inline-grid; } .swap > * { grid-area: 1 / 1; }
+    .swap .a { animation: swapA 4s infinite; } .swap .b { animation: swapB 4s infinite; }
+    @keyframes swapA { 0%, 35% { opacity: 1; } 40%, 100% { opacity: 0; } }
+    @keyframes swapB { 0%, 35% { opacity: 0; } 40%, 100% { opacity: 1; } }
+    .runglow { animation: runglow 4s infinite; }
+    @keyframes runglow { 0%, 45% { box-shadow: 0 0 6px var(--cyan); } 50%, 60% { box-shadow: 0 0 30px var(--cyan); background: rgba(57,243,255,.2); } 100% { box-shadow: 0 0 6px var(--cyan); } }
+    .moving { animation: up 4s infinite; }
+    @keyframes up { 0%, 55% { top: 41%; } 70%, 100% { top: 11%; } }
+    .bounce { animation: bounce 2.4s linear infinite; }
+    @keyframes bounce { 0% { left: 10%; top: 20%; } 25% { left: 50%; top: 80%; } 50% { left: 88%; top: 30%; } 75% { left: 45%; top: 5%; } 100% { left: 10%; top: 20%; } }
+    .zoom { animation: zoom 3s ease-in infinite; transform-origin: 50% 70%; }
+    @keyframes zoom { 0%, 40% { transform: scale(1); } 100% { transform: scale(3.2); opacity: .2; } }
+    .caption { padding: 4px 20px 0; }
+    .caption h2 { margin: 18px 0 2px; color: var(--pink); font-size: 18px; }
+    .caption p { margin: 2px 0; color: var(--muted); }
+    #play-stage .beat { display: none; } #play-stage .beat.show { display: block; height: 100%; }
+  </style>
+</head>
+<body>
+  <h1 class="page-title"><b>Maqueta 3</b> · Intro de la primera visita (≈45 s, amb "Salta ⏭") · <a href="./">← totes les maquetes</a></h1>
+  <p class="note">Tot dibuixat amb formes, CSS i SVG. Cada moment té la seva animació. Prem "Reprodueix" per veure'ls seguits, o baixa per veure'ls un per un.</p>
+  <div class="states" data-target="#dummy"><button id="play">▶ Reprodueix la intro</button></div>
+  <div id="dummy"></div>
+
+  <div class="device-wrap"><div class="device" id="play-stage" data-w="1280" data-h="560"></div></div>
+
+  <div id="beats">
+  <!-- 1 -->
+  <div class="caption"><h2>1 · A les fosques (interactiu)</h2><p>Tot apagat. "Prem qualsevol tecla (o toca la pantalla) per encendre els llums" → el rètol s'encén lletra a lletra. Aquest gest també desbloqueja el so.</p></div>
+  <div class="device-wrap"><div class="device beat" data-w="1280" data-h="560"><div class="stage">
+    <span class="skip">Salta ⏭</span>
+    <div class="sign ignite"><span>B</span><span>I</span><span>T</span> <span>A</span><span>R</span><span>C</span><span>A</span><span>D</span><span>E</span></div>
+    <div class="row">
+      <div class="cab"><div class="roof">PONG</div><div class="body"></div><div class="scr" style="left:18px;right:18px;top:54px"></div></div>
+      <div class="cab"><div class="roof">BRICK</div><div class="body"></div><div class="scr" style="left:18px;right:18px;top:54px"></div></div>
+      <div class="cab"><div class="roof">SNAKE</div><div class="body"></div><div class="scr" style="left:18px;right:18px;top:54px"></div></div>
+      <div class="cab"><div class="roof">???</div><div class="body"></div><div class="scr" style="left:18px;right:18px;top:54px"></div></div>
+    </div>
+    <div class="press">Prem qualsevol tecla per encendre els llums</div>
+  </div></div></div>
+
+  <!-- 2 -->
+  <div class="caption"><h2>2 · Arriba en Bit</h2><p>El Bit entra rodolant, s'atura i parpelleja. Fa servir la mateixa bafarada que les lliçons.</p></div>
+  <div class="device-wrap"><div class="device beat" data-w="1280" data-h="560"><div class="stage lit">
+    <span class="skip">Salta ⏭</span>
+    <div class="sign lit"><span>B</span><span>I</span><span>T</span> <span>A</span><span>R</span><span>C</span><span>A</span><span>D</span><span>E</span></div>
+    <div class="botline">
+      <div class="bit roll"><svg width="150" height="160" viewBox="0 0 60 64"><line class="antenna" x1="30" y1="12" x2="30" y2="5"/><circle class="bulb" cx="30" cy="5" r="4"/><rect class="head" x="6" y="12" width="48" height="40" rx="12"/><circle class="eye" cx="22" cy="30" r="5"/><circle class="eye" cx="38" cy="30" r="5"/><path class="mouth" d="M22 42 Q30 46 38 42"/></svg></div>
+      <div class="bubble">Hola! Sóc en Bit 🤖. Benvingut a la meva sala recreativa… bé, al que en queda.</div>
+    </div>
+  </div></div></div>
+
+  <!-- 3 -->
+  <div class="caption"><h2>3 · Totes espatllades</h2><p>Cada màquina mostra soroll i una etiqueta AVARIADA. El Bit explica per què et necessita.</p></div>
+  <div class="device-wrap"><div class="device beat" data-w="1280" data-h="560"><div class="stage lit">
+    <span class="skip">Salta ⏭</span>
+    <div class="row" style="bottom:170px">
+      <div class="cab"><div class="roof">PONG</div><div class="body"></div><div class="scr" style="left:18px;right:18px;top:54px"><div class="noise"></div></div><div class="broken">AVARIADA</div></div>
+      <div class="cab"><div class="roof">BRICK</div><div class="body"></div><div class="scr" style="left:18px;right:18px;top:54px"><div class="noise"></div></div><div class="broken">AVARIADA</div></div>
+      <div class="cab"><div class="roof">SNAKE</div><div class="body"></div><div class="scr" style="left:18px;right:18px;top:54px"><div class="noise"></div></div><div class="broken">AVARIADA</div></div>
+      <div class="cab"><div class="roof">???</div><div class="body"></div><div class="scr" style="left:18px;right:18px;top:54px"><div class="noise"></div></div><div class="broken">AVARIADA</div></div>
+    </div>
+    <div class="botline" style="top:400px">
+      <div class="bit"><svg width="90" height="96" viewBox="0 0 60 64"><line class="antenna" x1="30" y1="12" x2="30" y2="5"/><circle class="bulb" cx="30" cy="5" r="4"/><rect class="head" x="6" y="12" width="48" height="40" rx="12"/><path class="mouth" d="M17 30 H27"/><path class="mouth" d="M33 28 H43"/><path class="mouth" d="M24 43 H36"/></svg></div>
+      <div class="bubble">Totes les màquines tenen el codi trencat. Jo sé llegir-lo, però no tinc dits per teclejar. Necessito un programador. Tu!</div>
+    </div>
+  </div></div></div>
+
+  <!-- 4 -->
+  <div class="caption"><h2>4 · Com s'arregla (mini-demo automàtica)</h2><p>El 185 de la línia groga es converteix en 50, el ▶ s'il·lumina i la pala puja.</p></div>
+  <div class="device-wrap"><div class="device beat" data-w="1280" data-h="560"><div class="stage lit">
+    <span class="skip">Salta ⏭</span>
+    <div class="demo">
+      <div class="editor"><span class="ln zone">  <span class="fn">DrawRectangle</span>(<span class="num">20</span>, <span class="swap"><span class="num a">185</span><span class="num b">50</span></span>, <span class="num">10</span>, <span class="num">80</span>, <span class="k">WHITE</span>);</span></div>
+      <span class="btn big runglow">▶</span>
+      <div class="screen"><i class="paddle moving" style="left:4%"></i><i class="paddle" style="right:4%; top:41%"></i></div>
+    </div>
+    <div class="botline" style="top:420px">
+      <div class="bit"><svg width="90" height="96" viewBox="0 0 60 64"><line class="antenna" x1="30" y1="12" x2="30" y2="5"/><circle class="bulb" cx="30" cy="5" r="4"/><rect class="head" x="6" y="12" width="48" height="40" rx="12"/><circle class="eye" cx="22" cy="30" r="5"/><circle class="eye" cx="38" cy="30" r="5"/><path class="mouth" d="M22 42 Q30 46 38 42"/></svg></div>
+      <div class="bubble">Tu canvies el codi groc, prems ▶ Executa, i la màquina fa cas. És codi C de debò!</div>
+    </div>
+  </div></div></div>
+
+  <!-- 5 -->
+  <div class="caption"><h2>5 · La promesa</h2><p>El moble del Pong passa d'AVARIADA a encès, amb ⭐⭐⭐ i la pilota rebotant.</p></div>
+  <div class="device-wrap"><div class="device beat" data-w="1280" data-h="560"><div class="stage lit">
+    <span class="skip">Salta ⏭</span>
+    <div style="position:absolute; left:120px; top:60px; width:420px" class="cabinet">
+      <div class="marquee">PONG</div>
+      <div class="screen" style="border-color:var(--green); box-shadow:0 0 18px var(--green)"><i class="paddle" style="left:3%; top:30%"></i><i class="paddle" style="right:3%; top:50%"></i><i class="ball bounce"></i></div>
+      <div style="text-align:center; font-size:30px">⭐⭐⭐</div>
+    </div>
+    <div class="botline" style="left:600px; top:170px">
+      <div class="bit"><svg width="90" height="96" viewBox="0 0 60 64"><line class="antenna" x1="30" y1="12" x2="30" y2="5"/><circle class="bulb" cx="30" cy="5" r="4"/><rect class="head" x="6" y="12" width="48" height="40" rx="12"/><path class="mouth" d="M16 32 Q22 23 28 32"/><path class="mouth" d="M32 32 Q38 23 44 32"/><path class="mouth" d="M19 39 Q30 51 41 39"/></svg></div>
+      <div class="bubble">Quan l'arreglis del tot, la màquina s'encén i hi podràs jugar. I després, a per la següent!</div>
+    </div>
+  </div></div></div>
+
+  <!-- 6 -->
+  <div class="caption"><h2>6 · Som-hi!</h2><p>El Bit assenyala el Pong i surt el botó. En prémer-lo, zoom cap a la pantalla del moble, que es converteix en la lliçó 0.</p></div>
+  <div class="device-wrap"><div class="device beat" data-w="1280" data-h="560"><div class="stage lit">
+    <span class="skip">Salta ⏭</span>
+    <div class="row zoom" style="bottom:120px">
+      <div class="cab"><div class="roof">PONG</div><div class="body"></div><div class="scr" style="left:18px;right:18px;top:54px"><div class="noise"></div></div></div>
+    </div>
+    <div style="position:absolute; bottom:40px; left:0; right:0; text-align:center"><span class="btn big yellow">Som-hi! ▶</span></div>
+  </div></div></div>
+  </div>
+
+  <script src="mock.js"></script>
+  <script>
+    // Play the six beats one after another in the big stage above.
+    const stage = document.getElementById('play-stage');
+    const beats = [...document.querySelectorAll('#beats .beat')];
+    let timer = 0;
+    document.getElementById('play').addEventListener('click', () => {
+      clearTimeout(timer);
+      let i = 0;
+      const show = () => {
+        stage.innerHTML = '';
+        const clone = beats[i].firstElementChild.cloneNode(true);
+        stage.appendChild(clone);
+        i++;
+        if (i < beats.length) timer = setTimeout(show, 6500);
+      };
+      show();
+    });
+    document.getElementById('play').click();
+  </script>
+</body>
+</html>

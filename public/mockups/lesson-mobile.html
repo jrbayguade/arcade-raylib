@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maqueta · Lliçó al mòbil</title>
+  <link rel="stylesheet" href="mock.css" />
+  <style>
+    .phone { display: grid; grid-template-rows: 26px 1fr; height: 100%; padding: 4px 10px 8px; }
+    .strip { display: flex; align-items: center; justify-content: space-between; }
+    .strip .lights .light { width: 9px; height: 9px; }
+    .strip .total { color: var(--yellow); font-weight: 700; font-size: 14px; }
+    .cols { display: grid; grid-template-columns: 58fr 42fr; gap: 10px; min-height: 0; }
+    .left { position: relative; display: flex; flex-direction: column; gap: 6px; min-height: 0; }
+    .ticket { display: flex; align-items: center; gap: 8px; border: 2px solid var(--yellow); border-radius: 10px; padding: 4px 10px; color: var(--yellow); font-weight: 600; font-size: 14px; background: rgba(255,225,77,.08); }
+    .ticket .more { margin-left: auto; color: var(--muted); }
+    .left .editor { flex: 1; font-size: 13px; line-height: 1.6; overflow: hidden; }
+    .float-bubble { position: absolute; top: 0; left: 0; right: 0; z-index: 3; display: flex; gap: 8px; }
+    .float-bubble .bubble { flex: 1; font-size: 14px; }
+    .right { position: relative; display: flex; flex-direction: column; gap: 8px; min-height: 0; }
+    .right .cabinet { padding: 6px; gap: 6px; border-width: 2px; }
+    .right .marquee { font-size: 15px; letter-spacing: 5px; }
+    .right .chips .chip { font-size: 12px; padding: 0 6px; }
+    .right .chips .chip b { font-size: 14px; }
+    .actions { display: flex; gap: 8px; align-items: center; margin-top: auto; }
+    .actions .btn { padding: 8px 14px; font-size: 16px; }
+    .actions .key { border: 2px solid var(--cyan); border-radius: 8px; padding: 6px 8px; font-size: 18px; color: var(--cyan); }
+    .toast { position: absolute; left: 6%; right: 6%; bottom: 8%; background: rgba(27,18,64,.95); border: 2px solid var(--green); border-radius: 10px; padding: 6px 10px; color: var(--green); font-weight: 700; font-size: 14px; box-shadow: 0 0 12px var(--green); }
+    .symbols { position: absolute; right: 0; bottom: 52px; z-index: 4; display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; padding: 6px; background: #1b1240; border: 2px solid var(--cyan); border-radius: 10px; box-shadow: 0 0 14px var(--cyan); }
+    .symbols span { border: 2px solid var(--cyan); border-radius: 6px; min-width: 30px; text-align: center; color: var(--cyan); font: 700 15px ui-monospace, monospace; padding: 3px 0; }
+  </style>
+</head>
+<body>
+  <h1 class="page-title"><b>Maqueta 2</b> · Lliçó al mòbil en horitzontal (844 × 390) · <a href="./">← totes les maquetes</a></h1>
+  <p class="note">Tot hi cap sense desplaçar res. El Bit és un "bitllet" d'una línia amb la missió; si el toques, s'obre la bafarada flotant. Els botons, a la dreta, a tocar del polze.</p>
+  <div class="states" data-target="#phone">
+    <button data-show="normal">1 · Treballant</button>
+    <button data-show="open">2 · Bit obert</button>
+    <button data-show="keys">3 · Símbols ⌨️</button>
+    <button data-show="win">4 · Encert</button>
+  </div>
+
+  <div class="device-wrap">
+  <div class="device" id="phone" data-w="844" data-h="390">
+    <div class="phone">
+      <div class="strip">
+        <div class="lights"><i class="light now"></i><i class="light"></i><i class="light"></i><i class="light"></i><i class="light"></i><i class="light"></i></div>
+        <div class="total">⭐ 0</div>
+      </div>
+      <div class="cols">
+        <div class="left">
+          <div class="ticket" data-state="normal keys open">🤖 Canvia el 185 per un 50 i prem ▶ <span class="more">▾</span></div>
+          <div class="ticket" data-state="win" style="border-color:var(--green); color:var(--green); background:rgba(125,255,154,.08)">🤖 La pala ha pujat! 🎉 <span class="more">▾</span></div>
+          <div class="float-bubble" data-state="open">
+            <div class="bit">
+              <svg width="44" height="48" viewBox="0 0 60 64">
+                <line class="antenna" x1="30" y1="12" x2="30" y2="5"/><circle class="bulb" cx="30" cy="5" r="4"/>
+                <rect class="head" x="6" y="12" width="48" height="40" rx="12"/>
+                <circle class="eye" cx="22" cy="30" r="5"/><circle class="eye" cx="38" cy="30" r="5"/>
+                <path class="mouth" d="M22 42 Q30 46 38 42"/>
+              </svg>
+            </div>
+            <div class="bubble">
+              Només pots escriure a la zona groga. Les paraules grises <code>x:</code>, <code>y:</code> t'expliquen què vol dir cada número.
+              <div class="mission"><small>🎯 Missió</small>Canvia el 185 per un 50 i prem ▶ Executa.</div>
+              <div style="color:var(--muted); font-size:12px; margin-top:4px">toca el codi per tancar</div>
+            </div>
+          </div>
+          <div class="editor">
+            <span class="ln fold"><span>▸ preparar el joc</span></span>
+            <span class="ln">  <span class="fn">ClearBackground</span>(<span class="k">BLACK</span>);</span>
+            <span class="ln">  <span class="fn">DrawRectangle</span>(<span class="num">770</span>, <span class="num">185</span>, <span class="num">10</span>, <span class="num">80</span>, <span class="k">WHITE</span>);</span>
+            <span class="ln zone">  <span class="fn">DrawRectangle</span>(<span class="hint">x:</span><span class="num">20</span>, <span class="hint">y:</span><span class="num" data-state="normal open keys">185</span><span class="num" data-state="win">50</span>, <span class="hint">amp:</span><span class="num">10</span>, <span class="hint">alç:</span><span class="num">80</span>, <span class="k">WHITE</span>);</span>
+            <span class="ln">  <span class="fn">EndDrawing</span>();</span>
+            <span class="ln fold"><span>▸ tancar el joc</span></span>
+          </div>
+        </div>
+        <div class="right">
+          <div class="cabinet">
+            <div class="marquee">PONG</div>
+            <div class="screen">
+              <i class="paddle" style="left:3%; top:41%" data-state="normal open keys"></i>
+              <i class="paddle" style="left:3%; top:11%" data-state="win"></i>
+              <i class="paddle" style="right:3%; top:41%"></i>
+              <div class="toast" data-state="win">La pala ha pujat! ⭐⭐</div>
+            </div>
+          </div>
+          <div class="chips"><span class="chip"><span>palaY</span><b>185</b></span></div>
+          <div class="actions" data-state="normal open keys">
+            <span class="btn big" style="flex:1; justify-content:center">▶ EXECUTA</span>
+            <span class="key" style="background: rgba(57,243,255,.15)" data-state="keys">⌨️</span>
+            <span class="key" data-state="normal open">⌨️</span>
+            <span class="key">💡</span>
+          </div>
+          <div class="actions" data-state="win">
+            <span class="btn big yellow" style="flex:1; justify-content:center">CONTINUA →</span>
+            <span class="key">▶</span>
+          </div>
+          <div class="symbols" data-state="keys">
+            <span>;</span><span>(</span><span>)</span><span>{</span><span>}</span><span>=</span>
+            <span>,</span><span>"</span><span>&lt;</span><span>&gt;</span><span>+</span><span>-</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  <script src="mock.js"></script>
+</body>
+</html>

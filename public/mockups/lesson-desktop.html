@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maqueta · Lliçó a l'ordinador</title>
+  <link rel="stylesheet" href="mock.css" />
+  <style>
+    .desk { display: grid; grid-template-rows: 54px 1fr; height: 100%; padding: 0 22px 18px; }
+    .topbar { display: flex; align-items: center; gap: 22px; }
+    .brand { font-weight: 900; letter-spacing: 3px; color: var(--pink); text-shadow: 0 0 8px var(--pink); font-size: 18px; }
+    .brand span { color: var(--muted); font-weight: 500; letter-spacing: 1px; }
+    .topbar .total { margin-left: auto; color: var(--yellow); font-weight: 700; }
+    .cols { display: grid; grid-template-columns: 55fr 45fr; gap: 26px; min-height: 0; }
+    .bench { display: flex; flex-direction: column; gap: 14px; }
+    .talk { display: flex; gap: 14px; align-items: flex-start; }
+    .talk .bubble { flex: 1; min-height: 118px; font-size: 16px; }
+    .pagedots { display: flex; gap: 5px; margin-top: 8px; }
+    .pagedots i { width: 7px; height: 7px; border-radius: 50%; background: #4a4370; }
+    .pagedots i.on { background: var(--pink); }
+    .actionbar { display: flex; align-items: center; gap: 14px; }
+    .machine { display: flex; flex-direction: column; gap: 14px; }
+    .explain-grid { position: absolute; inset: 0; background:
+      repeating-linear-gradient(0deg, transparent 0 23px, #2a2056 23px 24px),
+      repeating-linear-gradient(90deg, transparent 0 23px, #2a2056 23px 24px); }
+    .explain-grid .dot { position: absolute; left: 25%; top: 22%; width: 14px; height: 14px; border-radius: 50%; background: var(--pink); box-shadow: 0 0 10px var(--pink); }
+    .explain-grid .lbl { position: absolute; left: 28%; top: 13%; color: var(--text); font: 700 18px ui-monospace, monospace; }
+    .axis-x { position: absolute; left: 3%; top: 4%; color: var(--yellow); font-weight: 900; }
+    .axis-y { position: absolute; left: 1%; top: 80%; color: var(--yellow); font-weight: 900; }
+    .confetti { position: absolute; inset: 0; pointer-events: none; }
+    .ann { position: absolute; color: var(--yellow); font-size: 12px; background: rgba(0,0,0,.6); border: 1px dashed var(--yellow); border-radius: 6px; padding: 2px 6px; }
+  </style>
+</head>
+<body>
+  <h1 class="page-title"><b>Maqueta 1</b> · Pantalla de lliçó a l'ordinador (1366 × 768) · <a href="./">← totes les maquetes</a></h1>
+  <p class="note">Dues columnes: a l'esquerra el banc de treball (Bit → codi → botons, de dalt a baix), a la dreta la màquina sempre encesa. Canvia d'estat amb els botons:</p>
+  <div class="states" data-target="#desk">
+    <button data-show="start">1 · Inici del pas</button>
+    <button data-show="hint">2 · Demana una pista</button>
+    <button data-show="almost">3 · Gairebé (error suau)</button>
+    <button data-show="win">4 · Encert</button>
+    <button data-show="explain">5 · Pas d'explicació</button>
+  </div>
+
+  <div class="device-wrap">
+  <div class="device" id="desk" data-w="1366" data-h="768">
+    <div class="desk">
+      <div class="topbar">
+        <div class="brand">BIT ARCADE <span>· PONG · lliçó 0</span></div>
+        <div class="lights">
+          <span class="lights" data-state="start hint almost win"><i class="light now"></i><i class="light"></i><i class="light"></i><i class="light"></i><i class="light"></i><i class="light"></i></span>
+          <span class="lights" data-state="explain"><i class="light done"></i><i class="light now"></i><i class="light"></i><i class="light"></i><i class="light"></i><i class="light"></i></span>
+        </div>
+        <div class="total">⭐ 0</div>
+      </div>
+
+      <div class="cols">
+        <!-- left: the workbench -->
+        <div class="bench">
+          <div class="talk">
+            <div class="bit">
+              <svg width="78" height="84" viewBox="0 0 60 64" data-state="start hint almost explain">
+                <line class="antenna" x1="30" y1="12" x2="30" y2="5"/><circle class="bulb" cx="30" cy="5" r="4"/>
+                <rect class="head" x="6" y="12" width="48" height="40" rx="12"/>
+                <circle class="eye" cx="22" cy="30" r="5"/><circle class="eye" cx="38" cy="30" r="5"/>
+                <path class="mouth" d="M22 42 Q30 46 38 42"/>
+              </svg>
+              <svg width="78" height="84" viewBox="0 0 60 64" data-state="win">
+                <line class="antenna" x1="30" y1="12" x2="30" y2="5"/><circle class="bulb" cx="30" cy="5" r="4"/>
+                <rect class="head" x="6" y="12" width="48" height="40" rx="12"/>
+                <path class="mouth" d="M16 32 Q22 23 28 32"/><path class="mouth" d="M32 32 Q38 23 44 32"/>
+                <path class="mouth" d="M19 39 Q30 51 41 39"/>
+              </svg>
+            </div>
+            <div class="bubble">
+              <div data-state="start">
+                La línia groga dibuixa la pala de l'esquerra.
+                <div class="pagedots"><i></i><i></i><i></i><i class="on"></i><i></i></div>
+                <div class="mission"><small>🎯 La teva missió</small>Canvia el 185 per un 50 i prem ▶ Executa.</div>
+              </div>
+              <div data-state="hint">
+                <span class="nudge">💡 Busca el número 185 a la línia groga. És el que té l'etiqueta <code>y:</code>.</span>
+                <div class="mission"><small>🎯 La teva missió</small>Canvia el 185 per un 50 i prem ▶ Executa.</div>
+              </div>
+              <div data-state="almost">
+                Ja gairebé! La pala <b>encara no s'ha mogut</b>. Mira el segon número: és la <code>y</code>.
+                <div style="margin-top:8px"><a href="#" onclick="return false">🎯 veure la missió</a></div>
+              </div>
+              <div data-state="win">
+                <span class="ok-text">La pala ha pujat! Acabes de moure el teu primer objecte. 🎉</span>
+                <div style="margin-top:8px; display:flex; gap:6px"><span class="star">⭐</span><span class="star">⭐</span></div>
+              </div>
+              <div data-state="explain">
+                La pantalla és com un full quadriculat. La <b>x</b> compta cap a la dreta i la <b>y</b>, cap avall. Passa el ratolí per la màquina!
+                <div class="pagedots"><i class="on"></i><i></i><i></i></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="editor" data-state="start hint almost win">
+            <span class="ln"><span class="str">#include "raylib.h"</span></span>
+            <span class="ln fold"><span>▸ preparar el joc</span></span>
+            <span class="ln">    <span class="fn">BeginDrawing</span>();</span>
+            <span class="ln">    <span class="fn">ClearBackground</span>(<span class="k">BLACK</span>);</span>
+            <span class="ln">    <span class="fn">DrawRectangle</span>(<span class="num">770</span>, <span class="num">185</span>, <span class="num">10</span>, <span class="num">80</span>, <span class="k">WHITE</span>);</span>
+            <span class="ln zone" data-state="start hint win">    <span class="fn">DrawRectangle</span>(<span class="hint">x:</span><span class="num">20</span>, <span class="hint">y:</span><span class="num" data-state="start hint">185</span><span class="num" data-state="win">50</span>, <span class="hint">amplada:</span><span class="num">10</span>, <span class="hint">alçada:</span><span class="num">80</span>, <span class="hint">color:</span><span class="k">WHITE</span>);</span>
+            <span class="ln zone" data-state="almost">    <span class="fn">DrawRectangle</span>(<span class="hint">x:</span><span class="num">50</span>, <span class="hint">y:</span><span class="num">185</span>, <span class="hint">amplada:</span><span class="num">10</span>, <span class="hint">alçada:</span><span class="num">80</span>, <span class="hint">color:</span><span class="k">WHITE</span>);</span>
+            <span class="ln">    <span class="fn">EndDrawing</span>();</span>
+            <span class="ln fold"><span>▸ tancar el joc</span></span>
+          </div>
+          <div data-state="start hint almost win" style="color:var(--muted); font-size:12px; margin-top:-6px">↑ sense números de línia, l'editor fa l'alçada del codi, i les etiquetes grises només surten a la línia groga</div>
+
+          <div class="actionbar" data-state="start hint almost">
+            <span class="btn big">▶ EXECUTA</span>
+            <span class="btn soft" data-state="start almost">💡 Pista <small>0/3</small></span>
+            <span class="btn soft" data-state="hint">💡 Pista <small>1/3</small></span>
+            <span class="icon-btn" title="Torna a començar (demana confirmació)">⟲</span>
+          </div>
+          <div class="actionbar" data-state="win">
+            <span class="btn big yellow replay-anim" style="animation: glow 1.6s infinite">CONTINUA →</span>
+            <span class="btn soft">▶ Executa</span>
+          </div>
+          <div class="actionbar" data-state="explain">
+            <span class="btn big yellow">CONTINUA →</span>
+          </div>
+        </div>
+
+        <!-- right: the machine -->
+        <div class="machine">
+          <div class="cabinet">
+            <div class="marquee">PONG</div>
+            <div class="screen on replay-anim" style="position:relative">
+              <div data-state="start hint">
+                <i class="paddle" style="left:2.5%; top:41%"></i>
+                <i class="paddle" style="right:2.5%; top:41%"></i>
+                <span class="ann" style="left:6%; top:44%">aquesta pala vol pujar</span>
+              </div>
+              <div data-state="almost">
+                <i class="paddle" style="left:6.3%; top:41%"></i>
+                <i class="paddle" style="right:2.5%; top:41%"></i>
+              </div>
+              <div data-state="win">
+                <i class="paddle" style="left:2.5%; top:11%"></i>
+                <i class="paddle" style="right:2.5%; top:41%"></i>
+                <div class="confetti">
+                  <i style="left:20%;background:#39f3ff"></i><i style="left:35%;background:#ff3ea5;animation-delay:.3s"></i>
+                  <i style="left:50%;background:#ffe14d;animation-delay:.6s"></i><i style="left:65%;background:#7dff9a;animation-delay:.2s"></i>
+                  <i style="left:80%;background:#b18cff;animation-delay:.5s"></i><i style="left:45%;background:#39f3ff;animation-delay:.9s"></i>
+                </div>
+              </div>
+              <div data-state="explain" class="explain-grid">
+                <span class="axis-x">x →</span><span class="axis-y">y ↓</span>
+                <span class="dot"></span><span class="lbl">(200, 100)</span>
+              </div>
+            </div>
+            <div class="chips">
+              <span style="color:var(--muted); font-size:13px" data-state="start hint almost win explain">Aquí surten les caixes de les variables (a partir de la lliçó 1): <span class="chip"><span>palaY</span><b>185</b><small>int</small></span></span>
+            </div>
+          </div>
+          <p class="note" style="padding:0">La màquina s'encén en entrar a cada pas (efecte de pantalla antiga), així el nen veu què està espatllat abans de tocar res.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  <script src="mock.js"></script>
+</body>
+</html>
