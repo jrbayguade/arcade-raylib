@@ -1,0 +1,68 @@
+{
+  "title": "Variables",
+  "folds": {
+    "preparar": "preparar el joc",
+    "bucle": "es repeteix a cada fotograma: comença a dibuixar",
+    "tancar": "tancar el joc"
+  },
+  "steps": {
+    "warmup": {
+      "prompt": "Hola de nou! Per escalfar: posa la pala de l'esquerra a la y = 100.",
+      "hints": [
+        "La y és el segon número de `DrawRectangle`.",
+        "Canvia el 185 per 100.",
+        "`DrawRectangle(20, 100, 10, 80, WHITE);`"
+      ],
+      "success": "Com un rellotge! Ja domines les coordenades."
+    },
+    "observe": {
+      "prompt": "Mira el codi: ara la pala de l'esquerra no fa servir un número, fa servir `palaY`. Canvia el 185 de la línia groga per un 300, prem ▶ i mira la caixa `palaY` a la dreta, a sota del joc.",
+      "hints": [
+        "Només has de canviar el número de la línia groga.",
+        "Fes doble clic al 185 i escriu 300.",
+        "La línia ha de quedar `int palaY = 300;`"
+      ],
+      "success": "La caixa `palaY` ara guarda un 300, i la pala ha anat on diu la caixa!"
+    },
+    "box": {
+      "prompt": "Una variable és com una caixa amb un nom escrit a fora. A dins hi guardes un valor. Quan el codi diu `palaY`, l'ordinador obre la caixa i fa servir el que hi ha a dins. La paraula `int` vol dir que a la caixa només hi caben nombres enters. El signe = vol dir «guarda-hi»: `int palaY = 185;` es llegeix «crea una caixa d'enters que es diu palaY i guarda-hi 185». Compte: l'ordinador distingeix majúscules i minúscules, així que `palaY` i `palay` són caixes diferents."
+    },
+    "together": {
+      "prompt": "Ara totes dues pales fan servir la mateixa caixa, `palaY`. Fes que pugin totes dues cap a dalt de tot (una y de 100 o menys) canviant un sol número.",
+      "hints": [
+        "Totes dues pales llegeixen la caixa `palaY`.",
+        "Dalt de tot vol dir una y petita. Prova un número entre 0 i 100.",
+        "Per exemple: `int palaY = 60;`"
+      ],
+      "success": "Un sol canvi i s'han mogut totes dues! Aquest és el superpoder de les variables. 🦸"
+    },
+    "height": {
+      "prompt": "Ara les dues pales fan servir una caixa `alcada` per saber com d'altes són... però aquesta caixa encara no existeix! Prem ▶ i veuràs l'error. Crea-la a la zona groga amb un valor diferent de 80, per exemple 120, i així veuràs el canvi. Escriu `alcada` amb c, sense ç: als noms no s'hi poden posar ç ni accents.",
+      "hints": [
+        "Fes-ho igual que `palaY`: `int nom = valor;`",
+        "Afegeix una línia nova a sota de la de `palaY`, amb el nom `alcada`.",
+        "La zona groga ha de quedar: `int palaY = 185;` i a sota `int alcada = 120;`"
+      ],
+      "success": "Ara, si vols pales més altes o més baixes, només canvies un número i canvien totes dues. Això és programar amb cap! 🧠"
+    },
+    "ball": {
+      "prompt": "Últim repte! El `DrawCircle` ja fa servir `pilotaX` i `pilotaY`, però aquestes caixes encara no existeixen. Crea-les a la zona groga perquè la pilota quedi al mig de la pantalla.",
+      "hints": [
+        "Fes com amb `alcada`: una línia `int nom = valor;` per a cada variable.",
+        "El mig de la pantalla és x = 400 i y = 225.",
+        "Afegeix `int pilotaX = 400;` i `int pilotaY = 225;` al final de la zona groga."
+      ],
+      "success": "Molt bé! Aviat aquestes caixes canviaran de valor soles i la pilota es mourà. Però això és la lliçó següent... 😉"
+    }
+  },
+  "checks": {
+    "paddleAt100": "La pala de l'esquerra és a la y = 100",
+    "paddleMoved": "La pala de l'esquerra s'ha mogut",
+    "bothTogether": "Les dues pales són a la mateixa altura",
+    "bothUp": "Les pales són a dalt de tot (y de 100 o menys)",
+    "declaresHeight": "Has creat la caixa `alcada` (int)",
+    "heightUsed": "Les pales es veuen i fan l'alçada que diu `alcada`",
+    "declaresBall": "Has creat les caixes `pilotaX` i `pilotaY` (int)",
+    "ballCentered": "La pilota és al mig de la pantalla"
+  }
+}

@@ -42,6 +42,10 @@ jobs:
       - name: Tot el mini-C de content/ ha de ser C vàlid
         run: |
           find content -name '*.c' -print0 | while IFS= read -r -d '' f; do
+            case "$f" in
+              content/pong/*.solution.c) ;;
+              content/pong/*) echo "skip $f (exercici d'inici)"; continue ;;
+            esac
             echo "gcc $f"
             gcc -std=c99 -Wall -Werror -fsyntax-only -I/tmp/raylib "$f"
           done
