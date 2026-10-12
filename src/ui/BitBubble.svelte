@@ -61,8 +61,8 @@
       raf = requestAnimationFrame(frame);
     };
     if (pages.length > 0) raf = requestAnimationFrame(frame);
-    // Touching the code folds the bubble away so it never covers what the kid is editing.
-    const onDown = (e: PointerEvent) => { if ((e.target as Element | null)?.closest?.('.work')) open = false; };
+    // Touching the code or the machine folds the bubble away so it never covers what the kid is editing or watching.
+    const onDown = (e: PointerEvent) => { if ((e.target as Element | null)?.closest?.('.work, .machine-area')) open = false; };
     addEventListener('pointerdown', onDown, { capture: true });
     return () => {
       cancelAnimationFrame(raf);
@@ -70,10 +70,16 @@
     };
   });
 
-  // A new answer from Bit opens the folded bubble on phones.
+  // A new answer from Bit opens the folded bubble on phones, then steps aside so the kid sees the game react.
   $effect(() => {
-    if (message) open = true;
+    if (!message) return;
+    open = true;
+    if (!phone) return;
+    const id = setTimeout(() => (open = false), 4000);
+    return () => clearTimeout(id);
   });
+  /** What the folded ticket shows when Bit has answered: ✓ for a success, ! for anything else. */
+  const answerMark = $derived(!message ? null : message.kind === 'result' && message.feedback?.kind === 'success' ? 'ok' : 'warn');
 
   const skip = () => { sounds.play('page'); tw.skip(); sync(); };
   const goTo = (i: number) => { tw.goTo(i); sync(); };
@@ -84,10 +90,11 @@
   }
 </script>
 
-<div class="talk" class:open>
+<div class="talk" class:open class:answering={message !== null} data-answer={answerMark}>
   <button class="ticket" data-sound="page" onclick={() => (open = !open)} aria-expanded={open}>
     <BitFace {mood} size={26} />
     <span class="ticket-text"><RichText text={mission ?? pages[pages.length - 1] ?? ''} /></span>
+    {#if answerMark}<span class="ticket-mark" aria-hidden="true">{answerMark === 'ok' ? '✓' : '!'}</span>{/if}
     <span class="ticket-more" aria-hidden="true">{open ? '▴' : '▾'}</span>
   </button>
   <BitFace {mood} size={70} jump={celebrating} />

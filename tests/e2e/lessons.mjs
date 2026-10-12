@@ -133,6 +133,22 @@ try {
   await playLesson(1, ['solve', 'vars', 'explain', 'vars', 'vars', 'vars']);
   check('all lessons done', await visible(page.getByText('Has acabat totes les lliçons')));
 
+  // Tall screens: the buttons follow the code, the machine lines up with Bit
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await page.goto(`${base}#/pong/0/0`);
+  await page.reload();
+  await page.locator('.cm-editor').waitFor();
+  const paneBox = await page.locator('.code-pane').boundingBox();
+  const actionsBox = await page.locator('.actions').boundingBox();
+  check('1920×1080: buttons right under the code', actionsBox.y - (paneBox.y + paneBox.height) < 40, JSON.stringify([paneBox, actionsBox]));
+  const talkBox = await page.locator('.talk').boundingBox();
+  check('1920×1080: the machine starts level with Bit', Math.abs((await page.locator('.machine-area').boundingBox()).y - talkBox.y) < 40);
+  await page.goto(`${base}#/pong/0/1`);
+  await page.locator('.explain svg').waitFor();
+  const nextBox = await page.locator('.actions').boundingBox();
+  check('1920×1080: explanation step buttons in view', nextBox.y + nextBox.height <= 1080, JSON.stringify(nextBox));
+  await page.setViewportSize({ width: 1600, height: 900 });
+
   // A compile error is explained and marked in the editor
   await page.goto(`${base}#/pong/0/0`);
   await page.reload();
@@ -233,6 +249,15 @@ try {
       check('phone sideways: the symbols float, the code does not move', (await phone.locator('.code-pane').boundingBox()).y === editorTop);
       await phone.locator('.symbols button', { hasText: /^;$/ }).click();
       check('phone sideways: symbol bar types into the zone', (await phone.evaluate(() => window.__bitArcade.code())).includes('WHITE);;'));
+      await phone.locator('.keys-toggle').click();
+      await phone.evaluate(() => window.__bitArcade.solve());
+      await phone.getByRole('button', { name: '▶ Executa', exact: true }).click();
+      check('phone sideways: Bit answers', await visible(phone.locator('.talk.open .bubble .success')));
+      const answerBox = await phone.locator('.talk .bubble').boundingBox();
+      const screenBox = await phone.locator('.machine canvas').boundingBox();
+      check('phone sideways: the answer leaves the top of the game in view', answerBox.y > screenBox.y + screenBox.height / 3, JSON.stringify([answerBox, screenBox]));
+      check('phone sideways: the answer steps aside by itself', await visible(phone.locator('.talk:not(.open)'), 6000));
+      check('phone sideways: the folded ticket shows the success', await visible(phone.locator('.ticket .ticket-mark', { hasText: '✓' })));
     }
     await ctx.close();
   }

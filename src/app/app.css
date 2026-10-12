@@ -99,6 +99,14 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 .actions .reset.armed { font-size: 15px; color: var(--red); border: 2px solid var(--red); box-shadow: 0 0 8px var(--red); }
 .actions .done { color: var(--green); font-weight: 700; }
 
+/* Tall screens: the buttons follow the code instead of waiting at the bottom of the window */
+@media (min-height: 1000px) {
+  .screen {
+    grid-template-rows: auto auto minmax(0, max-content) auto 1fr;
+    grid-template-areas: 'top top' 'talk machine' 'work machine' 'actions machine' '. machine';
+  }
+}
+
 /* On-screen symbols for touch keyboards, where ; ( ) { } are buried: floating over the code */
 .keys-toggle { display: none; font-size: 20px; line-height: 1; padding: 8px 10px; box-shadow: none; }
 .keys-toggle.on { background: rgba(57, 243, 255, 0.18); box-shadow: 0 0 10px var(--cyan); }
@@ -110,7 +118,7 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 .symbols button { min-width: 38px; padding: 6px 0; font: 600 16px ui-monospace, Consolas, monospace; box-shadow: none; }
 
 /* The machine: an arcade cabinet with a lit sign, a CRT screen and the variables as chips */
-.machine-area { grid-area: machine; min-height: 0; align-self: center; }
+.machine-area { grid-area: machine; min-height: 0; align-self: start; }
 .cabinet {
   background: linear-gradient(#1b1240, #120b2c); border: 3px solid var(--pink); border-radius: 18px 18px 8px 8px;
   box-shadow: 0 0 18px var(--pink); padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 10px;
@@ -148,7 +156,7 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 .grid-card .axis-label { fill: var(--yellow); font-size: 28px; font-weight: 700; }
 .grid-card .origin { fill: var(--muted); font-size: 18px; }
 .grid-card .grid-guide { stroke: var(--pink); stroke-dasharray: 6 6; }
-.grid-card .point { animation: fade-in 0.35s ease-out both; }
+.grid-card .point { animation: fade-in 0.2s ease-out both; }
 .grid-card .dot { fill: var(--pink); }
 .grid-card .coord { fill: var(--text); font-size: 26px; font-family: ui-monospace, monospace; }
 .box-card .var-box { fill: #1d1446; stroke: var(--cyan); stroke-width: 4; }
@@ -197,17 +205,23 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
   .talk .bubble { display: none; position: fixed; top: 28px; right: 10px; width: calc(42vw - 20px); z-index: 30; font-size: 13px; padding: 8px 12px; line-height: 1.4; max-height: calc(100vh - 40px); overflow: auto; }
   .talk.open .bubble { display: block; }
   .talk .bubble .mission { display: none; } /* already in the ticket */
+  /* Bit's answer: only the answer, low in the machine column, so the top of the playfield stays in view */
+  .talk.answering .bubble { top: auto; bottom: 58px; max-height: 45vh; }
+  .talk.answering .bubble .say, .talk.answering .bubble .pager { display: none; }
+  .talk.answering .bubble .answer { margin-top: 0; }
+  .ticket-mark { flex: none; font-weight: 900; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-size: 13px; color: var(--bg); background: var(--yellow); }
+  .talk[data-answer='ok'] .ticket { border-color: var(--green); color: var(--green); background: rgba(80, 255, 140, 0.08); }
+  .talk[data-answer='ok'] .ticket-mark { background: var(--green); }
   .mission { padding: 4px 10px; }
   .stars { font-size: 20px; }
   .code-pane { max-height: 100%; }
   .code-pane .cm-editor { font-size: 12px; }
   .code-pane .cm-param-hint { display: none; }
   .code-pane .cm-param-hint[data-label='x:'], .code-pane .cm-param-hint[data-label='y:'] { display: inline; }
-  .code-pane .cm-lesson-fold { white-space: nowrap; }
+  .code-pane .cm-lesson-fold { white-space: nowrap; display: inline-block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; vertical-align: bottom; }
   .cabinet { padding: 5px 8px 8px; gap: 5px; border-width: 2px; }
   .marquee { font-size: 13px; letter-spacing: 6px; }
   .actions { gap: 6px; justify-content: flex-end; flex-wrap: nowrap; }
-  .machine-area { align-self: start; }
   .actions button { min-height: 44px; white-space: nowrap; }
   .actions .run.secondary .run-label { display: none; }
   .actions.solved .hint-btn { display: none; }
