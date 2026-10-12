@@ -23,8 +23,23 @@
     .cab .pad { position: absolute; top: 110px; left: 30%; width: 40%; height: 10px; border-radius: 5px; background: #3a3358; }
     .lit .cab .roof, .lit .cab .body, .lit .cab .scr { border-color: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
     .lit .cab .roof { color: var(--yellow); text-shadow: 0 0 8px var(--yellow); }
-    .noise { position: absolute; inset: 0; background: repeating-linear-gradient(0deg, #222 0 2px, #555 2px 3px, #111 3px 5px); animation: noise .2s steps(3) infinite; opacity: .8; }
-    @keyframes noise { 50% { transform: translateY(2px); } }
+    /* TV static: grey fractal noise that jumps around every few ms, with scanlines and a slow rolling band */
+    .noise { position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); background-size: 260px; filter: contrast(2.2) brightness(1.25); animation: snow .28s steps(4) infinite, flicker 3s infinite; }
+    .noise::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(0,0,0,.35) 0 1px, transparent 1px 3px); }
+    .noise::after { content: ''; position: absolute; left: 0; right: 0; height: 30%; background: linear-gradient(transparent, rgba(255,255,255,.18), transparent); animation: roll 2.2s linear infinite; }
+    .noise.dim { opacity: .35; }
+    @keyframes snow { 0% { background-position: 0 0; } 25% { background-position: 37px -23px; } 50% { background-position: -29px 41px; } 75% { background-position: 53px 17px; } 100% { background-position: -11px -37px; } }
+    @keyframes flicker { 0%, 100% { opacity: 1; } 47% { opacity: .85; } 50% { opacity: 1; } }
+    @keyframes roll { from { top: -30%; } to { top: 100%; } }
+    .noise.dim { animation: snow .28s steps(4) infinite; }
+    .mini-pong { position: absolute; inset: 0; background: #000; }
+    .mini-pong .p { position: absolute; width: 6%; height: 26%; background: #fff; }
+    .mini-pong .p.l { left: 6%; animation: padL 1.8s ease-in-out infinite; }
+    .mini-pong .p.r { right: 6%; animation: padR 1.8s ease-in-out infinite; }
+    .mini-pong .b { position: absolute; width: 6%; aspect-ratio: 1; border-radius: 50%; background: #fdf900; animation: pongBall 1.8s linear infinite; }
+    @keyframes padL { 0%, 100% { top: 10%; } 50% { top: 62%; } }
+    @keyframes padR { 0%, 100% { top: 60%; } 50% { top: 12%; } }
+    @keyframes pongBall { 0% { left: 12%; top: 20%; } 50% { left: 82%; top: 70%; } 100% { left: 12%; top: 20%; } }
     .broken { position: absolute; top: 40%; left: -6px; right: -6px; transform: rotate(-8deg); background: #c0213a; color: #fff; font: 800 12px system-ui; text-align: center; letter-spacing: 2px; padding: 2px 0; box-shadow: 0 0 10px #ff4b6a; }
     .press { position: absolute; bottom: 20px; left: 0; right: 0; text-align: center; color: var(--yellow); font-weight: 700; font-size: 20px; animation: bulb 1.2s infinite; }
     .botline { position: absolute; left: 60px; right: 60px; top: 150px; display: flex; gap: 18px; align-items: flex-start; }
@@ -61,15 +76,15 @@
 
   <div id="beats">
   <!-- 1 -->
-  <div class="caption"><h2>1 · A les fosques (interactiu)</h2><p>Tot apagat. "Prem qualsevol tecla (o toca la pantalla) per encendre els llums" → el rètol s'encén lletra a lletra. Aquest gest també desbloqueja el so.</p></div>
+  <div class="caption"><h2>1 · A les fosques (interactiu)</h2><p>Llums apagats, però les pantalles fan "neu" com una tele sense antena. "Prem qualsevol tecla (o toca la pantalla) per encendre els llums" → el rètol s'encén lletra a lletra. Aquest gest també desbloqueja el so.</p></div>
   <div class="device-wrap"><div class="device beat" data-w="1280" data-h="560"><div class="stage">
     <span class="skip">Salta ⏭</span>
     <div class="sign ignite"><span>B</span><span>I</span><span>T</span> <span>A</span><span>R</span><span>C</span><span>A</span><span>D</span><span>E</span></div>
     <div class="row">
-      <div class="cab"><div class="roof">PONG</div><div class="body"></div><div class="scr" style="left:18px;right:18px;top:54px"></div></div>
-      <div class="cab"><div class="roof">BRICK</div><div class="body"></div><div class="scr" style="left:18px;right:18px;top:54px"></div></div>
-      <div class="cab"><div class="roof">SNAKE</div><div class="body"></div><div class="scr" style="left:18px;right:18px;top:54px"></div></div>
-      <div class="cab"><div class="roof">???</div><div class="body"></div><div class="scr" style="left:18px;right:18px;top:54px"></div></div>
+      <div class="cab"><div class="roof">PONG</div><div class="body"></div><div class="scr" style="left:18px;right:18px;top:54px"><div class="noise dim"></div></div></div>
+      <div class="cab"><div class="roof">BRICK</div><div class="body"></div><div class="scr" style="left:18px;right:18px;top:54px"><div class="noise dim"></div></div></div>
+      <div class="cab"><div class="roof">SNAKE</div><div class="body"></div><div class="scr" style="left:18px;right:18px;top:54px"><div class="noise dim"></div></div></div>
+      <div class="cab"><div class="roof">???</div><div class="body"></div><div class="scr" style="left:18px;right:18px;top:54px"><div class="noise dim"></div></div></div>
     </div>
     <div class="press">Prem qualsevol tecla per encendre els llums</div>
   </div></div></div>
@@ -132,11 +147,11 @@
   </div></div></div>
 
   <!-- 6 -->
-  <div class="caption"><h2>6 · Som-hi!</h2><p>El Bit assenyala el Pong i surt el botó. En prémer-lo, zoom cap a la pantalla del moble, que es converteix en la lliçó 0.</p></div>
+  <div class="caption"><h2>6 · Som-hi!</h2><p>El Pong ja juga sol a la pantalla (les pales es mouen) i surt el botó. En prémer-lo, zoom cap a la pantalla del moble, que es converteix en la lliçó 0.</p></div>
   <div class="device-wrap"><div class="device beat" data-w="1280" data-h="560"><div class="stage lit">
     <span class="skip">Salta ⏭</span>
     <div class="row zoom" style="bottom:120px">
-      <div class="cab"><div class="roof">PONG</div><div class="body"></div><div class="scr" style="left:18px;right:18px;top:54px"><div class="noise"></div></div></div>
+      <div class="cab"><div class="roof">PONG</div><div class="body"></div><div class="scr" style="left:18px;right:18px;top:54px"><div class="mini-pong"><i class="p l"></i><i class="p r"></i><i class="b"></i></div></div></div>
     </div>
     <div style="position:absolute; bottom:40px; left:0; right:0; text-align:center"><span class="btn big yellow">Som-hi! ▶</span></div>
   </div></div></div>
