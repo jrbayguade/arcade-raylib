@@ -31,6 +31,7 @@
   let variables = $state<VariableView[]>([]);
   let celebrations = $state(0);
   let celebrating = $state(false);
+  let symbolsOpen = $state(false);
   let game: ReturnType<typeof GamePane> | undefined = $state();
   let codePane: ReturnType<typeof CodePane> | undefined = $state();
 
@@ -160,6 +161,8 @@
   <main class="code">
     <div class="toolbar">
       {#if isExercise(view.step)}
+        <button class="keys-toggle" class:on={symbolsOpen} aria-expanded={symbolsOpen} aria-label={t('symbolsLabel')}
+          title={t('symbolsLabel')} onpointerdown={(e) => e.preventDefault()} onclick={() => (symbolsOpen = !symbolsOpen)}>⌨️</button>
         <button class="run" data-sound="none" onclick={run} title={t('runShortcut')}>{t('run')}</button>
       {/if}
       {#if view.canContinue && !view.isLast}
@@ -169,11 +172,13 @@
       {/if}
     </div>
     {#if isExercise(view.step) && view.exercise}
+      {#if symbolsOpen}
       <div class="symbols" aria-label={t('symbolsLabel')}>
         {#each SYMBOLS as s (s)}
           <button data-sound="type" onpointerdown={(e) => e.preventDefault()} onclick={() => codePane?.insert(s)}>{s}</button>
         {/each}
       </div>
+      {/if}
       {#key `${view.step.id}/${resetCount}`}
         <CodePane bind:this={codePane} source={view.exercise.source} foldLabels={lesson.texts.folds}
           {errorLine} onChange={changed} onRun={run} />

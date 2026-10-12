@@ -126,23 +126,23 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 @keyframes next-in { from { transform: scale(0.3) translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
 @keyframes next-glow { 50% { box-shadow: 0 0 22px var(--yellow), 0 0 4px var(--yellow) inset; } }
 
-/* Sound on/off, always reachable */
-.sound-toggle {
-  position: fixed; top: 8px; right: 12px; z-index: 40; font-size: 22px; line-height: 1;
-  padding: 6px 8px; border: none; background: none; box-shadow: none;
-}
-.sound-toggle:hover { background: rgba(57, 243, 255, 0.12); }
-
 /* On-screen symbols for touch keyboards, where ; ( ) { } are buried */
-.symbols { display: none; gap: 6px; flex-wrap: wrap; }
+.code { position: relative; }
+.keys-toggle { display: none; font-size: 22px; line-height: 1; padding: 8px 10px; box-shadow: none; }
+.keys-toggle.on { background: rgba(57, 243, 255, 0.18); box-shadow: 0 0 10px var(--cyan); }
+@media (pointer: coarse) { .keys-toggle { display: inline-block; } }
+/* Floating over the top of the editor: opening it never pushes the code down. */
+.symbols {
+  position: absolute; top: 58px; right: 0; z-index: 20; display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px;
+  padding: 8px; background: #1b1240; border: 2px solid var(--cyan); border-radius: 10px; box-shadow: 0 0 14px var(--cyan);
+}
 .symbols button { min-width: 38px; padding: 6px 0; font: 600 16px ui-monospace, Consolas, monospace; box-shadow: none; }
-@media (pointer: coarse) { .symbols { display: flex; } }
 
 /* Phones held upright: ask to rotate */
 .rotate { display: none; }
 @media (orientation: portrait) and (pointer: coarse) {
   /* Hide the lesson underneath: otherwise it is wider than the phone and the browser zooms out. */
-  .screen, .sound-toggle, .confetti { display: none; }
+  .screen, .confetti { display: none; }
   .rotate {
     display: flex; position: fixed; inset: 0; z-index: 100; flex-direction: column; align-items: center; justify-content: center;
     gap: 16px; background: var(--bg); color: var(--yellow); font-size: 22px; font-weight: 700; text-align: center; padding: 24px;
@@ -168,7 +168,9 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
   .vars h3 { font-size: 13px; }
   .box { min-width: 70px; padding: 3px 8px; }
   .box .value { font-size: 16px; }
-  .symbols button { min-width: 30px; padding: 3px 0; font-size: 14px; }
+  .symbols { top: 42px; }
+  .symbols button { min-width: 34px; padding: 4px 0; font-size: 15px; }
+  .keys-toggle { font-size: 18px; padding: 5px 8px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

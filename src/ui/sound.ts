@@ -113,5 +113,5 @@ export class SoundBoard {
 
 export const sounds = new SoundBoard(
   () => (typeof AudioContext === 'function' ? (new AudioContext() as unknown as AudioLike) : null),
-  typeof localStorage === 'undefined' ? null : localStorage,
+  null, // sound is always on: no mute, and an old saved mute is ignored
 );

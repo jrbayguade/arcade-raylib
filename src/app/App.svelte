@@ -6,7 +6,6 @@
   import { parseRoute } from './route';
 
   let route = $state(parseRoute(location.hash, LESSONS.length));
-  let muted = $state(sounds.muted);
 
   $effect(() => {
     const onHash = () => (route = parseRoute(location.hash, LESSONS.length));
@@ -38,15 +37,7 @@
     sounds.onPlay = (name) => heard.push(name);
   }
 
-  function toggleSound(): void {
-    sounds.toggle();
-    muted = sounds.muted;
-    sounds.play('click');
-  }
 </script>
-
-<button class="sound-toggle" data-sound="none" onclick={toggleSound} aria-pressed={muted}
-  aria-label={muted ? t('soundOn') : t('soundOff')} title={muted ? t('soundOn') : t('soundOff')}>{muted ? '🔇' : '🔊'}</button>
 
 {#key `${route.lesson}/${route.step}`}
   <LessonScreen

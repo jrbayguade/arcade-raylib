@@ -146,7 +146,6 @@ try {
   await page.goto(`${base}#/pong/0/0`);
   await page.reload();
   await page.locator('.cm-editor').waitFor();
-  check('no symbol bar on a desktop', !(await page.locator('.symbols').isVisible()));
   await page.evaluate(() => window.__bitArcade.solve());
   await button('▶ Executa').click();
   await visible(page.locator('.bubble .success'));
@@ -154,16 +153,8 @@ try {
   const heard = await page.evaluate(() => [...window.__bitArcadeSounds]);
   check('sounds: run, success and one per star', heard.includes('run') && heard.includes('success') && heard.filter((n) => n === 'star').length === 2, heard.join(','));
   check('sounds: Bit types with ticks', heard.includes('type'));
-  await page.locator('.sound-toggle').click();
-  check('mute button shows muted', (await page.locator('.sound-toggle').getAttribute('aria-pressed')) === 'true');
-  const before = await page.evaluate(() => window.__bitArcadeSounds.length);
-  await button('▶ Executa').click();
-  await page.waitForTimeout(300);
-  check('muted: nothing plays', (await page.evaluate(() => window.__bitArcadeSounds.length)) === before);
-  await page.reload();
-  await page.locator('.cm-editor').waitFor();
-  check('muted is remembered after reload', (await page.locator('.sound-toggle').getAttribute('aria-pressed')) === 'true');
-  await page.locator('.sound-toggle').click();
+  check('no mute button: sound is always on', (await page.locator('.sound-toggle').count()) === 0);
+  check('no keyboard button on a desktop', !(await page.locator('.keys-toggle').isVisible()));
 
   // Phones: upright asks to rotate; sideways fits, with a symbol bar
   for (const [w, h] of [[390, 844], [844, 390]]) {
@@ -187,6 +178,11 @@ try {
       check('phone sideways: Run in view', run !== null && run.y + run.height <= h);
       await phone.locator('.cm-zone').getByText('WHITE').first().click();
       await phone.keyboard.press('End');
+      check('phone sideways: symbols hidden until ⌨️ is tapped', !(await phone.locator('.symbols').isVisible()));
+      const editorTop = (await phone.locator('.code-pane').boundingBox()).y;
+      await phone.locator('.keys-toggle').click();
+      check('phone sideways: ⌨️ opens the symbols', await visible(phone.locator('.symbols')));
+      check('phone sideways: the symbols float, the code does not move', (await phone.locator('.code-pane').boundingBox()).y === editorTop);
       await phone.locator('.symbols button', { hasText: /^;$/ }).click();
       check('phone sideways: symbol bar types into the zone', (await phone.evaluate(() => window.__bitArcade.code())).includes('WHITE);;'));
     }
