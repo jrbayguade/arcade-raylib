@@ -74,6 +74,8 @@ export interface LessonEditor {
   view: EditorView;
   setErrorLine(line: number | null): void;
   replaceZone(text: string): void;
+  /** Types text at the cursor (the on-screen symbol bar); ignored outside the zone like any edit. */
+  insert(text: string): void;
   code(): string;
   destroy(): void;
 }
@@ -115,6 +117,10 @@ export function createLessonEditor(opts: {
     replaceZone: (text) => {
       const zone = view.state.field(zoneField);
       view.dispatch({ changes: { from: zone.from, to: zone.to, insert: text } });
+    },
+    insert: (text) => {
+      view.dispatch(view.state.replaceSelection(text));
+      view.focus();
     },
     code: () => view.state.doc.toString(),
     destroy: () => view.destroy(),

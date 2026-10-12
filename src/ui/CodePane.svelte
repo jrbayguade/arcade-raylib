@@ -34,6 +34,10 @@
     editor?.replaceZone(text);
   }
 
+  export function insert(text: string): void {
+    editor?.insert(text);
+  }
+
   export function code(): string {
     return editor?.code() ?? '';
   }

@@ -142,6 +142,52 @@ try {
   await page.keyboard.press('Control+V');
   await runAndExpectSuccess('order hint (cut and paste)');
 
+  // Sounds: run, success and stars are heard; the mute button silences and is remembered
+  await page.goto(`${base}#/pong/0/0`);
+  await page.reload();
+  await page.locator('.cm-editor').waitFor();
+  check('no symbol bar on a desktop', !(await page.locator('.symbols').isVisible()));
+  await page.evaluate(() => window.__bitArcade.solve());
+  await button('▶ Executa').click();
+  await visible(page.locator('.bubble .success'));
+  await page.waitForTimeout(1200);
+  const heard = await page.evaluate(() => [...window.__bitArcadeSounds]);
+  check('sounds: run, success and one per star', heard.includes('run') && heard.includes('success') && heard.filter((n) => n === 'star').length === 2, heard.join(','));
+  check('sounds: Bit types with ticks', heard.includes('type'));
+  await page.locator('.sound-toggle').click();
+  check('mute button shows muted', (await page.locator('.sound-toggle').getAttribute('aria-pressed')) === 'true');
+  const before = await page.evaluate(() => window.__bitArcadeSounds.length);
+  await button('▶ Executa').click();
+  await page.waitForTimeout(300);
+  check('muted: nothing plays', (await page.evaluate(() => window.__bitArcadeSounds.length)) === before);
+  await page.reload();
+  await page.locator('.cm-editor').waitFor();
+  check('muted is remembered after reload', (await page.locator('.sound-toggle').getAttribute('aria-pressed')) === 'true');
+  await page.locator('.sound-toggle').click();
+
+  // Phones: upright asks to rotate; sideways fits, with a symbol bar
+  for (const [w, h] of [[390, 844], [844, 390]]) {
+    const ctx = await browser.newContext({ viewport: { width: w, height: h }, isMobile: true, hasTouch: true });
+    const phone = await ctx.newPage();
+    phone.on('pageerror', (e) => errors.push(String(e)));
+    await phone.goto(`${base}#/pong/0/0`);
+    if (w < h) {
+      check('phone upright: asks to rotate', await visible(phone.locator('.rotate')));
+      check('phone upright: nothing wider than the screen', (await phone.evaluate(() => document.documentElement.scrollWidth)) <= w);
+    } else {
+      await phone.locator('.cm-editor').waitFor();
+      check('phone sideways: no rotate message', !(await phone.locator('.rotate').isVisible()));
+      check('phone sideways: nothing wider than the screen', (await phone.evaluate(() => document.documentElement.scrollWidth)) <= w);
+      const run = await phone.getByRole('button', { name: '▶ Executa', exact: true }).boundingBox();
+      check('phone sideways: Run in view', run !== null && run.y + run.height <= h);
+      await phone.locator('.cm-zone').getByText('WHITE').first().click();
+      await phone.keyboard.press('End');
+      await phone.locator('.symbols button', { hasText: /^;$/ }).click();
+      check('phone sideways: symbol bar types into the zone', (await phone.evaluate(() => window.__bitArcade.code())).includes('WHITE);;'));
+    }
+    await ctx.close();
+  }
+
   check('no page errors', errors.length === 0, errors.join(' | '));
 } catch (e) {
   check('script finished without exceptions', false, String(e));

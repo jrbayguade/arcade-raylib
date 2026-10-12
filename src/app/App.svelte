@@ -1,16 +1,52 @@
 <script lang="ts">
   import { LESSONS } from '../../content/pong';
+  import { t } from '../i18n/i18n';
   import LessonScreen from '../ui/LessonScreen.svelte';
+  import { sounds, type SoundName } from '../ui/sound';
   import { parseRoute } from './route';
 
   let route = $state(parseRoute(location.hash, LESSONS.length));
+  let muted = $state(sounds.muted);
 
   $effect(() => {
     const onHash = () => (route = parseRoute(location.hash, LESSONS.length));
     addEventListener('hashchange', onHash);
     return () => removeEventListener('hashchange', onHash);
   });
+
+  // Audio may only start after a user gesture; every button then clicks (or plays its own data-sound).
+  $effect(() => {
+    const unlock = () => sounds.unlock();
+    const onClick = (e: MouseEvent) => {
+      const button = (e.target as Element | null)?.closest?.('button');
+      if (!button || button.disabled || button.dataset.sound === 'none') return;
+      sounds.play((button.dataset.sound as SoundName | undefined) ?? 'click');
+    };
+    addEventListener('pointerdown', unlock, { capture: true });
+    addEventListener('keydown', unlock, { capture: true });
+    addEventListener('click', onClick, { capture: true });
+    return () => {
+      removeEventListener('pointerdown', unlock, { capture: true });
+      removeEventListener('keydown', unlock, { capture: true });
+      removeEventListener('click', onClick, { capture: true });
+    };
+  });
+
+  if (import.meta.env.DEV) {
+    const heard: string[] = [];
+    (window as unknown as { __bitArcadeSounds: string[] }).__bitArcadeSounds = heard;
+    sounds.onPlay = (name) => heard.push(name);
+  }
+
+  function toggleSound(): void {
+    sounds.toggle();
+    muted = sounds.muted;
+    sounds.play('click');
+  }
 </script>
+
+<button class="sound-toggle" data-sound="none" onclick={toggleSound} aria-pressed={muted}
+  aria-label={muted ? t('soundOn') : t('soundOff')} title={muted ? t('soundOn') : t('soundOff')}>{muted ? '🔇' : '🔊'}</button>
 
 {#key `${route.lesson}/${route.step}`}
   <LessonScreen
@@ -20,3 +56,8 @@
     hasNextLesson={route.lesson < LESSONS.length - 1}
   />
 {/key}
+
+<div class="rotate" role="alert">
+  <div class="rotate-phone" aria-hidden="true">📱</div>
+  <p>{t('rotate')}</p>
+</div>

@@ -12,6 +12,9 @@
   import ExplainCard from './ExplainCard.svelte';
   import GamePane from './GamePane.svelte';
   import VariablesPanel from './VariablesPanel.svelte';
+  import { sounds } from './sound';
+
+  const SYMBOLS = [';', '(', ')', '{', '}', '=', ',', '"', '<', '>', '+', '-'];
 
   let { lesson, lessonIndex, startStep, hasNextLesson }: {
     lesson: Lesson;
@@ -51,11 +54,14 @@
   }
 
   function showLiveError(d: Diagnostic): void {
+    sounds.play('error');
     liveError = d;
     errorLine = d.line;
   }
 
-  function celebrate(): void {
+  function celebrate(stars: number): void {
+    sounds.play('success');
+    for (let i = 0; i < stars; i++) setTimeout(() => sounds.play('star', { pitch: 1 + i * 0.25 }), 450 + i * 300);
     celebrations++;
     celebrating = true;
     setTimeout(() => (celebrating = false), 900);
@@ -68,6 +74,7 @@
 
   function run(): void {
     const wasDone = engine.exercise?.done ?? false;
+    sounds.play('run');
     const result = engine.run();
     liveError = null;
     version++;
@@ -75,8 +82,9 @@
     if (result.kind === 'checked') {
       errorLine = null;
       game?.start(engine.exercise!.code);
-      if (result.passed && !wasDone) celebrate();
+      if (result.passed && !wasDone) celebrate(engine.exercise!.stars);
     } else {
+      sounds.play('error');
       errorLine = result.diagnostic.line;
       game?.stop();
     }
@@ -134,7 +142,7 @@
     {/key}
     {#if view.exercise}
       <div class="actions">
-        <button onclick={hint} disabled={!view.moreHints} title={t('hintTitle')}>{t('hint')}</button>
+        <button data-sound="hint" onclick={hint} disabled={!view.moreHints} title={t('hintTitle')}>{t('hint')}</button>
         <button onclick={reset}>{t('reset')}</button>
       </div>
       {#if view.exercise.done}
@@ -152,15 +160,20 @@
   <main class="code">
     <div class="toolbar">
       {#if isExercise(view.step)}
-        <button class="run" onclick={run} title={t('runShortcut')}>{t('run')}</button>
+        <button class="run" data-sound="none" onclick={run} title={t('runShortcut')}>{t('run')}</button>
       {/if}
       {#if view.canContinue && !view.isLast}
-        {#key view.step.id}<button class="primary next" onclick={next}>{t('continue')}</button>{/key}
+        {#key view.step.id}<button class="primary next" data-sound="next" onclick={next}>{t('continue')}</button>{/key}
       {:else if view.canContinue && hasNextLesson}
-        <button class="primary next" onclick={nextLesson}>{t('nextLesson')}</button>
+        <button class="primary next" data-sound="next" onclick={nextLesson}>{t('nextLesson')}</button>
       {/if}
     </div>
     {#if isExercise(view.step) && view.exercise}
+      <div class="symbols" aria-label={t('symbolsLabel')}>
+        {#each SYMBOLS as s (s)}
+          <button data-sound="type" onpointerdown={(e) => e.preventDefault()} onclick={() => codePane?.insert(s)}>{s}</button>
+        {/each}
+      </div>
       {#key `${view.step.id}/${resetCount}`}
         <CodePane bind:this={codePane} source={view.exercise.source} foldLabels={lesson.texts.folds}
           {errorLine} onChange={changed} onRun={run} />

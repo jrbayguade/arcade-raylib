@@ -6,6 +6,7 @@
   import { prefersReducedMotion } from './motion';
   import RichText from './RichText.svelte';
   import TypedText from './TypedText.svelte';
+  import { sounds } from './sound';
   import { BIT_SPEED, Typewriter } from './typewriter';
 
   let { pages, hints, result, liveError, checkTexts, success, celebrating }: {
@@ -32,10 +33,16 @@
 
   onMount(() => {
     let last = performance.now();
+    let lastTick = 0;
     let raf = 0;
     const frame = (now: number) => {
+      const before = tw.text.length;
       tw.tick(Math.min(now - last, 100));
       last = now;
+      if (tw.text.length > before && now - lastTick > 55) {
+        sounds.play('type', { pitch: 0.9 + Math.random() * 0.2 });
+        lastTick = now;
+      }
       sync();
       raf = requestAnimationFrame(frame);
     };
@@ -43,7 +50,7 @@
     return () => cancelAnimationFrame(raf);
   });
 
-  const skip = () => { tw.skip(); sync(); };
+  const skip = () => { sounds.play('page'); tw.skip(); sync(); };
   const goTo = (i: number) => { tw.goTo(i); sync(); };
   const replay = () => { tw.restart(); sync(); };
 </script>
@@ -62,9 +69,9 @@
     {#if pages.length > 1}
       <div class="pager">
         {#each pages as _, i (i)}
-          <button class="dot" class:on={i === page} aria-label={t('pageLabel', { n: i + 1 })} onclick={() => goTo(i)}></button>
+          <button class="dot" data-sound="page" class:on={i === page} aria-label={t('pageLabel', { n: i + 1 })} onclick={() => goTo(i)}></button>
         {/each}
-        <button class="replay" onclick={replay} aria-label={t('replay')} title={t('replay')}>↺</button>
+        <button class="replay" data-sound="page" onclick={replay} aria-label={t('replay')} title={t('replay')}>↺</button>
       </div>
     {/if}
     {#each hints as hint, i (hint)}

@@ -24,7 +24,7 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 
 .screen {
   display: grid; height: 100vh; gap: 16px; padding: 12px 16px;
-  grid-template-columns: minmax(260px, 1fr) minmax(420px, 1.6fr) minmax(380px, 1.3fr);
+  grid-template-columns: minmax(190px, 1fr) minmax(280px, 1.6fr) minmax(220px, 1.3fr);
   grid-template-rows: auto 1fr;
   grid-template-areas: 'top top top' 'guide code game';
 }
@@ -125,6 +125,51 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 @keyframes bit-jump { 0%, 100% { transform: none; } 30% { transform: translateY(-18px) rotate(-10deg); } 60% { transform: translateY(0) rotate(8deg); } }
 @keyframes next-in { from { transform: scale(0.3) translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
 @keyframes next-glow { 50% { box-shadow: 0 0 22px var(--yellow), 0 0 4px var(--yellow) inset; } }
+
+/* Sound on/off, always reachable */
+.sound-toggle {
+  position: fixed; top: 8px; right: 12px; z-index: 40; font-size: 22px; line-height: 1;
+  padding: 6px 8px; border: none; background: none; box-shadow: none;
+}
+.sound-toggle:hover { background: rgba(57, 243, 255, 0.12); }
+
+/* On-screen symbols for touch keyboards, where ; ( ) { } are buried */
+.symbols { display: none; gap: 6px; flex-wrap: wrap; }
+.symbols button { min-width: 38px; padding: 6px 0; font: 600 16px ui-monospace, Consolas, monospace; box-shadow: none; }
+@media (pointer: coarse) { .symbols { display: flex; } }
+
+/* Phones held upright: ask to rotate */
+.rotate { display: none; }
+@media (orientation: portrait) and (pointer: coarse) {
+  /* Hide the lesson underneath: otherwise it is wider than the phone and the browser zooms out. */
+  .screen, .sound-toggle, .confetti { display: none; }
+  .rotate {
+    display: flex; position: fixed; inset: 0; z-index: 100; flex-direction: column; align-items: center; justify-content: center;
+    gap: 16px; background: var(--bg); color: var(--yellow); font-size: 22px; font-weight: 700; text-align: center; padding: 24px;
+  }
+  .rotate-phone { font-size: 84px; animation: rotate-phone 2s ease-in-out infinite; filter: drop-shadow(0 0 12px var(--cyan)); }
+}
+@keyframes rotate-phone { 0%, 20% { transform: rotate(0); } 50%, 80% { transform: rotate(-90deg); } 100% { transform: rotate(0); } }
+
+/* Phones held sideways (and small windows): everything smaller so the three columns fit */
+@media (max-height: 560px) {
+  .screen { gap: 8px; padding: 6px 10px; }
+  .top h1 { font-size: 15px; }
+  .progress { font-size: 12px; }
+  .avatar { font-size: 24px; }
+  :root { --avatar-w: 30px; }
+  .bubble { padding: 6px 10px; font-size: 13px; line-height: 1.4; }
+  .actions button { padding: 4px 8px; font-size: 13px; }
+  .stars { font-size: 20px; min-height: 26px; }
+  .toolbar { min-height: 38px; gap: 8px; }
+  .toolbar .run, .toolbar .next { font-size: 15px; padding: 6px 14px; }
+  .code-pane .cm-editor { font-size: 12px; }
+  .machine { padding: 5px; border-width: 2px; }
+  .vars h3 { font-size: 13px; }
+  .box { min-width: 70px; padding: 3px 8px; }
+  .box .value { font-size: 16px; }
+  .symbols button { min-width: 30px; padding: 3px 0; font-size: 14px; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }

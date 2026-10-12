@@ -110,7 +110,11 @@
     "pageLabel": "Bafarada {n}",
     "replay": "↺ Torna-m'ho a dir",
     "runShortcut": "Ctrl+Enter",
-    "starsEarned": "{n} de {max} estrelles"
+    "starsEarned": "{n} de {max} estrelles",
+    "soundOn": "Activa el so",
+    "soundOff": "Silencia el so",
+    "rotate": "Gira el mòbil per programar!",
+    "symbolsLabel": "Símbols per escriure codi"
   },
   "params": {
     "InitWindow": [
