@@ -1,4 +1,4 @@
-import { EditorState, StateField, type Extension } from '@codemirror/state';
+import { EditorSelection, EditorState, StateField, type Extension } from '@codemirror/state';
 import { Decoration, EditorView, type DecorationSet } from '@codemirror/view';
 
 export interface Zone { from: number; to: number }
@@ -31,11 +31,30 @@ export function editableZone(zone: Zone): Extension {
     zoneField.init(() => zone),
     EditorState.changeFilter.of((tr) => {
       const z = tr.startState.field(zoneField);
+      const doc = tr.startState.doc;
       let inside = true;
+      let touchesNewlineAfterZone = false;
       tr.changes.iterChangedRanges((fromA, toA) => {
-        if (fromA < z.from || toA > z.to) inside = false;
+        if (fromA < z.from) inside = false;
+        else if (toA === z.to + 1 && doc.sliceString(z.to, z.to + 1) === '\n') touchesNewlineAfterZone = true;
+        else if (toA > z.to) inside = false;
       });
-      return inside;
+      if (!inside) return false;
+      // Triple-click, or Ctrl+X with no selection, takes the zone's last line *with* its newline: keep only the newline.
+      return touchesNewlineAfterZone ? [z.to, z.to + 1] : true;
+    }),
+    // A selection that starts in the zone never reaches past it (triple-click takes the line *and* its newline;
+    // in the browser, typing over that would be rejected whole and the text would land after the old line).
+    EditorState.transactionFilter.of((tr) => {
+      if (!tr.selection || tr.docChanged) return tr;
+      const z = tr.startState.field(zoneField);
+      let clamped = false;
+      const ranges = tr.selection.ranges.map((r) => {
+        if (r.from < z.from || r.from > z.to || r.to <= z.to) return r;
+        clamped = true;
+        return r.anchor <= r.head ? EditorSelection.range(r.anchor, z.to) : EditorSelection.range(z.to, r.head);
+      });
+      return clamped ? [tr, { selection: EditorSelection.create(ranges, tr.selection.mainIndex) }] : tr;
     }),
     EditorView.decorations.compute([zoneField], zoneDecorations),
   ];

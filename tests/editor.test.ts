@@ -114,3 +114,49 @@ describe('lessonExtensions', () => {
       .toContain('int x = 7;');
   });
 });
+
+import { codeFolding, foldEffect, foldedRanges } from '@codemirror/language';
+import { errorLineEffects } from '../src/editor/editor';
+import { snippetTemplate } from '../src/editor/completions';
+
+describe('review fixes', () => {
+  it('replacing a whole selected line (up to and including its newline) keeps the newline and edits the zone', () => {
+    const doc = 'AAA\nzone\nBBB\n';
+    const s0 = EditorState.create({ doc, extensions: editableZone({ from: 4, to: 8 }) });
+    const typed = s0.update({ changes: { from: 4, to: 9, insert: 'X' } }).state;
+    expect(typed.doc.toString()).toBe('AAA\nX\nBBB\n');
+    const cut = s0.update({ changes: { from: 4, to: 9 } }).state;
+    expect(cut.doc.toString()).toBe('AAA\n\nBBB\n');
+    const beyond = s0.update({ changes: { from: 4, to: 10, insert: 'X' } }).state;
+    expect(beyond.doc.toString()).toBe(doc);
+  });
+
+  it('ends snippets of statement functions with a semicolon', () => {
+    expect(snippetTemplate('DrawCircle', ['x', 'y', 'radi', 'color'], 'void')).toBe('DrawCircle(${x}, ${y}, ${radi}, ${color});');
+    expect(snippetTemplate('IsKeyDown', ['tecla'], 'bool')).toBe('IsKeyDown(${tecla})');
+    expect(snippetTemplate('DrawRectangle', ['x', 'y', 'amplada', 'alçada', 'color'], 'void')).toContain('${alcada}');
+  });
+
+  it('unfolds the fold that hides an error line', () => {
+    const doc = 'a\nb\nc\nd\n';
+    let s = EditorState.create({ doc, extensions: [codeFolding(), errorLineField] });
+    s = s.update({ effects: foldEffect.of({ from: 2, to: 5 }) }).state;
+    expect(foldedRanges(s).size).toBe(1);
+    s = s.update({ effects: errorLineEffects(s, 3) }).state;
+    expect(foldedRanges(s).size).toBe(0);
+    expect(s.field(errorLineField).size).toBe(1);
+  });
+});
+
+describe('selection clamping', () => {
+  const doc = 'AAA\nzone\nBBB\n';
+  const make = () => EditorState.create({ doc, extensions: editableZone({ from: 4, to: 8 }) });
+  it('clamps a selection that starts in the zone and runs past its end (triple-click)', () => {
+    const s = make().update({ selection: { anchor: 4, head: 9 } }).state;
+    expect([s.selection.main.from, s.selection.main.to]).toEqual([4, 8]);
+  });
+  it('leaves selections that start outside the zone alone (Ctrl+A stays all-or-nothing)', () => {
+    const s = make().update({ selection: { anchor: 0, head: doc.length } }).state;
+    expect([s.selection.main.from, s.selection.main.to]).toEqual([0, doc.length]);
+  });
+});

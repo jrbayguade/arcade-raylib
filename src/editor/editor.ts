@@ -1,8 +1,8 @@
 import { autocompletion, closeBrackets, closeBracketsKeymap, completionKeymap } from '@codemirror/autocomplete';
 import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
 import { cpp } from '@codemirror/lang-cpp';
-import { codeFolding, foldEffect } from '@codemirror/language';
-import { EditorState, type Extension } from '@codemirror/state';
+import { codeFolding, foldEffect, foldedRanges, unfoldEffect } from '@codemirror/language';
+import { EditorState, type Extension, type StateEffect } from '@codemirror/state';
 import { oneDark } from '@codemirror/theme-one-dark';
 import {
   Decoration, EditorView, ViewPlugin, WidgetType, drawSelection, keymap, lineNumbers,
@@ -58,6 +58,17 @@ export function lessonExtensions(source: LessonSource, onChange: (code: string) 
   ];
 }
 
+/** Marks the error line and opens any fold that would hide it, so the red line is always visible. */
+export function errorLineEffects(state: EditorState, line: number | null): StateEffect<unknown>[] {
+  const effects: StateEffect<unknown>[] = [setErrorLine.of(line)];
+  if (line === null || line < 1 || line > state.doc.lines) return effects;
+  const { from, to } = state.doc.line(line);
+  foldedRanges(state).between(0, state.doc.length, (a, b) => {
+    if (a <= to && b >= from) effects.push(unfoldEffect.of({ from: a, to: b }));
+  });
+  return effects;
+}
+
 export interface LessonEditor {
   view: EditorView;
   setErrorLine(line: number | null): void;
@@ -93,7 +104,7 @@ export function createLessonEditor(opts: {
 
   return {
     view,
-    setErrorLine: (line) => view.dispatch({ effects: setErrorLine.of(line) }),
+    setErrorLine: (line) => view.dispatch({ effects: errorLineEffects(view.state, line) }),
     replaceZone: (text) => {
       const zone = view.state.field(zoneField);
       view.dispatch({ changes: { from: zone.from, to: zone.to, insert: text } });

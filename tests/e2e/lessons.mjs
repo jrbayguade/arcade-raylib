@@ -87,6 +87,30 @@ try {
   check('compile error explained', (await page.locator('.bubble .error').innerText()).includes('Falta un ;'));
   check('error line marked', await visible(page.locator('.cm-error-line')));
 
+  // Triple-click selects the line *with* its newline: typing must replace the zone line, not append to it
+  await page.goto(`${base}#/pong/0/0`);
+  await page.reload();
+  await page.locator('.cm-editor').waitFor();
+  await page.locator('.cm-zone').getByText('DrawRectangle').first().click({ clickCount: 3 });
+  // closeBrackets inserts ")" after "(": typing ")" steps over it, as when a kid types the whole line.
+  await page.keyboard.type('        DrawRectangle(20, 50, 10, 80, WHITE);');
+  const tripleCode = await page.evaluate(() => window.__bitArcade.code());
+  check('triple-click + typing replaces the line',
+    tripleCode.includes('\n        DrawRectangle(20, 50, 10, 80, WHITE);\n        EndDrawing();') && !tripleCode.includes('(20, 185'));
+  await runAndExpectSuccess('triple-click');
+
+  // The `order` hint: cut the ClearBackground line with Ctrl+X (no selection) and paste it above
+  await page.goto(`${base}#/pong/0/4`);
+  await page.reload();
+  await page.locator('.cm-editor').waitFor();
+  await page.locator('.cm-zone').nth(1).click();
+  await page.keyboard.press('Control+X');
+  await page.locator('.cm-zone').first().click();
+  await page.keyboard.press('Home');
+  await page.keyboard.press('Home');
+  await page.keyboard.press('Control+V');
+  await runAndExpectSuccess('order hint (cut and paste)');
+
   check('no page errors', errors.length === 0, errors.join(' | '));
 } catch (e) {
   check('script finished without exceptions', false, String(e));
