@@ -2,7 +2,7 @@ import { autocompletion, closeBrackets, closeBracketsKeymap, completionKeymap } 
 import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
 import { cpp } from '@codemirror/lang-cpp';
 import { codeFolding, foldEffect, foldedRanges, unfoldEffect } from '@codemirror/language';
-import { EditorState, type Extension, type StateEffect } from '@codemirror/state';
+import { EditorState, Prec, type Extension, type StateEffect } from '@codemirror/state';
 import { oneDark } from '@codemirror/theme-one-dark';
 import {
   Decoration, EditorView, ViewPlugin, WidgetType, drawSelection, keymap, lineNumbers,
@@ -44,6 +44,7 @@ const completions = buildCompletions(new RaylibHost({ seed: 1 }), paramNames);
 export function lessonExtensions(source: LessonSource, onChange: (code: string) => void): Extension[] {
   return [
     lineNumbers(),
+    EditorView.lineWrapping, // long calls wrap: no sideways scrolling that hides the start of lines
     history(),
     drawSelection(),
     closeBrackets(),
@@ -82,6 +83,8 @@ export function createLessonEditor(opts: {
   source: LessonSource;
   foldLabel: (key: string, lines: number) => string;
   onChange: (code: string) => void;
+  /** Ctrl+Enter (Cmd+Enter on Mac) runs the program from the editor. */
+  onRun?: () => void;
 }): LessonEditor {
   const { source } = opts;
   const labels = new Map(source.folds.map((f) => [f.from, opts.foldLabel(f.key, f.lines)]));
@@ -97,7 +100,11 @@ export function createLessonEditor(opts: {
   });
   const view = new EditorView({
     parent: opts.parent,
-    state: EditorState.create({ doc: source.code, extensions: [...lessonExtensions(source, opts.onChange), folding] }),
+    state: EditorState.create({ doc: source.code, extensions: [
+      ...lessonExtensions(source, opts.onChange),
+      folding,
+      Prec.highest(keymap.of([{ key: 'Mod-Enter', run: () => { opts.onRun?.(); return true; } }])),
+    ] }),
   });
   view.dispatch({ effects: source.folds.map((f) => foldEffect.of({ from: f.from, to: f.to })) });
   view.dispatch({ selection: { anchor: source.editable.to }, scrollIntoView: true });

@@ -7,7 +7,9 @@
   },
   "steps": {
     "warmup": {
-      "prompt": "Hola de nou! Per escalfar: posa la pala de l'esquerra a la y = 100.",
+      "prompt": [
+        "Hola de nou! Per escalfar: posa la pala de l'esquerra a la y = 100."
+      ],
       "hints": [
         "La y és el segon número de `DrawRectangle`.",
         "Canvia el 185 per 100.",
@@ -16,7 +18,10 @@
       "success": "Com un rellotge! Ja domines les coordenades."
     },
     "observe": {
-      "prompt": "Mira el codi: ara la pala de l'esquerra no fa servir un número, fa servir `palaY`. Canvia el 185 de la línia groga per un 300, prem ▶ i mira la caixa `palaY` a la dreta, a sota del joc.",
+      "prompt": [
+        "Mira el codi: ara la pala de l'esquerra no fa servir un número, fa servir `palaY`.",
+        "Canvia el 185 de la línia groga per un 300, prem ▶ Executa i mira la caixa `palaY`, a sota del joc."
+      ],
       "hints": [
         "Només has de canviar el número de la línia groga.",
         "Fes doble clic al 185 i escriu 300.",
@@ -25,10 +30,19 @@
       "success": "La caixa `palaY` ara guarda un 300, i la pala ha anat on diu la caixa!"
     },
     "box": {
-      "prompt": "Una variable és com una caixa amb un nom escrit a fora. A dins hi guardes un valor. Quan el codi diu `palaY`, l'ordinador obre la caixa i fa servir el que hi ha a dins. La paraula `int` vol dir que a la caixa només hi caben nombres enters. El signe = vol dir «guarda-hi»: `int palaY = 185;` es llegeix «crea una caixa d'enters que es diu palaY i guarda-hi 185». Compte: l'ordinador distingeix majúscules i minúscules, així que `palaY` i `palay` són caixes diferents."
+      "prompt": [
+        "Una variable és com una caixa amb un nom escrit a fora. A dins hi guardes un valor.",
+        "Quan el codi diu `palaY`, l'ordinador obre la caixa i fa servir el que hi ha a dins.",
+        "La paraula `int` vol dir que a la caixa només hi caben nombres enters.",
+        "El signe = vol dir «guarda-hi»: `int palaY = 185;` es llegeix «crea una caixa d'enters que es diu palaY i guarda-hi 185».",
+        "Compte: l'ordinador distingeix majúscules i minúscules. `palaY` i `palay` són caixes diferents! Quan ho tinguis clar, prem Continua."
+      ]
     },
     "together": {
-      "prompt": "Ara totes dues pales fan servir la mateixa caixa, `palaY`. Fes que pugin totes dues cap a dalt de tot (una y de 100 o menys) canviant un sol número.",
+      "prompt": [
+        "Ara totes dues pales fan servir la mateixa caixa, `palaY`.",
+        "Fes que pugin totes dues cap a dalt de tot (una y de 100 o menys) canviant un sol número."
+      ],
       "hints": [
         "Totes dues pales llegeixen la caixa `palaY`.",
         "Dalt de tot vol dir una y petita. Prova un número entre 0 i 100.",
@@ -37,7 +51,11 @@
       "success": "Un sol canvi i s'han mogut totes dues! Aquest és el superpoder de les variables. 🦸"
     },
     "height": {
-      "prompt": "Ara les dues pales fan servir una caixa `alcada` per saber com d'altes són... però aquesta caixa encara no existeix! Prem ▶ i veuràs l'error. Crea-la a la zona groga amb un valor diferent de 80, per exemple 120, i així veuràs el canvi. Escriu `alcada` amb c, sense ç: als noms no s'hi poden posar ç ni accents.",
+      "prompt": [
+        "Ara les dues pales fan servir una caixa `alcada` per saber com d'altes són... però aquesta caixa encara no existeix! Si prems ▶ Executa, veuràs l'error.",
+        "Escriu `alcada` amb c, sense ç: als noms no s'hi poden posar ç ni accents.",
+        "Crea la caixa `alcada` a la zona groga, amb un valor diferent de 80, per exemple 120."
+      ],
       "hints": [
         "Fes-ho igual que `palaY`: `int nom = valor;`",
         "Afegeix una línia nova a sota de la de `palaY`, amb el nom `alcada`.",
@@ -46,7 +64,10 @@
       "success": "Ara, si vols pales més altes o més baixes, només canvies un número i canvien totes dues. Això és programar amb cap! 🧠"
     },
     "ball": {
-      "prompt": "Últim repte! El `DrawCircle` ja fa servir `pilotaX` i `pilotaY`, però aquestes caixes encara no existeixen. Crea-les a la zona groga perquè la pilota quedi al mig de la pantalla.",
+      "prompt": [
+        "Últim repte! El `DrawCircle` ja fa servir `pilotaX` i `pilotaY`, però aquestes caixes encara no existeixen.",
+        "Crea-les a la zona groga perquè la pilota quedi al mig de la pantalla."
+      ],
       "hints": [
         "Fes com amb `alcada`: una línia `int nom = valor;` per a cada variable.",
         "El mig de la pantalla és x = 400 i y = 225.",

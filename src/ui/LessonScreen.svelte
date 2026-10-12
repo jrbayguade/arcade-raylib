@@ -3,11 +3,12 @@
   import type { Diagnostic } from '../lang/diagnostics';
   import type { VariableView } from '../lang/interpreter';
   import { LessonEngine } from '../lessons/engine';
-  import { isExercise, type Lesson } from '../lessons/model';
+  import { isExercise, promptPages, type Lesson } from '../lessons/model';
   import { parseLessonSource, zoneText } from '../lessons/source';
   import { routeHash } from '../app/route';
   import BitBubble from './BitBubble.svelte';
   import CodePane from './CodePane.svelte';
+  import Confetti from './Confetti.svelte';
   import ExplainCard from './ExplainCard.svelte';
   import GamePane from './GamePane.svelte';
   import VariablesPanel from './VariablesPanel.svelte';
@@ -25,6 +26,8 @@
   let errorLine = $state<number | null>(null);
   let liveError = $state<Diagnostic | null>(null);
   let variables = $state<VariableView[]>([]);
+  let celebrations = $state(0);
+  let celebrating = $state(false);
   let game: ReturnType<typeof GamePane> | undefined = $state();
   let codePane: ReturnType<typeof CodePane> | undefined = $state();
 
@@ -52,7 +55,19 @@
     errorLine = d.line;
   }
 
+  function celebrate(): void {
+    celebrations++;
+    celebrating = true;
+    setTimeout(() => (celebrating = false), 900);
+  }
+
+  function gameCenter(): { x: number; y: number } {
+    const r = document.querySelector('.game .machine')?.getBoundingClientRect();
+    return r ? { x: r.left + r.width / 2, y: r.top + r.height / 2 } : { x: innerWidth / 2, y: innerHeight / 2 };
+  }
+
   function run(): void {
+    const wasDone = engine.exercise?.done ?? false;
     const result = engine.run();
     liveError = null;
     version++;
@@ -60,6 +75,7 @@
     if (result.kind === 'checked') {
       errorLine = null;
       game?.start(engine.exercise!.code);
+      if (result.passed && !wasDone) celebrate();
     } else {
       errorLine = result.diagnostic.line;
       game?.stop();
@@ -112,38 +128,44 @@
   </header>
 
   <aside class="guide">
-    <BitBubble prompt={view.texts.prompt} hints={view.hints} result={view.exercise?.result ?? null}
-      {liveError} checkTexts={lesson.texts.checks} success={view.texts.success} />
+    {#key view.step.id}
+      <BitBubble pages={promptPages(view.texts)} hints={view.hints} result={view.exercise?.result ?? null}
+        {liveError} checkTexts={lesson.texts.checks} success={view.texts.success} {celebrating} />
+    {/key}
     {#if view.exercise}
       <div class="actions">
         <button onclick={hint} disabled={!view.moreHints} title={t('hintTitle')}>{t('hint')}</button>
         <button onclick={reset}>{t('reset')}</button>
       </div>
       {#if view.exercise.done}
-        <p class="stars" aria-label={t('starsLabel')}>{'⭐'.repeat(view.exercise.stars)}</p>
+        <p class="stars" aria-label={t('starsLabel')}>
+          {#each Array.from({ length: view.exercise.stars }) as _, i (i)}<span style="animation-delay: {i * 200}ms">⭐</span>{/each}
+        </p>
       {/if}
     {/if}
-    {#if view.canContinue}
-      {#if !view.isLast}
-        <button class="primary" onclick={next}>{t('continue')}</button>
-      {:else}
-        <p class="done">{t('lessonDone')}</p>
-        {#if hasNextLesson}
-          <button class="primary" onclick={nextLesson}>{t('nextLesson')}</button>
-        {:else}
-          <p class="done">{t('allDone')}</p>
-        {/if}
-      {/if}
+    {#if view.canContinue && view.isLast}
+      <p class="done">{t('lessonDone')}</p>
+      {#if !hasNextLesson}<p class="done">{t('allDone')}</p>{/if}
     {/if}
   </aside>
 
   <main class="code">
+    <div class="toolbar">
+      {#if isExercise(view.step)}
+        <span class="shortcut">{t('runShortcut')}</span>
+        <button class="run" onclick={run}>{t('run')}</button>
+      {/if}
+      {#if view.canContinue && !view.isLast}
+        {#key view.step.id}<button class="primary next" onclick={next}>{t('continue')}</button>{/key}
+      {:else if view.canContinue && hasNextLesson}
+        <button class="primary next" onclick={nextLesson}>{t('nextLesson')}</button>
+      {/if}
+    </div>
     {#if isExercise(view.step) && view.exercise}
       {#key `${view.step.id}/${resetCount}`}
         <CodePane bind:this={codePane} source={view.exercise.source} foldLabels={lesson.texts.folds}
-          {errorLine} onChange={changed} />
+          {errorLine} onChange={changed} onRun={run} />
       {/key}
-      <button class="run" onclick={run}>{t('run')}</button>
     {:else if view.step.kind === 'explain'}
       <ExplainCard card={view.step.card} />
     {/if}
@@ -156,3 +178,5 @@
     {/if}
   </section>
 </div>
+
+<Confetti trigger={celebrations} origin={gameCenter} />

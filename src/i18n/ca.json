@@ -105,7 +105,11 @@
     "mouseCoords": "x: {x}   y: {y}",
     "variablesTitle": "Les teves variables",
     "foldLines": "▸ {label} ({lines} línies amagades)",
-    "starsLabel": "Estrelles d'aquest exercici:"
+    "starsLabel": "Estrelles d'aquest exercici:",
+    "skipHint": "Fes clic per anar més de pressa",
+    "pageLabel": "Bafarada {n}",
+    "replay": "↺ Torna-m'ho a dir",
+    "runShortcut": "Ctrl+Enter"
   },
   "params": {
     "InitWindow": [

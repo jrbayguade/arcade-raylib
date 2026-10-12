@@ -18,7 +18,12 @@ export interface ExplainStep { kind: 'explain'; id: string; card: 'grid' | 'vari
 
 export type Step = ExerciseStep | ExplainStep;
 
-export interface StepTexts { prompt: string; hints?: string[]; success?: string }
+/** `prompt` can be split into short pages that Bit types one after another; the last one stays on screen. */
+export interface StepTexts { prompt: string | string[]; hints?: string[]; success?: string }
+
+export function promptPages(texts: StepTexts): string[] {
+  return Array.isArray(texts.prompt) ? texts.prompt : [texts.prompt];
+}
 
 export interface LessonTexts {
   title: string;

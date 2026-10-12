@@ -4,11 +4,12 @@
   import { t } from '../i18n/i18n';
   import type { LessonSource } from '../lessons/source';
 
-  let { source, foldLabels, errorLine, onChange }: {
+  let { source, foldLabels, errorLine, onChange, onRun }: {
     source: LessonSource;
     foldLabels: Record<string, string>;
     errorLine: number | null;
     onChange: (code: string) => void;
+    onRun: () => void;
   } = $props();
 
   let parent: HTMLDivElement;
@@ -20,6 +21,7 @@
       source,
       foldLabel: (key, lines) => t('foldLines', { lines, label: foldLabels[key] ?? key }),
       onChange,
+      onRun,
     });
     return () => editor?.destroy();
   });

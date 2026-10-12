@@ -47,6 +47,8 @@ try {
         await page.locator('.cm-zone span', { hasText: /^185$/ }).first().dblclick();
         await page.keyboard.type('50');
         await runAndExpectSuccess(label);
+        check(`${label}: confetti on success`, await visible(page.locator('.confetti[data-active="true"]'), 1000).catch(() => false) || (await page.locator('.confetti').getAttribute('data-active')) === 'true');
+        check(`${label}: Continue button appears`, await visible(page.locator('.toolbar .next')));
         check(`${label}: two stars without hints`, (await page.locator('.stars').innerText()).includes('⭐⭐'));
       } else {
         if (kind === 'hint') {
@@ -54,7 +56,13 @@ try {
           check(`${label}: hint shown`, await visible(page.locator('.bubble .hint')));
         }
         await page.evaluate(() => window.__bitArcade.solve());
-        await runAndExpectSuccess(label);
+        if (kind === 'ctrlEnter') {
+          await page.locator('.cm-content').focus();
+          await page.keyboard.press('Control+Enter');
+          check(`${label}: Ctrl+Enter runs the code`, await visible(page.locator('.bubble .success')));
+        } else {
+          await runAndExpectSuccess(label);
+        }
         if (kind === 'hint') check(`${label}: one star after a hint`, (await page.locator('.stars').innerText()).trim() === '⭐');
         if (kind === 'vars') check(`${label}: variables panel`, await visible(page.locator('.vars .box')));
       }
@@ -67,7 +75,23 @@ try {
   check('fold placeholders shown', await visible(page.locator('.cm-lesson-fold')));
   check('parameter hints shown', (await page.locator('.cm-param-hint').allInnerTexts()).includes('alçada:'));
 
-  await playLesson(0, ['type185', 'explain', 'hint', 'solve', 'solve', 'solve']);
+  // Bit types the first bubble, then moves on by itself; a click skips the wait
+  const say = page.locator('.bubble .say');
+  check('Bit starts typing', (await say.innerText()).length < 'Hola! Sóc en Bit 🤖.'.length + 2);
+  check('Bit finishes the first bubble', await visible(page.locator('.bubble .say', { hasText: 'Sóc en Bit' })));
+  check('one dot per bubble', (await page.locator('.pager .dot').count()) === 5);
+  await say.click();
+  await say.click();
+  check('a click jumps to the next bubble', await visible(page.locator('.bubble .say', { hasText: 'espatllada' }), 1500));
+  check('bubbles move on by themselves', await visible(page.locator('.bubble .say', { hasText: 'zona groga' }), 9000));
+  const runBox = await button('▶ Executa').boundingBox();
+  check('Run button in view at 1600×900', runBox !== null && runBox.y >= 0 && runBox.y + runBox.height <= 900);
+  await page.setViewportSize({ width: 1366, height: 768 });
+  const smallBox = await button('▶ Executa').boundingBox();
+  check('Run button in view at 1366×768', smallBox !== null && smallBox.y >= 0 && smallBox.y + smallBox.height <= 768);
+  await page.setViewportSize({ width: 1600, height: 900 });
+
+  await playLesson(0, ['type185', 'explain', 'hint', 'ctrlEnter', 'solve', 'solve']);
   check('lesson 0 done', await visible(page.getByText('Has acabat la lliçó!')));
   await button('Següent lliçó →').click();
   // The hash change re-mounts the screen in a later task: wait for the new lesson, not the old editor.
@@ -84,7 +108,7 @@ try {
   await page.keyboard.press('End');
   await page.keyboard.press('Backspace');
   await button('▶ Executa').click();
-  check('compile error explained', (await page.locator('.bubble .error').innerText()).includes('Falta un ;'));
+  check('compile error explained', await visible(page.locator('.bubble .error', { hasText: 'Falta un ;' })));
   check('error line marked', await visible(page.locator('.cm-error-line')));
 
   // Triple-click selects the line *with* its newline: typing must replace the zone line, not append to it

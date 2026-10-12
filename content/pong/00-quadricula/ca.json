@@ -6,7 +6,13 @@
   },
   "steps": {
     "observe": {
-      "prompt": "Hola! Sóc en Bit 🤖. Aquesta màquina està espatllada i l'arreglarem junts. Només pots escriure a la zona groga; la resta del codi ja està fet (les barres grises amaguen trossos: fes-hi clic per obrir-los). Les paraules grises x:, y:... no són codi: només t'expliquen què vol dir cada número. La línia groga dibuixa la pala de l'esquerra. Canvia el 185 per un 50 i prem ▶ Executa. Què passa?",
+      "prompt": [
+        "Hola! Sóc en Bit 🤖.",
+        "Aquesta màquina està espatllada i l'arreglarem junts.",
+        "Només pots escriure a la zona groga. La resta del codi ja està fet: les barres grises amaguen trossos, i si hi fas clic, s'obren.",
+        "Les paraules grises x:, y:... no són codi: només t'expliquen què vol dir cada número.",
+        "La línia groga dibuixa la pala de l'esquerra. Canvia el 185 per un 50 i prem ▶ Executa. Què passa?"
+      ],
       "hints": [
         "Busca el número 185 a la línia groga. És el segon número.",
         "Fes doble clic damunt del 185 per seleccionar-lo i escriu 50.",
@@ -15,10 +21,19 @@
       "success": "La pala ha pujat! Acabes de moure el teu primer objecte. 🎉"
     },
     "grid": {
-      "prompt": "La pantalla del joc és com un full quadriculat de 800 × 450 punts. Cada punt té dues coordenades: la x compta cap a la dreta des de l'esquerra, i la y compta cap avall des de dalt. Compte: la y creix cap avall! Per això, quan has posat un número més petit, la pala ha pujat. La x i la y d'un rectangle marquen la seva cantonada de dalt a l'esquerra. Passa el ratolí per sobre del joc i mira els números."
+      "prompt": [
+        "La pantalla del joc és com un full quadriculat de 800 × 450 punts.",
+        "Cada punt té dues coordenades: la x compta cap a la dreta des de l'esquerra, i la y compta cap avall des de dalt.",
+        "Compte: la y creix cap avall! Per això, quan has posat un número més petit, la pala ha pujat.",
+        "La x i la y d'un rectangle marquen la seva cantonada de dalt a l'esquerra.",
+        "Passa el ratolí per sobre del joc i mira els números. Quan ho tinguis clar, prem Continua."
+      ]
     },
     "floor": {
-      "prompt": "Ara posa la pala tocant a terra, a baix de tot. Pista de detectiu: la pantalla fa 450 d'alt i la pala en fa 80.",
+      "prompt": [
+        "Ara posa la pala tocant a terra, a baix de tot.",
+        "Pista de detectiu: la pantalla fa 450 d'alt i la pala en fa 80. On ha de començar la pala?"
+      ],
       "hints": [
         "Has de canviar la y, que és el segon número.",
         "Si la pala comença a la y i fa 80 d'alt, s'acaba a y + 80. Ha d'acabar a 450.",
@@ -27,7 +42,9 @@
       "success": "Perfecte, tocant a terra! Has fet servir les coordenades com un expert."
     },
     "tall": {
-      "prompt": "Aquesta pala és massa petita per parar res. Fes-la el doble d'alta.",
+      "prompt": [
+        "Aquesta pala és massa petita per parar res. Fes-la el doble d'alta."
+      ],
       "hints": [
         "Quin número té l'etiqueta grisa alçada: al davant?",
         "L'alçada ara és 80. El doble de 80 és...",
@@ -36,7 +53,11 @@
       "success": "Ara sí que és una pala de veritat! 💪"
     },
     "order": {
-      "prompt": "Ups! Algú ha desordenat el codi i la pala de l'esquerra ha desaparegut. L'ordinador fa les instruccions d'una en una, de dalt a baix. Per què no es veu la pala? Arregla-ho.",
+      "prompt": [
+        "Ups! Algú ha desordenat el codi i la pala de l'esquerra ha desaparegut.",
+        "L'ordinador fa les instruccions d'una en una, de dalt a baix.",
+        "Per què no es veu la pala? Arregla-ho."
+      ],
       "hints": [
         "ClearBackground pinta tota la pantalla de negre.",
         "Si primer dibuixes la pala i després ho pintes tot de negre, què queda?",
@@ -45,7 +66,12 @@
       "success": "Exacte: l'ordre importa! Primer s'esborra la pantalla, després es dibuixa."
     },
     "ball": {
-      "prompt": "Un Pong sense pilota no és un Pong! Dibuixa una pilota al mig de la pantalla amb `DrawCircle`. S'escriu com `DrawRectangle`, però amb 4 valors: x, y, radi i color. Atenció: en un cercle, la x i la y són el centre. Escriu Draw..., tria `DrawCircle` de la llista amb Enter i omple els forats (Tab salta al següent). Els colors van en anglès i en majúscules: `YELLOW`. Les línies que comencen amb // són notes per a persones: l'ordinador se les salta.",
+      "prompt": [
+        "Un Pong sense pilota no és un Pong!",
+        "La pilota es dibuixa amb `DrawCircle`. S'escriu com `DrawRectangle`, però amb 4 valors: x, y, radi i color. En un cercle, la x i la y són el centre.",
+        "Les línies que comencen amb // són notes per a persones: l'ordinador se les salta.",
+        "Escriu Draw..., tria `DrawCircle` de la llista amb Enter i omple els forats (Tab salta al següent). Els colors van en anglès i majúscules: `YELLOW`. Posa la pilota al mig de la pantalla!"
+      ],
       "hints": [
         "El mig de la pantalla és la meitat de 800 i la meitat de 450.",
         "`DrawCircle` necessita x, y, radi i color. Un radi de 8 queda bé.",
