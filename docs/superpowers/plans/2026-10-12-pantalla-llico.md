@@ -23,6 +23,15 @@
 - Sense progrés desat; navegació per hash `#/pong/<lliçó>/<pas>`.
 - `index.html` = app de lliçons; `demo.html` = demo anterior sense canvis de comportament.
 
+## Revisió del pla (2026-10-12) i aprovació
+
+Revisat per tres perfils abans d'executar-lo; l'usuari va delegar l'aprovació a les conclusions de la revisió.
+
+- **Docent de secundària (pedagogia i català):** s'han reescrit les consignes d'`observe`, `grid` i `ball` (lliçó 0) per explicar la zona groga, els plecs, les etiquetes grises, el centre del cercle i els comentaris; corregit el català de `grid`; pista de tallar i enganxar a `order`. A la lliçó 1, les variables es declaren **sempre abans del bucle** (abans `height` i `ball` les declaraven a dins, cosa que la lliçó 2 hauria hagut de desfer): el codi bloquejat ja fa servir `alcada` / `pilotaX` / `pilotaY` i el repte és crear-les. Textos de `box` (el signe =, majúscules), `height` ("amb c, sense ç") i diversos missatges de la interfície.
+- **Enginyer de frontend (Svelte/CodeMirror):** `svelte-check` no s'instal·la (incompatible amb TS 7; s'executa aïllat amb `npx`); `vite.config.ts` sense `node:url` i amb `rolldownOptions`; subpaquets de CodeMirror instal·lats explícitament; temporitzador del ressaltat de variables fora de la neteja de l'efecte; classes SVG que xocaven amb el CSS global.
+- **QA:** va executar tots els tests del pla en una còpia (tots en verd, comptes correctes). Aplicat: esperes reals a la prova de navegador (`waitFor`), `try/finally`, port lliure, Ctrl+A i obrir plecs a l'e2e; test de desfer/refer a la zona; errors del joc en marxa arriben al Bit; `reset` atura el joc; comprovacions més estrictes (pilota visible i no negra, `ClearBackground` obligatori a `order`, pales a dalt de tot a `together`, `alcada > 0`, pilota centrada via les variables).
+- **Ajornat (menor):** després d'una execució fallida en un exercici ja resolt, el Bit llista ✘ tot i que "Continua" segueix actiu; si l'alumne canvia la x en lloc de la y a `observe`, el missatge "la pala s'ha mogut ✘" és poc precís; `int a = alcada;` fet servir indirectament no passa `height`.
+
 ## Review Focus
 
 1. **Ctrl+A i escriure, o enganxar un bloc que sobresurt de la zona** — el codi bloquejat no s'ha de perdre mai; el canvi sencer es rebutja. Test: Task 8.
