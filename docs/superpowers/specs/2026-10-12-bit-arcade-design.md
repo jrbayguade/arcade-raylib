@@ -124,11 +124,13 @@ Cada lliçó ensenya **un sol concepte**, amb aquesta seqüència de passos:
   - Funció desconeguda o nombre d'arguments incorrecte.
   - `if` sense claus.
   - Construcció no suportada, amb un missatge específic ("Les funcions pròpies encara no les hem après").
-- **Avisos (no aturen l'execució):** `if (x = 5)` ("Has posat `=` (guardar) en lloc de `==` (comparar)") i divisió entera que trunca.
+  - `if (x = 5)`: com que al mini-C l'assignació no és una expressió, és un error ("Has posat `=` (guardar) en lloc de `==` (comparar)").
+  - Accents o `ç` en un nom de variable (`puntuació`), amb un missatge específic.
+- **Avisos (no aturen l'execució):** divisió entera que trunca de debò (`7 / 2`), una sola vegada per operació.
 - **Errors en execució:**
-  - Divisió per zero.
+  - Divisió entera per zero.
   - Massa operacions en un sol frame (més de 100.000), amb la línia del bucle sospitós.
-  - Arribar a `return` sense haver cridat `InitWindow`.
+  - Dibuixar abans d'haver cridat `InitWindow`.
 
 ## 7. Currículum de la màquina 1 (Pong)
 
