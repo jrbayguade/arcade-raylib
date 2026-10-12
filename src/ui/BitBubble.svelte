@@ -3,7 +3,7 @@
   import { formatDiagnostic, t } from '../i18n/i18n';
   import type { Diagnostic } from '../lang/diagnostics';
   import type { Evaluation } from '../lessons/checks';
-  import { prefersReducedMotion } from './motion';
+  import { prefersReducedMotion, rotateRequired } from './motion';
   import RichText from './RichText.svelte';
   import TypedText from './TypedText.svelte';
   import { sounds } from './sound';
@@ -37,7 +37,7 @@
     let raf = 0;
     const frame = (now: number) => {
       const before = tw.text.length;
-      tw.tick(Math.min(now - last, 100));
+      tw.tick(rotateRequired() ? 0 : Math.min(now - last, 100)); // paused under the rotate overlay
       last = now;
       if (tw.text.length > before && now - lastTick > 55) {
         sounds.play('type', { pitch: 0.9 + Math.random() * 0.2 });

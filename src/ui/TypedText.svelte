@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { prefersReducedMotion } from './motion';
+  import { prefersReducedMotion, rotateRequired } from './motion';
   import RichText from './RichText.svelte';
   import { Typewriter } from './typewriter';
 
@@ -18,7 +18,7 @@
     let last = performance.now();
     let raf = 0;
     const frame = (now: number) => {
-      tw.tick(Math.min(now - last, 100));
+      tw.tick(rotateRequired() ? 0 : Math.min(now - last, 100)); // paused under the rotate overlay
       last = now;
       shown = tw.text;
       if (!tw.finished) raf = requestAnimationFrame(frame);

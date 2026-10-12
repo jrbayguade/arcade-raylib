@@ -174,6 +174,11 @@ try {
     if (w < h) {
       check('phone upright: asks to rotate', await visible(phone.locator('.rotate')));
       check('phone upright: nothing wider than the screen', (await phone.evaluate(() => document.documentElement.scrollWidth)) <= w);
+      await phone.waitForTimeout(3000);
+      await phone.setViewportSize({ width: h, height: w });
+      await phone.locator('.cm-editor').waitFor();
+      const first = await phone.locator('.bubble .say .typed').innerText();
+      check('phone: Bit waits while the rotate message is shown', (await phone.locator('.pager .dot').first().getAttribute('class')).includes('on') && first.length < 'Hola! Sóc en Bit 🤖.'.length + 2, JSON.stringify(first));
     } else {
       await phone.locator('.cm-editor').waitFor();
       check('phone sideways: no rotate message', !(await phone.locator('.rotate').isVisible()));
