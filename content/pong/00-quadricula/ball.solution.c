@@ -13,7 +13,6 @@ int main(void)
         DrawRectangle(770, 185, 10, 80, WHITE);
 //@edit
         DrawRectangle(20, 185, 10, 80, WHITE);
-        // ✏️ Dibuixa la pilota aquí, a sota d'aquesta línia
         DrawCircle(400, 225, 8, YELLOW);
 //@end
         EndDrawing();

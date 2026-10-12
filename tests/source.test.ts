@@ -43,3 +43,18 @@ describe('parseLessonSource', () => {
     expect(() => parseLessonSource('//@edit\na\n//@end\n//@foo\n')).toThrow(/unknown marker/);
   });
 });
+
+describe('placeholders', () => {
+  it('turns //@placeholder into an empty, indented line inside the zone with a ghost text', () => {
+    const src = parseLessonSource('a\n//@edit\n    int x = 1;\n//@placeholder crea aquí la caixa\n//@end\nb\n');
+    expect(src.code).toBe('a\n    int x = 1;\n    \nb\n');
+    expect(src.placeholders).toEqual([{ pos: 21, text: 'crea aquí la caixa' }]);
+    expect(src.code.slice(src.editable.from, src.editable.to)).toBe('    int x = 1;\n    ');
+  });
+  it('has no placeholders by default', () => {
+    expect(parseLessonSource('//@edit\na\n//@end\n').placeholders).toEqual([]);
+  });
+  it('only allows placeholders inside the zone', () => {
+    expect(() => parseLessonSource('//@placeholder x\n//@edit\na\n//@end\n')).toThrow(/inside the \/\/@edit zone/);
+  });
+});

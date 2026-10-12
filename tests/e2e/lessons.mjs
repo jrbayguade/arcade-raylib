@@ -174,6 +174,14 @@ try {
   await page.locator('.cm-editor').waitFor();
   check('broken starting code shows TV static', await visible(page.locator('.cabinet .tv-static')));
 
+  // The empty line in the zone shows a ghost hint that is not code: typing there replaces it
+  check('ghost hint on the empty line', await visible(page.locator('.cm-ghost', { hasText: 'crea aquí la caixa alcada' })));
+  check('the ghost hint is not part of the code', !(await page.evaluate(() => window.__bitArcade.code())).includes('crea aquí'));
+  await page.locator('.cm-line:has(.cm-ghost)').click(); // a kid clicks the grey words: they let the click through
+  await page.keyboard.type('int alcada = 120;');
+  check('typing makes the ghost go away', (await page.locator('.cm-ghost').count()) === 0);
+  await runAndExpectSuccess('ghost line');
+
   // Sounds: run, success and stars are heard; the mute button silences and is remembered
   await page.goto(`${base}#/pong/0/0`);
   await page.reload();
@@ -210,7 +218,13 @@ try {
       check('phone sideways: Run in view', run !== null && run.y + run.height <= h);
       check('phone sideways: buttons are at least 44 px tall', run !== null && run.height >= 44);
       check('phone sideways: Bit opens his bubble while he talks', await visible(phone.locator('.talk.open .bubble')));
+      const bubbleBox = await phone.locator('.talk .bubble').boundingBox();
+      const zoneBox = await phone.locator('.cm-zone').first().boundingBox();
+      check('phone sideways: the open bubble does not cover the yellow zone',
+        bubbleBox.x >= zoneBox.x + zoneBox.width || bubbleBox.y >= zoneBox.y + zoneBox.height, JSON.stringify([bubbleBox, zoneBox]));
+      check('phone sideways: x: and y: hints are shown', (await phone.locator('.cm-param-hint:visible').allInnerTexts()).join(' ').includes('y:'));
       await phone.locator('.cm-zone').getByText('WHITE').first().click();
+      check('phone sideways: a tap on the zone reaches the editor', await visible(phone.locator('.cm-editor.cm-focused')));
       await phone.keyboard.press('End');
       check('phone sideways: symbols hidden until ⌨️ is tapped', !(await phone.locator('.symbols').isVisible()));
       const editorTop = (await phone.locator('.code-pane').boundingBox()).y;

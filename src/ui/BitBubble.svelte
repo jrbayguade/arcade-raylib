@@ -23,7 +23,10 @@
   } = $props();
 
   // The bubble is re-keyed per step, so the pages it was created with are the ones it types.
-  const tw = untrack(() => new Typewriter(pages, prefersReducedMotion() ? { ...BIT_SPEED, charsPerSecond: Infinity } : BIT_SPEED));
+  // On a landscape phone Bit covers the machine while he talks, so he talks faster and steps aside sooner.
+  const phone = typeof matchMedia === 'function' && matchMedia('(max-height: 560px)').matches;
+  const speed = phone ? { ...BIT_SPEED, charsPerSecond: BIT_SPEED.charsPerSecond * 1.5, pausePerCharMs: BIT_SPEED.pausePerCharMs * 0.7 } : BIT_SPEED;
+  const tw = untrack(() => new Typewriter(pages, prefersReducedMotion() ? { ...BIT_SPEED, charsPerSecond: Infinity } : speed));
   let text = $state('');
   let page = $state(0);
   let typing = $state(untrack(() => pages.length > 0));
@@ -53,7 +56,7 @@
       sync();
       if (tw.finished && !folded) {
         folded = true;
-        setTimeout(() => { if (!message) open = false; }, 2500);
+        setTimeout(() => { if (!message) open = false; }, phone ? 1500 : 2500);
       }
       raf = requestAnimationFrame(frame);
     };

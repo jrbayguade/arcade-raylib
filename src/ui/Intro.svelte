@@ -110,14 +110,16 @@
           <div class="bubble"><TypedText text={t('introDemo')} cps={45} /></div>
         </div>
       {:else if beat === 'promise'}
-        <div class="big-cab cabinet">
-          <div class="marquee">PONG</div>
-          <div class="mini"><i class="p l play-l"></i><i class="p r play-r"></i><i class="b bounce"></i></div>
-          <div style="text-align:center; font-size: 30px">⭐⭐⭐</div>
-        </div>
-        <div class="say-line" style="left: 52vw; top: 30vh">
-          <BitFace mood="happy" size={80} />
-          <div class="bubble"><TypedText text={t('introPromise')} cps={45} /></div>
+        <div class="promise-row">
+          <div class="big-cab cabinet">
+            <div class="marquee">PONG</div>
+            <div class="mini"><i class="p l play-l"></i><i class="p r play-r"></i><i class="b bounce"></i></div>
+            <div style="text-align:center; font-size: 30px">⭐⭐⭐</div>
+          </div>
+          <div class="say-line">
+            <BitFace mood="happy" size={80} />
+            <div class="bubble"><TypedText text={t('introPromise')} cps={45} /></div>
+          </div>
         </div>
       {:else if beat === 'go'}
         <div class="row go-row">

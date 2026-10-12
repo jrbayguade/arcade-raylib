@@ -13,6 +13,7 @@ import type { LessonSource } from '../lessons/source';
 import { RaylibHost } from '../runtime/raylib';
 import { buildCompletions, completionSource } from './completions';
 import { errorLineField, setErrorLine } from './errorLine';
+import { ghostText } from './ghost';
 import { computeParamHints, hintsInRange } from './paramHints';
 import { editableZone, zoneField } from './zone';
 
@@ -22,6 +23,7 @@ class HintWidget extends WidgetType {
   toDOM() {
     const span = document.createElement('span');
     span.className = 'cm-param-hint';
+    span.dataset.label = this.label;
     span.textContent = this.label;
     return span;
   }
@@ -54,6 +56,7 @@ export function lessonExtensions(source: LessonSource, onChange: (code: string) 
     autocompletion({ override: [completionSource(completions)], activateOnTyping: true }),
     keymap.of([...closeBracketsKeymap, ...completionKeymap, ...defaultKeymap, ...historyKeymap, indentWithTab]),
     editableZone(source.editable, onBlocked),
+    ghostText(source.placeholders ?? []),
     errorLineField,
     paramHints,
     EditorView.updateListener.of((u) => { if (u.docChanged) onChange(u.state.doc.toString()); }),
@@ -111,7 +114,8 @@ export function createLessonEditor(opts: {
     ] }),
   });
   view.dispatch({ effects: source.folds.map((f) => foldEffect.of({ from: f.from, to: f.to })) });
-  view.dispatch({ selection: { anchor: source.editable.to }, scrollIntoView: true });
+  // Start the cursor on the ghost line if there is one (that is where the kid has to write).
+  view.dispatch({ selection: { anchor: source.placeholders?.[0]?.pos ?? source.editable.to }, scrollIntoView: true });
 
   return {
     view,

@@ -172,3 +172,17 @@ describe('blocked edits', () => {
     expect(blocked).toBe(1);
   });
 });
+
+import { ghostText, shownGhosts } from '../src/editor/ghost';
+
+describe('ghost text', () => {
+  it('shows on an empty zone line and disappears as soon as the kid types there', () => {
+    const doc = 'a\n    x;\n    \nb\n';
+    let s = EditorState.create({ doc, extensions: ghostText([{ pos: 13, text: 'escriu aquí' }]) });
+    expect(shownGhosts(s)).toEqual([{ pos: 13, text: 'escriu aquí' }]);
+    s = s.update({ changes: { from: 0, insert: 'zz' } }).state;
+    expect(shownGhosts(s)).toEqual([{ pos: 15, text: 'escriu aquí' }]);
+    s = s.update({ changes: { from: 15, insert: 'int' } }).state;
+    expect(shownGhosts(s)).toEqual([]);
+  });
+});

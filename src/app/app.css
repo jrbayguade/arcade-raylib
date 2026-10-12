@@ -79,12 +79,13 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 
 /* The code: as tall as it needs, no more */
 .work { grid-area: work; position: relative; min-height: 0; display: flex; flex-direction: column; }
-.code-pane { display: flex; min-height: 0; height: 100%; border: 2px solid #3a3358; border-radius: 10px; overflow: hidden; }
+.code-pane { display: flex; min-height: 0; max-height: 100%; border: 2px solid #3a3358; border-radius: 10px; overflow: hidden; }
 .code-pane .cm-editor { flex: 1; max-height: 100%; font-size: clamp(14px, 0.5vw + 8px, 19px); }
 .code-pane.blocked .cm-zone { animation: zone-flash 0.7s ease-out; }
 .code-pane .cm-zone { background: rgba(255, 225, 77, 0.22); box-shadow: inset 4px 0 0 var(--yellow); }
 .code-pane .cm-error-line { background: rgba(255, 80, 80, 0.25); text-decoration: underline wavy var(--red); }
 .code-pane .cm-param-hint { color: #8f88bd; font-style: italic; font-size: 0.8em; margin-right: 2px; }
+.code-pane .cm-ghost { color: #8f88bd; font-style: italic; opacity: 0.85; pointer-events: none; }
 .code-pane .cm-lesson-fold { color: var(--muted); background: #1d1446; border-radius: 4px; padding: 0 8px; cursor: pointer; }
 
 /* One row of actions under the code: Continue takes Run's place */
@@ -109,7 +110,7 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 .symbols button { min-width: 38px; padding: 6px 0; font: 600 16px ui-monospace, Consolas, monospace; box-shadow: none; }
 
 /* The machine: an arcade cabinet with a lit sign, a CRT screen and the variables as chips */
-.machine-area { grid-area: machine; min-height: 0; }
+.machine-area { grid-area: machine; min-height: 0; align-self: center; }
 .cabinet {
   background: linear-gradient(#1b1240, #120b2c); border: 3px solid var(--pink); border-radius: 18px 18px 8px 8px;
   box-shadow: 0 0 18px var(--pink); padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 10px;
@@ -192,7 +193,8 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
   }
   .ticket-text { flex: 1; min-width: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.3; }
   .ticket-more { color: var(--muted); }
-  .talk .bubble { display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 30; font-size: 13px; padding: 8px 12px; line-height: 1.4; max-height: 52vh; overflow: auto; }
+  /* Open, Bit talks over the machine column: the code stays visible and tappable */
+  .talk .bubble { display: none; position: fixed; top: 28px; right: 10px; width: calc(42vw - 20px); z-index: 30; font-size: 13px; padding: 8px 12px; line-height: 1.4; max-height: calc(100vh - 40px); overflow: auto; }
   .talk.open .bubble { display: block; }
   .talk .bubble .mission { display: none; } /* already in the ticket */
   .mission { padding: 4px 10px; }
@@ -200,10 +202,12 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
   .code-pane { max-height: 100%; }
   .code-pane .cm-editor { font-size: 12px; }
   .code-pane .cm-param-hint { display: none; }
+  .code-pane .cm-param-hint[data-label='x:'], .code-pane .cm-param-hint[data-label='y:'] { display: inline; }
   .code-pane .cm-lesson-fold { white-space: nowrap; }
   .cabinet { padding: 5px 8px 8px; gap: 5px; border-width: 2px; }
   .marquee { font-size: 13px; letter-spacing: 6px; }
   .actions { gap: 6px; justify-content: flex-end; flex-wrap: nowrap; }
+  .machine-area { align-self: start; }
   .actions button { min-height: 44px; white-space: nowrap; }
   .actions .run.secondary .run-label { display: none; }
   .actions.solved .hint-btn { display: none; }
@@ -257,7 +261,9 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 .intro .mini .b { position: absolute; width: 4%; aspect-ratio: 1; border-radius: 50%; background: #fdf900; }
 .intro .mini .b.bounce { animation: pong-ball 1.8s linear infinite; }
 .intro .scr .mini { aspect-ratio: auto; height: 100%; }
-.intro .big-cab { position: absolute; left: 8vw; top: 10vh; width: min(38vw, 440px); }
+.intro .promise-row { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 4vw; padding: 0 6vw; }
+.intro .big-cab { flex: none; width: min(38vw, 440px); }
+.intro .promise-row .say-line { position: static; flex: 0 1 520px; }
 .intro .big-cab .mini { border-color: var(--green); box-shadow: 0 0 18px var(--green); }
 .intro .go { position: absolute; left: 0; right: 0; bottom: 6vh; text-align: center; }
 .intro .go button { font-size: 24px; padding: 12px 34px; }
@@ -275,11 +281,13 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
   .intro .go { bottom: 3vh; }
   .intro .go button { font-size: 17px; padding: 8px 22px; }
   .intro .say-line .bubble { font-size: 14px; }
+  .intro .row.ghost { display: none; } /* the bubble would sit on their roofs */
+  .intro .big-cab { width: min(34vw, 260px); }
 }
 
 /* Animations */
 @keyframes pulse { 50% { opacity: 0.5; } }
-@keyframes zone-flash { 30% { background: rgba(255, 225, 77, 0.65); } }
+@keyframes zone-flash { 30% { box-shadow: inset 4px 0 0 var(--yellow), inset 0 0 0 2px var(--yellow), 0 0 12px var(--yellow); } }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes blink { 50% { opacity: 0; } }
 @keyframes blink-eye { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }

@@ -1,8 +1,11 @@
 export interface Range { from: number; to: number }
 export interface Fold extends Range { key: string; lines: number }
-export interface LessonSource { code: string; editable: Range; folds: Fold[] }
+/** Ghost text drawn on an empty line of the zone (not part of the code: it vanishes when the kid types). */
+export interface Placeholder { pos: number; text: string }
+export interface LessonSource { code: string; editable: Range; folds: Fold[]; placeholders: Placeholder[] }
 
 const FOLD = /^\/\/@fold\s+(\w+)$/;
+const PLACEHOLDER = /^\/\/@placeholder\s+(.+)$/;
 
 /** Reads an exercise file: marker comments (`//@edit`, `//@end`, `//@fold key`, `//@endfold`) on their own
  *  lines are removed; the zone and folds are returned as offsets into the remaining code. */
@@ -14,6 +17,7 @@ export function parseLessonSource(raw: string): LessonSource {
   let zone: { start: number; end: number } | null = null;
   let foldOpen: { key: string; start: number } | null = null;
   const folds: { key: string; start: number; end: number }[] = [];
+  const ghosts: { line: number; indent: number; text: string }[] = [];
 
   lines.forEach((line, i) => {
     const marker = line.trim();
@@ -29,6 +33,14 @@ export function parseLessonSource(raw: string): LessonSource {
       if (out.length === editOpen) throw new Error(`${where}: the //@edit zone is empty`);
       zone = { start: editOpen, end: out.length - 1 };
       editOpen = null;
+      return;
+    }
+    const ghost = PLACEHOLDER.exec(marker);
+    if (ghost) {
+      if (editOpen === null) throw new Error(`${where}: a placeholder must be inside the //@edit zone`);
+      const indent = /^\s*/.exec(out[out.length - 1] ?? '')?.[0] ?? '';
+      ghosts.push({ line: out.length, indent: indent.length, text: ghost[1].trim() });
+      out.push(indent);
       return;
     }
     const fold = FOLD.exec(marker);
@@ -63,6 +75,7 @@ export function parseLessonSource(raw: string): LessonSource {
     code: out.join('\n') + '\n',
     editable: { from: starts[z.start], to: lineEnd(z.end) },
     folds: folds.map((f) => ({ key: f.key, from: starts[f.start], to: lineEnd(f.end), lines: f.end - f.start + 1 })),
+    placeholders: ghosts.map((g) => ({ pos: starts[g.line] + g.indent, text: g.text })),
   };
 }
 

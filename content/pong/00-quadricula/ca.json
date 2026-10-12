@@ -68,13 +68,12 @@
       "prompt": [
         "Un Pong sense pilota no és un Pong!",
         "La pilota es dibuixa amb `DrawCircle`. S'escriu com `DrawRectangle`, però amb 4 valors: x, y, radi i color. En un cercle, la x i la y són el centre.",
-        "Les línies que comencen amb // són notes per a persones: l'ordinador se les salta.",
         "Escriu Draw..., tria `DrawCircle` de la llista amb Enter i omple els forats (Tab salta al següent). Els colors van en anglès i majúscules: `YELLOW`. Posa la pilota al mig de la pantalla!"
       ],
       "hints": [
         "El mig de la pantalla és la meitat de 800 i la meitat de 450.",
         "`DrawCircle` necessita x, y, radi i color. Un radi de 8 queda bé.",
-        "Escriu a sota del comentari: `DrawCircle(400, 225, 8, YELLOW);`"
+        "A la línia buida, sota la pala, escriu: `DrawCircle(400, 225, 8, YELLOW);`"
       ],
       "success": "Ja tenim pilota! La màquina comença a tenir bona pinta. 🏓"
     }
