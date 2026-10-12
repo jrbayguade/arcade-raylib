@@ -144,8 +144,10 @@ try {
   const talkBox = await page.locator('.talk').boundingBox();
   check('1920×1080: the machine starts level with Bit', Math.abs((await page.locator('.machine-area').boundingBox()).y - talkBox.y) < 40);
   await page.goto(`${base}#/pong/0/1`);
+  await page.reload();
   await page.locator('.explain svg').waitFor();
   const nextBox = await page.locator('.actions').boundingBox();
+  check('an explanation opened by a link shows snow, not a black machine', await visible(page.locator('.cabinet .tv-static')));
   check('1920×1080: explanation step buttons in view', nextBox.y + nextBox.height <= 1080, JSON.stringify(nextBox));
   await page.setViewportSize({ width: 1600, height: 900 });
 

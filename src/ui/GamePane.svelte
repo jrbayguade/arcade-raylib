@@ -51,10 +51,18 @@
     void frame.offsetWidth;
     frame.classList.add('power');
     runner?.start(code);
+    running = true;
   }
 
   export function stop(): void {
     runner?.stop();
+    running = false;
+  }
+
+  let running = false;
+  /** Whether a program has been started (and not stopped) on this machine. */
+  export function isRunning(): boolean {
+    return running;
   }
 
   function track(e: MouseEvent): void {

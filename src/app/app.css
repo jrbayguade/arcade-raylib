@@ -156,7 +156,7 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 .grid-card .axis-label { fill: var(--yellow); font-size: 28px; font-weight: 700; }
 .grid-card .origin { fill: var(--muted); font-size: 18px; }
 .grid-card .grid-guide { stroke: var(--pink); stroke-dasharray: 6 6; }
-.grid-card .point { animation: fade-in 0.2s ease-out both; }
+.grid-card .point { animation: point-in 0.2s ease-out both; }
 .grid-card .dot { fill: var(--pink); }
 .grid-card .coord { fill: var(--text); font-size: 26px; font-family: ui-monospace, monospace; }
 .box-card .var-box { fill: #1d1446; stroke: var(--cyan); stroke-width: 4; }
@@ -303,6 +303,7 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 @keyframes pulse { 50% { opacity: 0.5; } }
 @keyframes zone-flash { 30% { box-shadow: inset 4px 0 0 var(--yellow), inset 0 0 0 2px var(--yellow), 0 0 12px var(--yellow); } }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes point-in { from { opacity: 0.4; } to { opacity: 1; } }
 @keyframes blink { 50% { opacity: 0; } }
 @keyframes blink-eye { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
 @keyframes fade-up { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }

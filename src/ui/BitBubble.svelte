@@ -75,7 +75,9 @@
     if (!message) return;
     open = true;
     if (!phone) return;
-    const id = setTimeout(() => (open = false), 4000);
+    // A success folds sooner: the stars are in the ticket's ✓ and the kid wants to see the game and the variables.
+    const success = message.kind === 'result' && message.feedback?.kind === 'success';
+    const id = setTimeout(() => (open = false), success ? 2500 : 4000);
     return () => clearTimeout(id);
   });
   /** What the folded ticket shows when Bit has answered: ✓ for a success, ! for anything else. */

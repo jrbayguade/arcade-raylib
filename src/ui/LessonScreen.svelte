@@ -91,7 +91,9 @@
   $effect(() => {
     stepId;
     untrack(() => {
-      if (!game || !isExercise(view.step) || !view.exercise) return;
+      if (!game) return;
+      // Opened straight on an explanation (a shared or resumed link): nothing has run yet, so show snow, not a black screen.
+      if (!isExercise(view.step) || !view.exercise) { if (!game.isRunning()) broken = true; return; }
       const code = view.exercise.source.code;
       if (compile(code, new RaylibHost({ seed: 1 })).ok) {
         broken = false;
