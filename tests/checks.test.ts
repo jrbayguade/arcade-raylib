@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { argIsVar, callsOf, check, circles, declares, evaluate, simulate, variable, visibleRects } from '../src/lessons/checks';
+import { argIsVar, callsOf, check, circles, declares, evaluate, history, simulate, variable, visibleRects } from '../src/lessons/checks';
 
 const game = (draw: string, setup = '') => `#include "raylib.h"
 int main(void) {
@@ -101,5 +101,45 @@ int main(void) {
     let got: unknown = 'unset';
     evaluate(crash, [check('c', (ctx) => { got = simulate(ctx, { frames: 3, hold: ['KEY_S'] }); return true; })]);
     expect(got).toBeNull();
+  });
+});
+
+describe('simulate: keys held for a few frames only', () => {
+  it('releases the keys after holdFor frames', () => {
+    const program = `#include "raylib.h"
+int main(void) {
+    InitWindow(800, 450, "x");
+    int y = 100;
+    while (!WindowShouldClose()) {
+        if (IsKeyDown(KEY_W)) { y = y - 2; }
+        BeginDrawing();
+        EndDrawing();
+    }
+    return 0;
+}
+`;
+    let y: number | undefined;
+    evaluate(program, [check('c', (ctx) => { y = variable(simulate(ctx, { frames: 10, hold: ['KEY_W'], holdFor: 3 })!, 'y'); return true; })]);
+    expect(y).toBe(94);
+  });
+});
+
+describe('history: a variable frame by frame', () => {
+  it('gives the value after every frame', () => {
+    const program = `#include "raylib.h"
+int main(void) {
+    InitWindow(800, 450, "x");
+    int x = 0;
+    while (!WindowShouldClose()) {
+        x = x + 3;
+        BeginDrawing();
+        EndDrawing();
+    }
+    return 0;
+}
+`;
+    let xs: number[] = [];
+    evaluate(program, [check('c', (ctx) => { xs = history(ctx, { frames: 4 }, 'x'); return true; })]);
+    expect(xs).toEqual([3, 6, 9, 12]);
   });
 });

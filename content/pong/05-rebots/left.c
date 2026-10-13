@@ -28,7 +28,7 @@ int main(void)
         pilotaX = pilotaX + velX;
 //@edit
         if (pilotaX > 792) { velX = -velX; }
-//@placeholder rebota també a l'esquerra: pilotaX < 8
+//@placeholder rebot esquerra: pilotaX < 8
 //@end
 
 //@fold dibuixar

@@ -22,6 +22,21 @@ describe('lesson 6: bounces', () => {
     expect(tryZone('edge', '        if (pilotaX >= 792) { velX = -velX; }')).toMatchObject({ passed: true });
     expect(firstFailing(tryZone('edge', '        if (pilotaX > 792) { velX = 0; }'))).toBe('bounces');
   });
+  it('edge: bouncing far too early is caught', () => {
+    expect(firstFailing(tryZone('edge', '        if (pilotaX > 700) { velX = -velX; }'))).toBe('bouncesTooEarly');
+  });
+  it('left: a ball that dips past the left edge is caught', () => {
+    expect(firstFailing(tryZone('left', `${R}
+        if (pilotaX < -20) { velX = -velX; }`))).toBe('bothWalls');
+  });
+  it('faster: a fixed speed or a slower ball are caught', () => {
+    const rest = `
+${L}
+        if (pilotaY < 8) { velY = -velY; }
+        if (pilotaY > 442) { velY = -velY; }`;
+    expect(firstFailing(tryZone('faster', '        if (pilotaX > 792) { velX = -5; }' + rest))).toBe('speedsUp');
+    expect(firstFailing(tryZone('faster', '        if (pilotaX > 792) { velX = -velX + 1; }' + rest))).toBe('slowsDown');
+  });
   it('left: the wrong comparison lets the ball escape', () => {
     expect(firstFailing(tryZone('left', `${R}\n        if (pilotaX > 8) { velX = -velX; }`))).not.toBeUndefined();
   });
@@ -31,6 +46,6 @@ describe('lesson 6: bounces', () => {
   it('faster: + 1 slows the ball instead, - 2 is fine', () => {
     const rest = `\n${L}\n        if (pilotaY < 8) { velY = -velY; }\n        if (pilotaY > 442) { velY = -velY; }`;
     expect(tryZone('faster', '        if (pilotaX > 792) { velX = -velX - 2; }' + rest)).toMatchObject({ passed: true });
-    expect(firstFailing(tryZone('faster', '        if (pilotaX > 792) { velX = -velX + 1; }' + rest))).toBe('speedsUp');
+    expect(firstFailing(tryZone('faster', '        if (pilotaX > 792) { velX = -velX + 1; }' + rest))).toBe('slowsDown');
   });
 });

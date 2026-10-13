@@ -295,7 +295,7 @@
       </button>
     {/if}
     {#if view.canContinue && view.isLast}
-      <span class="done">{t('lessonDone')}{hasNextLesson ? '' : ' ' + t('allDone')}</span>
+      <span class="done">{t('lessonDone')}{#if !hasNextLesson}<span class="all-done"> {t('allDone')}</span>{/if}</span>
     {/if}
   </div>
 

@@ -40,6 +40,7 @@ try {
         if (lesson === 3) check(`${label}: if card`, await visible(page.locator('.if-card')));
         if (lesson === 4) check(`${label}: compare card`, await visible(page.locator('.compare-card')));
         if (lesson === 5) check(`${label}: bounce card`, await visible(page.locator('.bounce-card')));
+        if (lesson === 6) check(`${label}: and card`, await visible(page.locator('.and-card')));
         if (lesson === 2) {
           check(`${label}: frames card`, await visible(page.locator('.frames-card')));
           const first = await page.locator('.frames-card .box-value').textContent();
@@ -159,12 +160,13 @@ try {
   check('lesson 3 shown', await visible(page.getByRole('heading', { name: /lliçó 3/ })));
   await page.locator('.cm-editor').waitFor();
   await playLesson(2, ['vars', 'explain', 'vars', 'vars', 'vars']);
-  for (const n of [3, 4, 5]) {
+  const LESSON_STEPS_AFTER_CARD = { 3: ['vars', 'vars', 'vars'], 4: ['vars', 'vars', 'vars'], 5: ['vars', 'vars', 'vars'], 6: ['vars', 'vars'] };
+  for (const n of [3, 4, 5, 6]) {
     check(`lesson ${n} done`, await visible(page.getByText('Has acabat la lliçó!')));
     await button('Següent lliçó →').click();
     check(`lesson ${n + 1} shown`, await visible(page.getByRole('heading', { name: new RegExp(`lliçó ${n + 1}`) })));
     await page.locator('.cm-editor').waitFor();
-    await playLesson(n, ['vars', 'explain', 'vars', 'vars', 'vars']);
+    await playLesson(n, ['vars', 'explain', ...LESSON_STEPS_AFTER_CARD[n]]);
   }
   check('all lessons done', await visible(page.getByText('Has acabat totes les lliçons')));
 

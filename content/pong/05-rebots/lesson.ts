@@ -1,4 +1,4 @@
-import { check, simulate, variable, type CheckContext } from '../../../src/lessons/checks';
+import { check, history, simulate, variable, type CheckContext } from '../../../src/lessons/checks';
 import type { Lesson } from '../../../src/lessons/model';
 import texts from './ca.json';
 import edge from './edge.c?raw';
@@ -13,11 +13,12 @@ import updownSolution from './updown.solution.c?raw';
 const v = (ctx: CheckContext | null, name: string) => (ctx ? variable(ctx, name) ?? NaN : NaN);
 const at = (ctx: CheckContext, frames: number) => simulate(ctx, { frames });
 const CONTROLS = ['KEY_W', 'KEY_S', 'KEY_UP', 'KEY_DOWN'];
-/** The ball stays on screen at many moments of a long game. */
-const staysInside = (ctx: CheckContext, slack = 0) => [50, 100, 150, 200, 250, 300, 350, 400].every((f) => {
-  const s = at(ctx, f);
-  return v(s, 'pilotaX') >= -slack && v(s, 'pilotaX') <= 800 + slack && (Number.isNaN(v(s, 'pilotaY')) || (v(s, 'pilotaY') >= 0 && v(s, 'pilotaY') <= 450));
-});
+/** The ball stays on screen during every frame of a long game (x always; y when the program has a pilotaY). */
+const staysInside = (ctx: CheckContext, slack = 0, frames = 400) => {
+  const xs = history(ctx, { frames }, 'pilotaX');
+  const ys = history(ctx, { frames }, 'pilotaY');
+  return xs.length === frames && xs.every((x) => x >= -slack && x <= 800 + slack) && ys.every((y) => y >= -slack && y <= 450 + slack);
+};
 
 export const lesson5: Lesson = {
   id: 'pong-5',
@@ -29,6 +30,7 @@ export const lesson5: Lesson = {
       kind: 'observe', id: 'edge', source: edge, solution: edgeSolution, showVariables: true, run: { frames: 120 }, controls: CONTROLS,
       checks: [
         check('bounces', (ctx) => v(ctx, 'velX') < 0),
+        check('bouncesTooEarly', (ctx) => v(at(ctx, 99), 'pilotaX') >= 788),
         check('bouncesAtEdge', (ctx) => v(at(ctx, 101), 'pilotaX') <= 796),
       ],
     },
@@ -48,11 +50,12 @@ export const lesson5: Lesson = {
       ],
     },
     {
-      kind: 'apply', id: 'faster', source: faster, solution: fasterSolution, showVariables: true, run: { frames: 300 }, controls: CONTROLS,
+      kind: 'apply', id: 'faster', source: faster, solution: fasterSolution, showVariables: true, run: { frames: 600 }, controls: CONTROLS,
       checks: [
-        check('speedsUp', (ctx) => Math.abs(v(ctx, 'velX')) > 4),
+        check('slowsDown', (ctx) => history(ctx, { frames: 600 }, 'velX').every((s) => Math.abs(s) >= 4)),
+        check('speedsUp', (ctx) => Math.abs(v(ctx, 'velX')) >= 6),
         check('notCrazy', (ctx) => Math.abs(v(ctx, 'velX')) <= 12),
-        check('stillInside', (ctx) => staysInside(ctx, 20)),
+        check('stillInside', (ctx) => staysInside(ctx, 20, 600)),
       ],
     },
   ],

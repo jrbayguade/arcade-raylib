@@ -9,24 +9,25 @@
   "steps": {
     "edge": {
       "prompt": [
-        "Lliçó nova! Fins ara la pilota s'escapava. Avui aprendrà a rebotar. 🏐",
+        "Lliçó nova! Fins ara la pilota s'escapava. Avui aprendrà a rebotar. 🏓",
         "Mira la línia groga: quan la pilota arriba a la dreta, fa `velX = -velX;`. Això li dona la volta al signe: si `velX` valia 4, ara val -4, i la pilota torna enrere.",
-        "Però rebota massa tard: quan `pilotaX` val 800, mitja pilota ja és fora de la pantalla (la pilota fa 8 de radi).",
+        "Però rebota massa tard: `pilotaX` és el centre de la pilota, i la pilota fa 8 de radi. Quan el centre arriba a 800, mitja pilota ja és fora de la pantalla. (I a l'esquerra encara s'escapa: ho arreglarem d'aquí a dos passos.)",
         "Fes que reboti just quan toca la vora: canvia el 800 per 792 (800 − 8) i prem ▶ Executa."
       ],
       "hints": [
         "Només has de canviar el número de la pregunta.",
-        "800 − 8 = 792.",
+        "La pilota fa 8 de radi: 800 − 8.",
         "`if (pilotaX > 792) { velX = -velX; }`"
       ],
       "success": "Rebot perfecte! La pilota toca la vora i torna enrere."
     },
     "bounceCard": {
       "prompt": [
-        "Com funciona `velX = -velX;`? El signe - davant d'una caixa vol dir «el mateix número amb el signe girat».",
-        "Si `velX` és 4, `-velX` és -4. Si `velX` és -4, `-velX` és 4. Menys per menys, més!",
-        "Recorda la lliçó 3: amb `velX` positiva la pilota va a la dreta, i amb `velX` negativa, a l'esquerra.",
-        "Així, girant el signe, la pilota canvia de direcció. Això és un rebot! Quan ho tinguis clar, prem Continua."
+        "Com funciona `velX = -velX;`? El signe - enganxat davant d'una caixa vol dir «el mateix número, però amb el signe canviat».",
+        "Si `velX` és 4, `-velX` és -4. Si `velX` és -4, `-velX` és 4: el contrari d'un número negatiu és positiu.",
+        "Recorda la lliçó 3: amb `velX` positiva la pilota va a la dreta, i amb `velX` negativa, a l'esquerra. Així, canviant el signe, la pilota canvia de direcció. Això és un rebot!",
+        "Compte: el - enganxat a `velX` (`-velX`) canvia el signe. El - entre dues coses (`velX - 1`) resta. Són dues feines diferents!",
+        "Quan ho tinguis clar, prem Continua."
       ]
     },
     "left": {
@@ -37,15 +38,15 @@
       ],
       "hints": [
         "És com la línia de dalt, però amb `<` i 8.",
-        "La pregunta és `pilotaX < 8`, i a dins gires el signe de `velX`.",
+        "La pregunta és `pilotaX < 8`, i a dins canvies el signe de `velX`.",
         "`if (pilotaX < 8) { velX = -velX; }`"
       ],
       "success": "Ara rebota a les dues parets! Ja no s'escapa mai."
     },
     "updown": {
       "prompt": [
-        "Ara la pilota també es mou en vertical, amb una caixa nova: `velY`. I s'escapa per dalt i per baix!",
-        "Fes el mateix que amb la x: quan `pilotaY` és més petita que 8, gira el signe de `velY`. I quan és més gran que 442 (450 − 8), també.",
+        "Una pilota que només va i ve en línia recta és avorrida. Mira a dalt: hi ha una caixa nova, `int velY = 3;`, i la línia `pilotaY = pilotaY + velY;`. És com `velX`, però en vertical. I s'escapa per dalt i per baix!",
+        "Fes el mateix que amb la x: quan `pilotaY` és més petita que 8, canvia el signe de `velY`. I quan és més gran que 442 (450 − 8), també.",
         "Escriu els dos `if` a la línia buida."
       ],
       "hints": [
@@ -58,7 +59,7 @@
     "faster": {
       "prompt": [
         "Últim repte! Fem el joc més emocionant: cada cop que la pilota rebota a la dreta, que vagi una mica més ràpid.",
-        "Pista: ara fa `velX = -velX;`. Si a més hi restes 1, la pilota sortirà cap a l'esquerra amb més velocitat.",
+        "Pista: ara fa `velX = -velX;`. Si a més hi restes 1 (`-velX - 1`), la pilota sortirà cap a l'esquerra amb més velocitat.",
         "Canvia la primera línia groga perquè, a més de girar, la pilota acceleri."
       ],
       "hints": [
@@ -66,18 +67,20 @@
         "Resta-hi 1 just després de `-velX`.",
         "`if (pilotaX > 792) { velX = -velX - 1; }`"
       ],
-      "success": "Cada rebot, més ràpid! Ara sí que costarà guanyar. 🔥"
+      "success": "Cada rebot, més ràpid! 🔥 A la lliçó 7, les pales també la faran rebotar."
     }
   },
   "checks": {
-    "bounces": "La pilota no rebota a la dreta. Dins de les claus ha de quedar `velX = -velX;`.",
+    "bounces": "La pilota no torna enrere a la vora. Revisa el número (792) i que dins de les claus hi hagi `velX = -velX;`.",
     "bouncesAtEdge": "La pilota encara rebota massa tard: canvia el 800 per 792.",
-    "bouncesLeft": "La pilota no rebota a l'esquerra. Escriu `if (pilotaX < 8) { velX = -velX; }`.",
-    "bothWalls": "La pilota s'escapa per algun costat. Comprova els dos `if`: el de la dreta amb `>` i el de l'esquerra amb `<`.",
-    "bouncesBottom": "La pilota no rebota a baix. Escriu `if (pilotaY > 442) { velY = -velY; }`.",
-    "allWalls": "La pilota s'escapa per dalt o per baix. Falta un `if` amb `pilotaY < 8` que giri `velY`.",
-    "speedsUp": "La pilota no accelera. Al rebot de la dreta, escriu `velX = -velX - 1;`.",
-    "notCrazy": "La pilota accelera massa! Resta-hi només una mica, per exemple 1.",
-    "stillInside": "Ara la pilota s'escapa. Deixa els altres tres rebots com estaven."
+    "bouncesLeft": "La pilota no rebota a l'esquerra. Mira la línia de dalt: necessites el mateix, però amb `<` i 8.",
+    "bothWalls": "La pilota surt de la pantalla per algun costat. Comprova els dos `if`: el de la dreta amb `>` i 792, i el de l'esquerra amb `<` i 8.",
+    "bouncesBottom": "La pilota no rebota a baix. Revisa l'`if` amb `pilotaY > 442`: a dins, `velY = -velY;`.",
+    "allWalls": "La pilota s'escapa per dalt. Comprova l'`if` amb `pilotaY < 8`: a dins ha de canviar el signe de `velY`, no de `velX`.",
+    "speedsUp": "La pilota no accelera prou. Al rebot de la dreta, després de canviar el signe, resta-hi 1.",
+    "notCrazy": "La pilota accelera massa! Fes que cada rebot només hi afegeixi 1: `-velX - 1`.",
+    "stillInside": "Ara la pilota s'escapa. Deixa els altres tres rebots com estaven.",
+    "bouncesTooEarly": "La pilota rebota abans de tocar la vora. El número ha de ser 792.",
+    "slowsDown": "Ara la pilota va més lenta! Després de canviar el signe, `velX` és negativa: per anar més ràpid, resta-hi 1."
   }
 }

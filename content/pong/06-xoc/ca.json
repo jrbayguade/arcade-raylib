@@ -1,0 +1,71 @@
+{
+  "title": "Xoc amb la pala",
+  "folds": {
+    "preparar": "preparar el joc",
+    "pales": "moure les pales i els seus límits (lliçons 4 i 5)",
+    "parets": "rebotar a dalt i a baix (lliçó 6)",
+    "dibuixar": "comença a dibuixar",
+    "tancar": "tancar el joc"
+  },
+  "steps": {
+    "partial": {
+      "prompt": [
+        "Lliçó nova! Ja no hi ha parets a l'esquerra ni a la dreta: ara són les pales les que han de tornar la pilota. 🏓",
+        "La línia groga fa dues preguntes alhora, unides amb `&&`, que vol dir «i»: «la pilota ha arribat a la pala I és més avall que la vora de dalt de la pala?». Només rebota si totes dues diuen sí.",
+        "Però falta una pregunta! Fes clic al joc i puja la pala del tot amb la W (al mòbil, amb el botó W): la pilota rebota igualment, tot i que la pala no hi és.",
+        "Afegeix la tercera pregunta al final de la condició: `&& pilotaY < palaY + alcada` (la pilota és més amunt que la vora de baix de la pala)."
+      ],
+      "hints": [
+        "La pregunta nova va dins dels parèntesis de l'`if`, just abans del `)`.",
+        "Escriu `&& pilotaY < palaY + alcada` després de `pilotaY > palaY`.",
+        "`if (pilotaX < 38 && pilotaY > palaY && pilotaY < palaY + alcada) { velX = -velX; }`"
+      ],
+      "success": "Ara només rebota si la pala hi és de debò! Prova d'esquivar la pilota amb la W."
+    },
+    "andCard": {
+      "prompt": [
+        "`&&` uneix preguntes: la resposta és sí només si TOTES diuen sí. N'hi ha prou que una digui no perquè tot sigui no.",
+        "Per rebotar a la pala esquerra, cal que la pilota hagi arribat a la pala (`pilotaX < 38`), que no passi per sobre (`pilotaY > palaY`) i que no passi per sota (`pilotaY < palaY + alcada`).",
+        "Mira la targeta: cada llum és una pregunta. Només quan s'encenen les tres, la pilota rebota. Quan ho tinguis clar, prem Continua."
+      ]
+    },
+    "right": {
+      "prompt": [
+        "Ara la pilota surt cap a la dreta, i la pala de la dreta encara no la torna.",
+        "Escriu l'`if` de la pala dreta. Les preguntes són semblants: la pilota arriba a la pala quan `pilotaX > 762`, i la pala dreta fa servir `palaDretaY`.",
+        "Fes-ho a la línia buida, amb tres preguntes unides amb `&&`."
+      ],
+      "hints": [
+        "Copia la línia de la pala esquerra i canvia-hi la primera pregunta i el nom de la pala.",
+        "La primera pregunta és `pilotaX > 762`, i on posava `palaY` ara ha de posar `palaDretaY` (dues vegades).",
+        "`if (pilotaX > 762 && pilotaY > palaDretaY && pilotaY < palaDretaY + alcada) { velX = -velX; }`"
+      ],
+      "success": "Les dues pales ja tornen la pilota. Això ja és un Pong de veritat! Convida algú a jugar."
+    },
+    "angles": {
+      "prompt": [
+        "Últim repte! Ara la pilota sempre va recta. Als Pong de veritat, el lloc on toca la pala canvia la direcció.",
+        "Si la pilota toca la meitat de dalt de la pala esquerra, que surti cap amunt (`velY = -3;`). Si toca la meitat de baix, cap avall (`velY = 3;`).",
+        "La meitat de dalt va de `palaY` fins a `palaY + 40`. Escriu els dos `if` a la línia buida."
+      ],
+      "hints": [
+        "Cada `if` comença igual que el de la pala esquerra: `pilotaX < 38 && pilotaY > palaY && ...`",
+        "Per a la meitat de dalt, la tercera pregunta és `pilotaY < palaY + 40`. Per a la de baix, `pilotaY >= palaY + 40 && pilotaY < palaY + alcada`.",
+        "`if (pilotaX < 38 && pilotaY > palaY && pilotaY < palaY + 40) { velY = -3; }` i `if (pilotaX < 38 && pilotaY >= palaY + 40 && pilotaY < palaY + alcada) { velY = 3; }`"
+      ],
+      "success": "Ara pots apuntar on va la pilota! Amb la meitat de dalt la tires amunt, i amb la de baix, avall. 🎯"
+    }
+  },
+  "checks": {
+    "bouncesOnPaddle": "La pilota ja no rebota a la pala esquerra. Comprova que la primera part continua sent `pilotaX < 38 && pilotaY > palaY`.",
+    "missesAbove": "Si la pala és a dalt de tot, la pilota encara rebota. Falta la pregunta `&& pilotaY < palaY + alcada`.",
+    "missesBelow": "Si la pala és a baix de tot, la pilota encara rebota. Comprova la pregunta `pilotaY > palaY`.",
+    "bouncesOnRight": "La pilota no rebota a la pala dreta. La primera pregunta ha de ser `pilotaX > 762`, i dins les claus, `velX = -velX;`.",
+    "rightMissesAbove": "Si la pala dreta és a dalt, la pilota encara rebota. Falta la pregunta `pilotaY < palaDretaY + alcada`.",
+    "rightMissesBelow": "Si la pala dreta és a baix, la pilota encara rebota. Falta la pregunta `pilotaY > palaDretaY`.",
+    "leftStillWorks": "Ara la pala esquerra no funciona. Deixa la primera línia com estava.",
+    "stillBounces": "La pilota ja no rebota a la pala esquerra. Deixa les dues primeres línies com estaven.",
+    "topHalfUp": "Quan la pilota toca la meitat de dalt de la pala, no surt cap amunt. Escriu un `if` amb `pilotaY < palaY + 40` que faci `velY = -3;`.",
+    "bottomHalfDown": "Quan la pilota toca la meitat de baix de la pala, no surt cap avall. Escriu un altre `if` amb `pilotaY >= palaY + 40` que faci `velY = 3;`."
+  }
+}

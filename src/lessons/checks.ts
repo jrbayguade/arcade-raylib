@@ -10,7 +10,8 @@ import { RaylibHost } from '../runtime/raylib';
 
 export interface CheckContext { program: Program; frame: DrawCommand[]; variables: VariableView[] }
 export interface Check { key: string; test(ctx: CheckContext): boolean }
-export interface RunSpec { frames: number; hold?: string[] }
+/** How to run a program headless: for some frames, holding keys (all the time, or only for the first `holdFor` frames). */
+export interface RunSpec { frames: number; hold?: string[]; holdFor?: number }
 export interface CheckResult { key: string; ok: boolean }
 export type Evaluation =
   | { kind: 'compile-error'; diagnostic: Diagnostic }
@@ -36,17 +37,18 @@ export function evaluate(source: string, checks: Check[], run: RunSpec = DEFAULT
 }
 
 /** Runs a compiled program for some frames with keys held, headless. */
-function runProgram(program: Program, host: RaylibHost, run: RunSpec): CheckContext | { diagnostic: Diagnostic } {
+function runProgram(program: Program, host: RaylibHost, run: RunSpec, onFrame?: (variables: VariableView[]) => void): CheckContext | { diagnostic: Diagnostic } {
   const machine = new Machine(program, host);
   const input = run.hold?.length ? holding(...run.hold.map((k) => KEYS[k])) : NO_INPUT;
   let frame: DrawCommand[] = [];
   let variables = machine.variables();
   for (let i = 0; i < run.frames; i++) {
-    const r = machine.runFrame(input);
+    const r = machine.runFrame(run.holdFor !== undefined && i >= run.holdFor ? NO_INPUT : input);
     if (r.status === 'error') return { diagnostic: r.diagnostic };
     if (r.status === 'finished') break;
     frame = r.drawList;
     variables = machine.variables();
+    onFrame?.(variables);
   }
   return { program, frame, variables };
 }
@@ -55,6 +57,16 @@ function runProgram(program: Program, host: RaylibHost, run: RunSpec): CheckCont
 export function simulate(ctx: CheckContext, run: RunSpec): CheckContext | null {
   const ran = runProgram(ctx.program, new RaylibHost({ seed: 1 }), run);
   return 'diagnostic' in ran ? null : ran;
+}
+
+/** One variable after every frame of a fresh run (empty if the program fails): to catch what a single snapshot misses. */
+export function history(ctx: CheckContext, run: RunSpec, name: string): number[] {
+  const values: number[] = [];
+  const ran = runProgram(ctx.program, new RaylibHost({ seed: 1 }), run, (vars) => {
+    const v = vars.find((x) => x.name === name)?.value;
+    if (typeof v === 'number') values.push(v);
+  });
+  return 'diagnostic' in ran ? [] : values;
 }
 
 function safely(test: () => boolean): boolean {

@@ -31,7 +31,7 @@ int main(void)
 //@edit
         if (pilotaX > 792) { velX = -velX; }
         if (pilotaX < 8) { velX = -velX; }
-//@placeholder rebota a dalt i a baix: pilotaY i velY
+//@placeholder rebots de dalt i baix: velY
 //@end
 
 //@fold dibuixar
