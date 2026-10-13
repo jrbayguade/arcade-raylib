@@ -12,6 +12,7 @@ const UNSUPPORTED_KEYWORDS: Record<string, Feature> = {
   const: 'const',
 };
 const ASSIGN_OPS = new Set(['=', '+=', '-=', '*=', '/=']);
+const ARITHMETIC = new Set(['+', '-', '*', '/', '%']);
 const BITWISE = new Set(['&', '|', '^', '~', '<<', '>>', '<<=', '>>=', '%=']);
 
 export function parse(tokens: Token[]): A.Program {
@@ -143,6 +144,7 @@ class Parser {
   /** Assignment, ++/-- or a function call (without the trailing semicolon). */
   private parseSimple(): A.Assign | A.IncDec | A.ExprStmt {
     const t = this.tok;
+    const start = this.pos;
     if (this.is('++') || this.is('--')) {
       this.advance();
       const name = this.tok;
@@ -169,6 +171,13 @@ class Parser {
     if (this.is('[')) this.fail(this.tok, 'UNSUPPORTED', { feature: 'array' });
     if (this.is('.') || this.is('->')) this.fail(this.tok, 'UNSUPPORTED', { feature: 'struct' });
     if (this.tok.kind === 'sym' && BITWISE.has(this.tok.text)) this.fail(this.tok, 'UNSUPPORTED', { feature: 'bitwise' });
+    if (this.tok.kind === 'sym' && ARITHMETIC.has(this.tok.text)) {
+      // `pilotaX + 3;` computes a value and throws it away: say so, and show how to keep it.
+      this.pos = start;
+      this.parseExpression();
+      const expr = this.tokens.slice(start, this.pos).map((k) => k.text).join(' ');
+      return this.fail(t, 'VALUE_NOT_STORED', { name: t.text, expr });
+    }
     return this.fail(t, 'EXPECTED_ASSIGNMENT', { name: t.text });
   }
 

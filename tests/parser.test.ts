@@ -90,6 +90,9 @@ describe('parse: errors', () => {
   it('rejects statements that do nothing', () => {
     expect(parseError(main('x == 5;'))).toMatchObject({ code: 'EXPECTED_ASSIGNMENT', params: { name: 'x' } });
   });
+  it('explains a calculation that is not stored', () => {
+    expect(parseError(main('pilotaX + 3;'))).toMatchObject({ code: 'VALUE_NOT_STORED', params: { name: 'pilotaX', expr: 'pilotaX + 3' } });
+  });
   it('checks the program structure', () => {
     expect(parseError('')).toMatchObject({ code: 'NO_MAIN' });
     expect(parseError('int x = 5;\nint main(void) { }')).toMatchObject({ code: 'UNSUPPORTED_GLOBAL' });

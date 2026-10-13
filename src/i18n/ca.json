@@ -14,6 +14,7 @@
     "UNEXPECTED_EOF": "El codi s'acaba abans d'hora. Potser falta tancar una clau } o un parèntesi )?",
     "MISSING_BRACES": "Després de «{keyword}» posa les instruccions entre claus { }.",
     "ASSIGN_IN_CONDITION": "Has posat = (guardar un valor) on calia == (comparar).",
+    "VALUE_NOT_STORED": "Has calculat «{expr}», però no l'has guardat a cap caixa. Per guardar-ho, escriu: «{name} = {expr};»",
     "EXPECTED_ASSIGNMENT": "Aquí esperava una assignació (per exemple «{name} = 5;») o una crida a una funció.",
     "EXPECTED_EXPRESSION": "Aquí esperava un valor (un número, una variable...) però he trobat «{found}».",
     "INCDEC_IN_EXPRESSION": "Fes servir ++ i -- en una línia a part, per exemple «x++;».",
