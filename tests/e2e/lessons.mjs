@@ -401,11 +401,19 @@ try {
     check('🏠 goes to the arcade hall', await visible(kid.locator('.hall')) && (await kid.evaluate(() => location.hash)) === '#/sala');
     const items = kid.locator('.lesson-item');
     check('hall: the first lesson is open with its stars', (await items.nth(0).getAttribute('class')).includes('open') && (await items.nth(0).innerText()).includes('⭐ 2/'));
-    check('hall: the next lessons are locked', await items.nth(1).isDisabled() && (await items.nth(1).innerText()).includes('🔒'));
+    check('hall: the next lessons are locked', (await items.nth(1).getAttribute('aria-disabled')) === 'true' && (await items.nth(1).innerText()).includes('🔒'));
+    await items.nth(1).click({ force: true }); // aria-disabled, but a tap still gets an answer from Bit
+    check('hall: Bit says why a locked lesson does not open', await visible(kid.locator('.hall-say', { hasText: 'Primer acaba la lliçó 1' })) && (await kid.evaluate(() => location.hash)) === '#/sala');
     check('hall: lessons still to come say so', (await items.nth(3).innerText()).includes('Properament'));
     check('hall: other machines are coming soon', (await kid.locator('.mini-cab').count()) === 3);
+    await kid.goto(`${base}#/pong/0/2`);
+    await kid.locator('.cm-editor').waitFor();
+    check('progress: the lesson header counts saved stars of other steps', (await kid.locator('.top .total').innerText()).includes('2/'));
+    await kid.goto(`${base}#/sala`);
     await kid.locator('.hall-continue', { hasText: 'Continua: lliçó 1' }).click();
-    check('hall: Continue goes back to the last place', await visible(kid.locator('.cm-editor')) && (await kid.evaluate(() => location.hash)) === '#/pong/0/0');
+    await kid.locator('.cm-editor').waitFor();
+    const resumed = await kid.evaluate(() => location.hash);
+    check('hall: Continue goes back to the last place', resumed === '#/pong/0/2', resumed);
     await kid.goto(`${base}#/sala`);
     await kid.locator('.hall-reset').click();
     check('hall: erasing progress asks first', await visible(kid.locator('.hall-reset.armed')));

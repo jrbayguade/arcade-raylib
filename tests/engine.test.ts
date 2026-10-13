@@ -145,3 +145,10 @@ describe('LessonEngine with saved progress', () => {
     expect(e.saved('card')).toBeNull();
   });
 });
+
+describe('LessonEngine stars from saved progress', () => {
+  it('counts the stars of saved steps it has not opened yet', () => {
+    const e = new LessonEngine(lesson, 1, { move: { code: 'x', stars: 2, hintsShown: 0, done: true } });
+    expect(e.starsOf('move')).toBe(2);
+  });
+});

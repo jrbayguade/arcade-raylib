@@ -194,12 +194,12 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 /* The arcade hall */
 .top .home { flex: none; font-size: 18px; line-height: 1; padding: 4px 8px; border-color: #3a3358; box-shadow: none; }
 .actions .to-hall { border-color: #3a3358; box-shadow: none; color: var(--text); }
-.hall { min-height: 100vh; box-sizing: border-box; padding: 16px 28px 24px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.hall { min-height: 100vh; box-sizing: border-box; padding: 10px 28px 14px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
 .hall-sign { margin: 0; font-size: clamp(26px, 3.4vw, 46px); font-weight: 900; letter-spacing: 8px; color: var(--pink); text-shadow: 0 0 10px var(--pink), 0 0 26px var(--pink); }
 .hall-floor { display: flex; gap: clamp(16px, 3vw, 40px); align-items: flex-start; justify-content: center; width: 100%; max-width: 1200px; }
 .hall-pong { flex: 0 1 560px; min-width: 0; }
 .lesson-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
-.lesson-item { width: 100%; display: flex; align-items: center; gap: 12px; text-align: left; padding: 8px 12px; min-height: 44px; border-color: #3a3358; box-shadow: none; color: var(--text); }
+.lesson-item { width: 100%; display: flex; align-items: center; gap: 12px; text-align: left; padding: 5px 12px; min-height: 44px; border-color: #3a3358; box-shadow: none; color: var(--text); }
 .lesson-item .lesson-no { flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-weight: 900; border: 2px solid currentColor; }
 .lesson-item .lesson-title { flex: 1; min-width: 0; font-weight: 600; }
 .lesson-item .lesson-state { flex: none; color: var(--yellow); font-weight: 700; white-space: nowrap; }
@@ -207,8 +207,14 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 .lesson-item.done .lesson-no { color: var(--green); }
 .lesson-item.open { border-color: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
 .lesson-item.open .lesson-no { color: var(--cyan); }
-.lesson-item:disabled { opacity: 0.45; }
-.lesson-item.soon .lesson-state { color: var(--muted); font-weight: 500; }
+.lesson-item.soon { opacity: 0.4; }
+.lesson-item.soon .lesson-state { color: var(--muted); font-weight: 500; font-style: italic; }
+.lesson-item.locked { color: var(--muted); }
+.lesson-item.locked .lock { font-size: 18px; filter: drop-shadow(0 0 4px var(--yellow)); }
+.lesson-item.target .lesson-no { animation: pulse 1.2s ease-in-out infinite; box-shadow: 0 0 10px currentColor; }
+.lesson-item.shake { animation: shake 0.45s ease-in-out; }
+.lesson-item .done-badge { margin-left: 6px; display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--green); color: var(--bg); font-size: 13px; }
+@keyframes shake { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
 .hall-others { display: flex; flex-direction: column; gap: 14px; flex: none; }
 .mini-cab { width: clamp(110px, 12vw, 160px); border: 2px solid #4a4370; border-radius: 12px 12px 4px 4px; padding: 6px; background: linear-gradient(#1b1240, #120b2c); }
 .mini-roof { text-align: center; font-weight: 900; letter-spacing: 3px; color: var(--muted); font-size: 13px; }
@@ -294,7 +300,9 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
   .actions .run, .actions .next { font-size: 15px; padding: 6px 14px; }
   .actions .run.secondary { font-size: 13px; padding: 5px 8px; }
   .actions .hint-btn { font-size: 13px; padding: 5px 8px; }
-  .actions .done { font-size: 12px; }
+  .actions .done { font-size: 12px; flex-basis: 100%; order: -1; text-align: right; }
+  .actions { flex-wrap: wrap; }
+  .actions .to-hall .to-hall-label { display: none; }
   .keys-toggle { font-size: 17px; padding: 5px 7px; }
   .slow-btn { min-height: 44px; font-size: 18px; padding: 4px 8px; }
   .frame-no { font-size: 13px; }

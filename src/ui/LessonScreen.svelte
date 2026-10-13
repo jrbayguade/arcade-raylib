@@ -271,7 +271,7 @@
       <button class="primary next" data-sound="next" onclick={nextLesson}>{t('nextLesson')}</button>
     {/if}
     {#if view.canContinue && view.isLast}
-      <button class="to-hall" data-sound="page" onclick={() => (location.hash = HALL_HASH)}>{t('hallBackLabel')}</button>
+      <button class="to-hall" data-sound="page" onclick={() => (location.hash = HALL_HASH)} aria-label={t('hallBack')}>🏠<span class="to-hall-label"> {t('hallBackLabelText')}</span></button>
     {/if}
     {#if isExercise(view.step)}
       <button class="run" class:secondary={view.canContinue} data-sound="none" onclick={run} title={t('runShortcut')} aria-label={t('run')}><span aria-hidden="true">▶</span> <span class="run-label" aria-hidden="true">{t('runLabel')}</span></button>

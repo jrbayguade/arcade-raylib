@@ -6,16 +6,26 @@ const storage = () => { try { return localStorage; } catch { return null; } };
 export const progress: Progress = $state(loadProgress(storage()));
 
 export function persist(): void {
+  pending = false;
   saveProgress(storage(), $state.snapshot(progress) as Progress);
 }
 
 let timer: ReturnType<typeof setTimeout> | undefined;
+let pending = false;
 /** For typing: saves a moment after the last keystroke (and before the page goes away). */
 export function persistSoon(): void {
   clearTimeout(timer);
-  timer = setTimeout(persist, 300);
+  pending = true;
+  timer = setTimeout(flush, 300);
 }
-if (typeof addEventListener === 'function') addEventListener('pagehide', () => { clearTimeout(timer); persist(); });
+function flush(): void {
+  clearTimeout(timer);
+  if (!pending) return;
+  pending = false;
+  persist();
+}
+// Only what is still waiting: everything else is already stored.
+if (typeof addEventListener === 'function') addEventListener('pagehide', flush);
 
 export function clearProgress(): void {
   clearTimeout(timer);

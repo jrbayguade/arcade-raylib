@@ -27,7 +27,18 @@
     return { i, planned, lesson, state, stars: lessonStars(progress, lesson) };
   }));
 
+  /** What Bit says: the greeting, or why a locked lesson does not open. */
+  let say = $state<string | null>(null);
+  let shake = $state<number | null>(null);
+
   function open(i: number): void {
+    const row = rows[i];
+    if (row.state === 'locked') {
+      say = t('hallLockedSay', { n: PONG_PLAN[unlocked - 1].number ?? unlocked });
+      shake = i;
+      setTimeout(() => (shake = null), 500);
+      return;
+    }
     location.hash = routeHash({ lesson: i, step: resumeStep(progress, LESSONS[i]) });
   }
 
@@ -54,14 +65,15 @@
       <ol class="lesson-list">
         {#each rows as row (row.i)}
           <li>
-            <button class="lesson-item {row.state}" disabled={row.state === 'soon' || row.state === 'locked'}
+            <button class="lesson-item {row.state}" class:shake={shake === row.i} class:target={row.lesson !== null && row.i === target.lesson}
+              disabled={row.state === 'soon'} aria-disabled={row.state === 'locked'} data-sound={row.state === 'locked' ? 'error' : undefined}
               title={row.state === 'locked' ? t('hallLocked') : undefined} onclick={() => open(row.i)}>
               <span class="lesson-no">{row.planned.number ?? '🏆'}</span>
               <span class="lesson-title">{row.lesson?.texts.title ?? row.planned.title}</span>
               <span class="lesson-state">
                 {#if row.state === 'soon'}{t('hallComing')}
-                {:else if row.state === 'locked'}🔒
-                {:else}⭐ {row.stars?.earned}/{row.stars?.max}{#if row.state === 'done'} ✓{/if}{/if}
+                {:else if row.state === 'locked'}<span class="lock">🔒</span>
+                {:else}⭐ {row.stars?.earned}/{row.stars?.max}{#if row.state === 'done'}<span class="done-badge">✓</span>{/if}{/if}
               </span>
             </button>
           </li>
@@ -80,7 +92,7 @@
   </div>
   <div class="hall-bit">
     <BitFace mood="happy" size={56} />
-    <p class="bubble hall-say">{started ? t('hallWelcomeBack') : t('hallWelcome')}</p>
+    <p class="bubble hall-say">{say ?? (started ? t('hallWelcomeBack') : t('hallWelcome'))}</p>
     <button class="primary hall-continue" data-sound="next" onclick={() => (location.hash = routeHash(target))}>
       {started ? t('hallContinue', { n: LESSONS[target.lesson].number }) : t('hallStart')}
     </button>

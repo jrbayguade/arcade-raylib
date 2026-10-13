@@ -57,7 +57,7 @@ export class LessonEngine {
   }
 
   starsOf(stepId: string): number {
-    return this.states.get(stepId)?.stars ?? 0;
+    return this.states.get(stepId)?.stars ?? clamp(this.saved_[stepId]?.stars, MAX_STARS);
   }
 
   setCode(code: string): void {
