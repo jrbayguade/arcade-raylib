@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { argIsVar, callsOf, check, circles, declares, evaluate, history, simulate, variable, visibleRects } from '../src/lessons/checks';
+import { argIsVar, assignmentsTo, callsOf, check, circles, declares, evaluate, history, simulate, texts, variable, visibleRects } from '../src/lessons/checks';
 
 const game = (draw: string, setup = '') => `#include "raylib.h"
 int main(void) {
@@ -141,5 +141,33 @@ int main(void) {
     let xs: number[] = [];
     evaluate(program, [check('c', (ctx) => { xs = history(ctx, { frames: 4 }, 'x'); return true; })]);
     expect(xs).toEqual([3, 6, 9, 12]);
+  });
+});
+
+describe('helpers for counters and text', () => {
+  const program = `#include "raylib.h"
+int main(void) {
+    InitWindow(800, 450, "x");
+    int punts = 0;
+    while (!WindowShouldClose()) {
+        if (punts < 3) { punts++; }
+        punts += 0;
+        BeginDrawing();
+        ClearBackground(BLACK);
+        DrawText(TextFormat("%d", punts), 440, 20, 40, WHITE);
+        EndDrawing();
+    }
+    return 0;
+}
+`;
+  it('finds every change made to a variable, in any form', () => {
+    let ops: string[] = [];
+    evaluate(program, [check('c', (ctx) => { ops = assignmentsTo(ctx.program, 'punts').map((s) => s.op); return true; })]);
+    expect(ops).toEqual(['++', '+=']);
+  });
+  it('lists the texts drawn in the last frame', () => {
+    let drawn: { text: string; x: number }[] = [];
+    evaluate(program, [check('c', (ctx) => { drawn = texts(ctx); return true; })], { frames: 5 });
+    expect(drawn).toMatchObject([{ text: '3', x: 440 }]);
   });
 });

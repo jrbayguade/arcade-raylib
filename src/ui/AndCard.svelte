@@ -24,7 +24,7 @@
 </script>
 
 <svg viewBox="0 0 800 450" class="and-card" role="img" aria-label="&&">
-  <rect x="20" y="20" width="280" height="280" class="screen" />
+  <rect x="20" y="20" width="280" height="280" class="card-screen" />
   <rect x="40" y={20 + s.paddleY} width="10" height="80" class="paddle" />
   <circle cx={20 + s.ballX} cy={20 + s.ballY} r="10" class="ball" />
   {#each [[near, 'pilotaX < 38'], [below, 'pilotaY > palaY'], [above, 'pilotaY < palaY + alcada']] as [on, text], n (n)}

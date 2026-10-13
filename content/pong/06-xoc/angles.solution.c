@@ -33,10 +33,30 @@ int main(void)
         if (pilotaY > 442) { velY = -velY; }
 //@endfold
 //@edit
-        if (pilotaX < 38 && pilotaY > palaY && pilotaY < palaY + alcada) { velX = -velX; }
-        if (pilotaX > 762 && pilotaY > palaDretaY && pilotaY < palaDretaY + alcada) { velX = -velX; }
-        if (pilotaX < 38 && pilotaY > palaY && pilotaY < palaY + 40) { velY = -3; }
-        if (pilotaX < 38 && pilotaY >= palaY + 40 && pilotaY < palaY + alcada) { velY = 3; }
+        if (pilotaX < 38
+            && pilotaY > palaY
+            && pilotaY < palaY + alcada)
+        {
+            velX = -velX;
+        }
+        if (pilotaX > 762
+            && pilotaY > palaDretaY
+            && pilotaY < palaDretaY + alcada)
+        {
+            velX = -velX;
+        }
+        if (pilotaX < 38
+            && pilotaY > palaY
+            && pilotaY < palaY + 40)
+        {
+            velY = -3;
+        }
+        if (pilotaX < 38
+            && pilotaY >= palaY + 40
+            && pilotaY < palaY + alcada)
+        {
+            velY = 3;
+        }
 //@end
 
 //@fold dibuixar

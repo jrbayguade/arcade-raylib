@@ -242,7 +242,7 @@
 <div class="screen">
   <header class="top">
     <button class="home" data-sound="page" title={t('hallBack')} aria-label={t('hallBack')} onclick={() => (location.hash = HALL_HASH)}>🏠</button>
-    <h1 class="brand">BIT ARCADE <span>· {lesson.machine ?? ''} · {t('lessonShort', { n: lesson.number })} · {lesson.texts.title}</span></h1>
+    <h1 class="brand">BIT ARCADE <span>· {lesson.machine ?? ''} · {lesson.final ? t('finalShort') : t('lessonShort', { n: lesson.number })} · {lesson.texts.title}</span></h1>
     <div class="lights" role="img" aria-label={t('stepOf', { n: view.index + 1, total: lesson.steps.length })}>
       {#each lesson.steps as s, i (s.id)}
         <i class="light" class:done={i < view.index} class:now={i === view.index}></i>

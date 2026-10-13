@@ -3,6 +3,8 @@
   import AndCard from './AndCard.svelte';
   import BounceCard from './BounceCard.svelte';
   import CompareCard from './CompareCard.svelte';
+  import CounterCard from './CounterCard.svelte';
+  import FixedCard from './FixedCard.svelte';
   import FramesCard from './FramesCard.svelte';
   import GridCard from './GridCard.svelte';
   import IfCard from './IfCard.svelte';
@@ -12,5 +14,5 @@
 </script>
 
 <div class="explain">
-  {#if card === 'grid'}<GridCard />{:else if card === 'frames'}<FramesCard />{:else if card === 'if'}<IfCard />{:else if card === 'compare'}<CompareCard />{:else if card === 'bounce'}<BounceCard />{:else if card === 'and'}<AndCard />{:else}<VariableBoxCard />{/if}
+  {#if card === 'grid'}<GridCard />{:else if card === 'frames'}<FramesCard />{:else if card === 'if'}<IfCard />{:else if card === 'compare'}<CompareCard />{:else if card === 'bounce'}<BounceCard />{:else if card === 'and'}<AndCard />{:else if card === 'counter'}<CounterCard />{:else if card === 'fixed'}<FixedCard />{:else}<VariableBoxCard />{/if}
 </div>

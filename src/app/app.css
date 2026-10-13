@@ -271,7 +271,7 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 .if-card .paddle { fill: #fff; transition: y 0.1s linear; }
 
 /* Comparisons: a limit line and the six operators */
-.compare-card .screen { fill: #000; stroke: var(--cyan); stroke-width: 3; }
+.compare-card .card-screen { fill: #000; stroke: var(--cyan); stroke-width: 3; }
 .compare-card .limit { stroke: var(--yellow); stroke-width: 3; stroke-dasharray: 8 6; }
 .compare-card .limit-label { fill: var(--yellow); font: 700 20px ui-monospace, monospace; }
 .compare-card .paddle { fill: #fff; transition: y 0.5s ease-in-out; }
@@ -283,7 +283,7 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 .compare-card .op-text { fill: var(--text); font-size: 21px; }
 
 /* Bounce: the sign flips at the wall */
-.bounce-card .screen { fill: #000; stroke: var(--cyan); stroke-width: 3; }
+.bounce-card .card-screen { fill: #000; stroke: var(--cyan); stroke-width: 3; }
 .bounce-card .ball { fill: #fdf900; }
 .bounce-card .arrow { fill: var(--yellow); font: 900 40px ui-monospace, monospace; text-anchor: middle; }
 .bounce-card .var-box { fill: #1d1446; stroke: var(--cyan); stroke-width: 4; }
@@ -293,7 +293,7 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 .bounce-card .code.on { fill: var(--green); }
 
 /* &&: three questions, three lamps */
-.and-card .screen { fill: #000; stroke: var(--cyan); stroke-width: 3; }
+.and-card .card-screen { fill: #000; stroke: var(--cyan); stroke-width: 3; }
 .and-card .paddle { fill: #fff; }
 .and-card .ball { fill: #fdf900; transition: cx 0.5s, cy 0.5s; }
 .and-card .lamp { fill: #2a2056; stroke: #5a5380; stroke-width: 3; transition: fill 0.2s; }
@@ -303,6 +303,21 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 .and-card .result { fill: #5a5380; font: 700 26px system-ui, sans-serif; }
 .and-card .result.on { fill: var(--green); }
 .and-card .rule { fill: var(--muted); font-size: 20px; }
+
+/* Counters: one more each time the ball crosses the line */
+.counter-card .card-screen { fill: #000; stroke: var(--cyan); stroke-width: 3; }
+.counter-card .goal { stroke: var(--pink); stroke-width: 4; stroke-dasharray: 10 8; }
+.counter-card .ball { fill: #fdf900; }
+.counter-card .var-box { fill: #1d1446; stroke: var(--cyan); stroke-width: 4; }
+.counter-card .box-name { fill: var(--muted); font: 22px ui-monospace, monospace; text-anchor: middle; }
+.counter-card .box-value { fill: var(--yellow); font: 64px ui-monospace, monospace; text-anchor: middle; animation: pop 0.4s; transform-box: fill-box; transform-origin: center; }
+.counter-card .code { fill: var(--green); font: 32px ui-monospace, monospace; }
+
+/* The machine is fixed */
+.fixed-card .marquee-text { fill: var(--yellow); font: 900 64px system-ui, sans-serif; letter-spacing: 14px; text-anchor: middle; filter: drop-shadow(0 0 10px var(--yellow)) drop-shadow(0 0 22px var(--pink)); }
+.fixed-card .title { fill: var(--green); font: 900 48px system-ui, sans-serif; text-anchor: middle; filter: drop-shadow(0 0 8px var(--green)); animation: pulse 1.4s ease-in-out infinite; }
+.fixed-card .trophy { font-size: 96px; text-anchor: middle; }
+.fixed-card .sub { fill: var(--text); font-size: 24px; text-anchor: middle; }
 
 /* Celebration */
 .confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; }

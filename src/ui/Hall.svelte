@@ -94,7 +94,7 @@
     <BitFace mood="happy" size={56} />
     <p class="bubble hall-say">{say ?? (started ? t('hallWelcomeBack') : t('hallWelcome'))}</p>
     <button class="primary hall-continue" data-sound="next" onclick={() => (location.hash = routeHash(target))}>
-      {started ? t('hallContinue', { n: LESSONS[target.lesson].number }) : t('hallStart')}
+      {started ? (LESSONS[target.lesson].final ? t('hallContinueFinal') : t('hallContinue', { n: LESSONS[target.lesson].number })) : t('hallStart')}
     </button>
   </div>
   {#if started}

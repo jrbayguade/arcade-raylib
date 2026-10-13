@@ -1,0 +1,39 @@
+{
+  "title": "El rival",
+  "folds": {
+    "preparar": "preparar el joc",
+    "jugador": "la teva pala (W i S) i els límits de totes dues",
+    "partida": "moure la pilota, rebots i punts (tot el que has fet!)",
+    "dibuixar": "dibuixar-ho tot: línia del mig, pales, pilota i marcador",
+    "tancar": "tancar el joc"
+  },
+  "steps": {
+    "rival": {
+      "prompt": [
+        "Repte final! 🏆 El Pong ja funciona sencer... però per jugar-hi necessites algú a l'altra banda.",
+        "Programaràs un rival: la pala de la dreta es mourà sola, seguint la pilota. Així podràs jugar contra la màquina!",
+        "La idea: si la pilota és més amunt que el mig de la pala (`palaDretaY + 40`), la pala puja una mica. Si és més avall, baixa una mica.",
+        "Escriu els dos `if` a la línia groga. Mou la pala 4 píxels cada vegada: si va massa ràpid, serà imbatible!"
+      ],
+      "hints": [
+        "El mig de la pala és `palaDretaY + 40`. Compara-hi `pilotaY`.",
+        "Un `if` amb `pilotaY < palaDretaY + 40` que resti 4 a `palaDretaY`, i un altre amb `>` que en sumi 4.",
+        "`if (pilotaY < palaDretaY + 40) { palaDretaY = palaDretaY - 4; }` i `if (pilotaY > palaDretaY + 40) { palaDretaY = palaDretaY + 4; }`"
+      ],
+      "success": "Tens un rival de veritat! Fes clic al joc i juga amb la W i la S. Aconseguiràs guanyar-li?"
+    },
+    "fixed": {
+      "prompt": [
+        "HO HAS ACONSEGUIT! La màquina del Pong torna a funcionar. 🎉",
+        "Has après coordenades, variables, el bucle del joc, `if`, comparacions, rebots, `&&`, comptadors... i has programat un rival. Això és programar de debò!",
+        "Tot el codi que veus és C de veritat, el mateix que fan servir els programadors de videojocs amb raylib.",
+        "Gràcies per arreglar la meva sala recreativa. Quan vulguis, torna a la sala: aviat s'encendran altres màquines!"
+      ]
+    }
+  },
+  "checks": {
+    "moves": "La pala dreta no es mou. Escriu dos `if` que la facin pujar i baixar segons on sigui la pilota.",
+    "fair": "La pala no es pot teletransportar! Mou-la uns pocs píxels a cada fotograma (com a molt, 6).",
+    "neverMisses": "La pala dreta encara deixa passar la pilota. Comprova que puja quan la pilota és més amunt (`<`) i que baixa quan és més avall (`>`)."
+  }
+}

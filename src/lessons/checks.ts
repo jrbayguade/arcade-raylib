@@ -1,4 +1,4 @@
-import type { Block, Call, DeclType, Expr, Program, Stmt } from '../lang/ast';
+import type { Assign, Block, Call, DeclType, Expr, IncDec, Program, Stmt } from '../lang/ast';
 import { compile } from '../lang/compile';
 import type { Diagnostic } from '../lang/diagnostics';
 import type { VariableView } from '../lang/interpreter';
@@ -79,6 +79,7 @@ function safely(test: () => boolean): boolean {
 
 type Rect = Extract<DrawCommand, { op: 'rect' }>;
 type Circle = Extract<DrawCommand, { op: 'circle' }>;
+type Text = Extract<DrawCommand, { op: 'text' }>;
 
 function afterLastClear(frame: DrawCommand[]): DrawCommand[] {
   for (let i = frame.length - 1; i >= 0; i--) if (frame[i].op === 'clear') return frame.slice(i + 1);
@@ -91,6 +92,10 @@ export function visibleRects(ctx: CheckContext): Rect[] {
 
 export function circles(ctx: CheckContext): Circle[] {
   return afterLastClear(ctx.frame).filter((c): c is Circle => c.op === 'circle');
+}
+
+export function texts(ctx: CheckContext): Text[] {
+  return afterLastClear(ctx.frame).filter((c): c is Text => c.op === 'text');
 }
 
 export function variable(ctx: CheckContext, name: string): number | undefined {
@@ -142,6 +147,13 @@ function* subExprs(e: Expr): Generator<Expr> {
 export function declares(program: Program, name: string, type: DeclType): boolean {
   for (const s of statements(program.main)) if (s.kind === 'VarDecl' && s.name === name && s.varType === type) return true;
   return false;
+}
+
+/** Every statement that changes a variable: `x = …`, `x += …`, `x++`… */
+export function assignmentsTo(program: Program, name: string): (Assign | IncDec)[] {
+  const out: (Assign | IncDec)[] = [];
+  for (const s of statements(program.main)) if ((s.kind === 'Assign' || s.kind === 'IncDec') && s.target === name) out.push(s);
+  return out;
 }
 
 export function callsOf(program: Program, fn: string): Call[] {

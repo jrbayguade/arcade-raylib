@@ -1,0 +1,84 @@
+{
+  "title": "Marcador",
+  "folds": {
+    "preparar": "preparar el joc",
+    "pales": "moure les pales i els seus límits (lliçons 4 i 5)",
+    "moviment": "moure la pilota i fer-la rebotar (lliçons 3, 6 i 7)",
+    "dibuixar": "comença a dibuixar: fons, pales i pilota",
+    "tancar": "tancar el joc"
+  },
+  "steps": {
+    "count": {
+      "prompt": [
+        "Lliçó nova! Un Pong sense marcador no és un Pong. Avui comptarem els punts. 🔢",
+        "Mira a dalt: hi ha dues caixes noves, `puntsEsquerra` i `puntsDreta`, que comencen a 0. I a sota, `DrawText` escriu els números a la pantalla.",
+        "La línia groga diu: «si la pilota passa per la dreta, suma 1 a `puntsEsquerra` i torna la pilota al centre». Fes clic al joc i aparta la pala dreta amb ↑: veuràs com puja el marcador.",
+        "Sumar 1 a una caixa és tan habitual que té una manera curta d'escriure's: `puntsEsquerra++;`. Canvia `puntsEsquerra = puntsEsquerra + 1;` per `puntsEsquerra++;` i prem ▶ Executa."
+      ],
+      "hints": [
+        "Només has de canviar la part que suma, la que hi ha abans de `pilotaX = 400;`.",
+        "`++` enganxat al nom de la caixa vol dir «suma-hi 1».",
+        "`if (pilotaX > 800) { puntsEsquerra++; pilotaX = 400; }`"
+      ],
+      "success": "El marcador funciona! I ara ja saps la drecera `++`."
+    },
+    "counterCard": {
+      "prompt": [
+        "Una caixa que va sumant d'1 en 1 es diu comptador. Comença a 0 i, cada cop que passa alguna cosa, hi suma 1.",
+        "`puntsEsquerra++;` és el mateix que `puntsEsquerra = puntsEsquerra + 1;`: llegeix la caixa, hi suma 1 i ho guarda.",
+        "També existeix `+=`: `puntsEsquerra += 2;` hi suma 2. I `--` hi resta 1.",
+        "Per dibuixar un número fem servir `TextFormat(\"%d\", caixa)`: converteix el número en text perquè `DrawText` el pugui escriure. Quan ho tinguis clar, prem Continua."
+      ]
+    },
+    "rightScore": {
+      "prompt": [
+        "Ara la pilota surt cap a l'esquerra. Quan passa per l'esquerra, encara no compta cap punt!",
+        "Escriu un `if` que, quan `pilotaX` sigui més petita que 0, sumi 1 a `puntsDreta` i torni la pilota al centre (`pilotaX = 400;`).",
+        "Pots posar les dues ordres dins les mateixes claus, com a la línia de dalt."
+      ],
+      "hints": [
+        "Copia la línia de dalt i canvia-hi la pregunta i la caixa del punt.",
+        "La pregunta és `pilotaX < 0`, i el punt és per a `puntsDreta`.",
+        "`if (pilotaX < 0) { puntsDreta++; pilotaX = 400; }`"
+      ],
+      "success": "Ara compten els punts dels dos costats!"
+    },
+    "drawRight": {
+      "prompt": [
+        "Els punts de la dreta ja es compten... però no es veuen! Només es dibuixa el marcador de l'esquerra.",
+        "A la línia buida, dibuixa `puntsDreta` amb `DrawText`, a la x = 440 (a la dreta del centre). Copia la línia de dalt i canvia el que calgui."
+      ],
+      "hints": [
+        "La línia de dalt dibuixa `puntsEsquerra` a la x = 340.",
+        "Canvia `puntsEsquerra` per `puntsDreta` i 340 per 440.",
+        "`DrawText(TextFormat(\"%d\", puntsDreta), 440, 20, 40, WHITE);`"
+      ],
+      "success": "Marcador complet! Ja es veuen els punts dels dos jugadors."
+    },
+    "winner": {
+      "prompt": [
+        "Últim repte! Les partides s'han d'acabar algun dia.",
+        "Quan `puntsEsquerra` arribi a 5, escriu un missatge gran al mig de la pantalla, per exemple «GUANYA L'ESQUERRA!».",
+        "A la línia buida, escriu un `if` amb `puntsEsquerra >= 5` i, a dins, un `DrawText` amb el teu missatge entre cometes."
+      ],
+      "hints": [
+        "Els textos que escrius tal qual van entre cometes: `\"GUANYA!\"`.",
+        "`DrawText(\"el teu missatge\", 200, 200, 40, YELLOW);` dins d'un `if` amb `puntsEsquerra >= 5`.",
+        "`if (puntsEsquerra >= 5) { DrawText(\"GUANYA L'ESQUERRA!\", 200, 200, 40, YELLOW); }`"
+      ],
+      "success": "Ja tens un Pong amb marcador i guanyador! Només falta l'últim repte... 🏆"
+    }
+  },
+  "checks": {
+    "scores": "El marcador de l'esquerra no puja. Dins de les claus ha de quedar `puntsEsquerra++;` (i també `pilotaX = 400;`).",
+    "shortForm": "Funciona, però encara fa servir la manera llarga. Canvia `puntsEsquerra = puntsEsquerra + 1;` per `puntsEsquerra++;`.",
+    "rightScores": "Quan la pilota passa per l'esquerra, `puntsDreta` no puja. Escriu un `if` amb `pilotaX < 0` que faci `puntsDreta++;`.",
+    "ballBackToCentre": "La pilota no torna al centre després del punt. Dins de les claus, afegeix `pilotaX = 400;`.",
+    "leftUntouched": "Ara els punts van a la caixa equivocada: quan la pilota passa per l'esquerra, el punt és per a `puntsDreta`.",
+    "drawsRight": "No es veu el marcador de la dreta. Escriu un `DrawText` amb `puntsDreta` a la x = 440.",
+    "leftStillDrawn": "Ara no es veu el marcador de l'esquerra. Deixa la línia de dalt com estava.",
+    "showsWinner": "Quan l'esquerra arriba a 5 punts, no surt cap missatge. Escriu un `if` amb `puntsEsquerra >= 5` i un `DrawText` amb el missatge entre cometes.",
+    "notTooSoon": "El missatge surt massa aviat! Només ha d'aparèixer quan `puntsEsquerra` arribi a 5.",
+    "ballBack": "Després del punt, la pilota no torna al centre. Dins de les claus, deixa també `pilotaX = 400;`."
+  }
+}

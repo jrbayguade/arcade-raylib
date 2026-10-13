@@ -18,7 +18,7 @@
 </script>
 
 <svg viewBox="0 0 800 450" class="bounce-card" role="img" aria-label="velX = -velX">
-  <rect x="100" y="40" width="620" height="200" class="screen" />
+  <rect x="100" y="40" width="620" height="200" class="card-screen" />
   <circle cx={x} cy="140" r="16" class="ball" />
   <text x={x} y={vel > 0 ? 100 : 100} class="arrow">{vel > 0 ? '→' : '←'}</text>
   <g transform="translate(180 280)">

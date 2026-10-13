@@ -32,6 +32,11 @@ try {
       const label = `lesson ${lesson} step ${i}`;
       if (kind === 'explain') {
         check(`${label}: explain card`, await visible(page.locator('.explain svg')));
+        const overflow = await page.evaluate(() => {
+          const svg = document.querySelector('.explain svg').getBoundingClientRect();
+          return [...document.querySelectorAll('.explain svg rect')].map((r) => r.getBoundingClientRect()).filter((b) => b.bottom > svg.bottom + 2 || b.right > svg.right + 2).length;
+        });
+        check(`${label}: everything in the card fits inside it`, overflow === 0, `${overflow} shapes outside`);
         if (lesson === 0) {
           await page.waitForTimeout(1700);
           const pt = await page.evaluate(() => { const g = document.querySelector('.grid-card .point'); return [g.dataset.x, g.dataset.y, g.querySelector('.coord').textContent, g.querySelector('.dot').getAttribute('cx'), g.querySelector('.dot').getAttribute('cy')]; });
@@ -41,6 +46,8 @@ try {
         if (lesson === 4) check(`${label}: compare card`, await visible(page.locator('.compare-card')));
         if (lesson === 5) check(`${label}: bounce card`, await visible(page.locator('.bounce-card')));
         if (lesson === 6) check(`${label}: and card`, await visible(page.locator('.and-card')));
+        if (lesson === 7) check(`${label}: counter card`, await visible(page.locator('.counter-card')));
+        if (lesson === 8) check(`${label}: the machine is fixed`, await visible(page.locator('.fixed-card')));
         if (lesson === 2) {
           check(`${label}: frames card`, await visible(page.locator('.frames-card')));
           const first = await page.locator('.frames-card .box-value').textContent();
@@ -160,11 +167,11 @@ try {
   check('lesson 3 shown', await visible(page.getByRole('heading', { name: /lliçó 3/ })));
   await page.locator('.cm-editor').waitFor();
   await playLesson(2, ['vars', 'explain', 'vars', 'vars', 'vars']);
-  const LESSON_STEPS_AFTER_CARD = { 3: ['vars', 'vars', 'vars'], 4: ['vars', 'vars', 'vars'], 5: ['vars', 'vars', 'vars'], 6: ['vars', 'vars'] };
-  for (const n of [3, 4, 5, 6]) {
+  const LESSON_STEPS_AFTER_CARD = { 3: ['vars', 'vars', 'vars'], 4: ['vars', 'vars', 'vars'], 5: ['vars', 'vars', 'vars'], 6: ['vars', 'vars'], 7: ['vars', 'vars', 'vars'], 8: [] };
+  for (const n of [3, 4, 5, 6, 7, 8]) {
     check(`lesson ${n} done`, await visible(page.getByText('Has acabat la lliçó!')));
     await button('Següent lliçó →').click();
-    check(`lesson ${n + 1} shown`, await visible(page.getByRole('heading', { name: new RegExp(`lliçó ${n + 1}`) })));
+    check(`lesson ${n + 1} shown`, await visible(page.getByRole('heading', { name: n === 8 ? /repte final/ : new RegExp(`lliçó ${n + 1}`) })));
     await page.locator('.cm-editor').waitFor();
     await playLesson(n, ['vars', 'explain', ...LESSON_STEPS_AFTER_CARD[n]]);
   }
@@ -454,7 +461,7 @@ try {
     check('hall: the next lessons are locked', (await items.nth(1).getAttribute('aria-disabled')) === 'true' && (await items.nth(1).innerText()).includes('🔒'));
     await items.nth(1).click({ force: true }); // aria-disabled, but a tap still gets an answer from Bit
     check('hall: Bit says why a locked lesson does not open', await visible(kid.locator('.hall-say', { hasText: 'Primer acaba la lliçó 1' })) && (await kid.evaluate(() => location.hash)) === '#/sala');
-    check('hall: lessons still to come say so', (await kid.locator('.lesson-item.soon').first().innerText()).includes('Properament'));
+    check('hall: the whole course is there, ending with the 🏆 challenge', (await items.count()) === 9 && (await items.nth(8).innerText()).includes('🏆'));
     check('hall: other machines are coming soon', (await kid.locator('.mini-cab').count()) === 3);
     await kid.goto(`${base}#/pong/0/2`);
     await kid.locator('.cm-editor').waitFor();

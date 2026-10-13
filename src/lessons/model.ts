@@ -38,6 +38,8 @@ export interface LessonTexts {
 export interface Lesson {
   id: string;
   number: number;
+  /** The last challenge of a machine (🏆): shown as "repte final" instead of a lesson number. */
+  final?: boolean;
   /** Name on the arcade cabinet's sign, e.g. PONG. */
   machine?: string;
   steps: Step[];
