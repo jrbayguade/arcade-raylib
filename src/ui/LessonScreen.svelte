@@ -275,7 +275,7 @@
       {#if isExercise(view.step)}
         <div class="machine-row">
           <button class="slow-btn" class:on={slowMotion.on} aria-pressed={slowMotion.on} data-sound="page"
-            title={t('slowMotion')} aria-label={t('slowMotion')} onclick={() => (slowMotion.on = !slowMotion.on)}>🐢</button>
+            title={t('slowMotion')} aria-label={t('slowMotion')} onclick={() => (slowMotion.on = !slowMotion.on)}>🐢 <span class="slow-label">{t('slowLabel')}</span>{#if slowMotion.on} ✓{/if}</button>
           {#if view.step.showVariables}<VariablesPanel {variables} />{/if}
         </div>
       {/if}

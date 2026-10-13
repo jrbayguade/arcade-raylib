@@ -22,7 +22,7 @@
     <g transform="translate({40 + i * 250} 20)" class="film" class:now={i === frame}>
       <rect width="220" height="124" rx="8" class="film-frame" />
       <circle cx={60 + i * 40} cy="62" r="10" class="film-ball" />
-      <text x="110" y="150" class="film-label">{t('framesLabel', { n: i + 1 })}</text>
+      <text x="110" y="150" class="film-label">{t('framesLabel', { n: i + 1, x: START + (i + 1) * STEP })}</text>
     </g>
   {/each}
   <g transform="translate(60 230)">
@@ -31,8 +31,8 @@
     <text x="100" y="-8" class="box-name">pilotaX</text>
     {#key inBox}<text x="100" y="88" class="box-value">{inBox}</text>{/key}
   </g>
-  <text x="300" y="270" class="frames-code">pilotaX = pilotaX + 3;</text>
-  <text x="300" y="330" class="beat" class:on={beat === 0}>{t('framesRead', { n: before })}</text>
-  <text x="470" y="330" class="beat" class:on={beat === 1}>{t('framesAdd')}</text>
-  <text x="600" y="330" class="beat" class:on={beat === 2}>{t('framesStore', { n: before + STEP })}</text>
+  <text x="300" y="240" class="frames-code">pilotaX = pilotaX + 3;</text>
+  <text x="320" y="300" class="beat" class:on={beat === 0}>{t('framesRead', { n: before })}</text>
+  <text x="320" y="345" class="beat" class:on={beat === 1}>{t('framesAdd')}</text>
+  <text x="320" y="390" class="beat" class:on={beat === 2}>{t('framesStore', { n: before + STEP })}</text>
 </svg>

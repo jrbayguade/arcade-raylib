@@ -4,6 +4,7 @@
   import type { Diagnostic } from '../lang/diagnostics';
   import type { VariableView } from '../lang/interpreter';
   import { renderFrame } from '../render/canvas';
+  import { allBallsOffScreen } from '../runtime/drawList';
   import { KeyboardInput } from '../runtime/keyboard';
   import { Runner } from '../runtime/runner';
 
@@ -21,6 +22,9 @@
   let runner: Runner | null = null;
   let mouse = $state<{ x: number; y: number } | null>(null);
   let frameNo = $state(0);
+  /** Every ball has left the screen: offer to launch it again instead of showing an empty machine. */
+  let lost = $state(false);
+  let lastCode: string | null = null;
 
   onMount(() => {
     const ctx = canvas.getContext('2d')!;
@@ -38,6 +42,7 @@
         }
         renderFrame(ctx, drawList);
         frameNo = runner?.frameCount ?? 0;
+        lost = allBallsOffScreen(drawList, host.width, host.height);
         onVariables(runner?.variables() ?? []);
       },
       // The checks only run 2 frames: a later runtime error in the live game must still reach Bit.
@@ -50,7 +55,13 @@
   });
 
   // Declared after onMount, so it first runs once the runner exists; applies now and to every later run.
-  $effect(() => { runner?.setSlow(slow); });
+  // Switching 🐢 on restarts the program, so the kid watches it from the first frame (not "fotograma 884" on an empty screen).
+  let wasSlow = false;
+  $effect(() => {
+    runner?.setSlow(slow);
+    if (slow && !wasSlow && lastCode && runner?.running) start(lastCode);
+    wasSlow = slow;
+  });
 
   /** Runs a program, with the old-TV "switching on" effect (restarted by toggling the class). */
   export function start(code: string): void {
@@ -58,6 +69,8 @@
     void frame.offsetWidth;
     frame.classList.add('power');
     frameNo = 0;
+    lost = false;
+    lastCode = code;
     runner?.start(code);
     running = true;
   }
@@ -87,6 +100,9 @@
   <canvas bind:this={canvas} width="800" height="450" tabindex="0"
     onmousemove={track} onmouseleave={() => (mouse = null)}></canvas>
   {#if broken}<div class="tv-static" aria-hidden="true"></div>{/if}
+  {#if lost && !broken}
+    <button class="ball-lost" data-sound="page" onclick={() => lastCode && start(lastCode)}>{t('ballLost')}</button>
+  {/if}
   {#if slow && !broken && frameNo > 0}<span class="frame-no">{t('frameNo', { n: frameNo })}</span>{/if}
   {#if mouse && !broken}<span class="coords">{t('mouseCoords', mouse)}</span>{/if}
 </div>

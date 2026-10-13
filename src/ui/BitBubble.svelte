@@ -87,6 +87,9 @@
   const goTo = (i: number) => { tw.goTo(i); sync(); };
   const replay = () => { tw.restart(); sync(); };
 
+  /** Mistakes Bit recognises and explains: no "there is something I don't understand" before the explanation. */
+  const EXPLAINED = new Set(['VALUE_NOT_STORED', 'ALREADY_DECLARED', 'UNDECLARED_VAR', 'MISSING_SEMICOLON']);
+
   function diagnosticText(intro: string, d: Diagnostic): string {
     return `${intro} ${formatDiagnostic(d)}`;
   }
@@ -140,7 +143,7 @@
           {:else if message.feedback?.kind === 'almost'}
             <p class="almost"><TypedText text={`${t('almost')} ${checkTexts[message.feedback.key] ?? message.feedback.key}`} /></p>
           {:else if message.feedback?.kind === 'compile-error'}
-            <p class="error"><TypedText text={diagnosticText(t('compileErrorIntro', { line: message.feedback.diagnostic.line }), message.feedback.diagnostic)} /></p>
+            <p class="error"><TypedText text={diagnosticText(t(EXPLAINED.has(message.feedback.diagnostic.code) ? 'compileErrorExplained' : 'compileErrorIntro', { line: message.feedback.diagnostic.line }), message.feedback.diagnostic)} /></p>
           {:else if message.feedback?.kind === 'runtime-error'}
             <p class="error"><TypedText text={diagnosticText(t('runtimeErrorIntro', { line: message.feedback.diagnostic.line }), message.feedback.diagnostic)} /></p>
           {/if}

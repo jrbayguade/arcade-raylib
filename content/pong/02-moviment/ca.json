@@ -10,7 +10,7 @@
       "prompt": [
         "Lliçó nova! Fins ara tot estava quiet. Avui la pilota es mourà sola. 🏃",
         "Mira el codi: ara es veu el `while`, que abans estava amagat a la barra «es repeteix a cada fotograma». Tot el que hi ha a dins es repeteix 60 vegades cada segon, fins que tanques el joc. Cada volta és un fotograma, com els dibuixos d'una pel·lícula.",
-        "La línia groga, `pilotaX = pilotaX + 1;`, suma 1 a la caixa `pilotaX` a cada fotograma. Per això la pilota s'arrossega cap a la dreta. Sembla rar, oi? De seguida t'explico com funciona. Quan arribi a la vora, sortirà de la pantalla: és normal, encara no sap rebotar.",
+        "La línia groga `pilotaX = pilotaX + 1;` suma 1 a la caixa `pilotaX` a cada fotograma. Per això la pilota s'arrossega cap a la dreta. Sembla rar, oi? De seguida t'explico com funciona. Quan arribi a la vora, sortirà de la pantalla: és normal, encara no sap rebotar.",
         "Prem 🐢 (a sota del joc) i després ▶ Executa: veuràs la pilota avançar fotograma a fotograma i el número de `pilotaX` pujant d'1 en 1. Torna a prémer 🐢 per anar a velocitat normal.",
         "Fes que la pilota vagi més ràpid: canvia l'1 per un 5 i prem ▶ Executa."
       ],

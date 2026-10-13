@@ -89,6 +89,11 @@ try {
           const a = await pilotaX();
           await page.waitForTimeout(300);
           check(`${label}: the ball keeps moving after a success`, (await pilotaX()) > a);
+          check(`${label}: when the ball leaves, the machine offers to launch it again`, await visible(page.locator('.ball-lost'), 4000));
+          await page.locator('.ball-lost').click();
+          await page.waitForTimeout(100);
+          const back = [await page.locator('.ball-lost').count(), await pilotaX()];
+          check(`${label}: launching it again brings the ball back`, back[0] === 0 && back[1] < 600, JSON.stringify(back));
         }
       }
       if (i < steps.length - 1) await button('Continua →').click();
@@ -338,6 +343,13 @@ try {
       check('phone sideways, lesson 3: the game fits', canvasBox.y + canvasBox.height <= h, JSON.stringify(canvasBox));
       const slow3 = await phone.locator('.slow-btn').boundingBox();
       check('phone sideways, lesson 3: 🐢 in view and thumb-sized', slow3 !== null && slow3.height >= 44 && slow3.y + slow3.height <= h);
+      const runOnTop = await phone.evaluate(() => {
+        const b = document.querySelector('.actions .run, .actions .next')?.getBoundingClientRect();
+        if (!b) return 'no button';
+        const el = document.elementFromPoint(b.x + b.width / 2, b.y + b.height / 2);
+        return el?.closest('.actions') ? 'ok' : el?.className ?? 'nothing';
+      });
+      check('phone sideways, lesson 3: nothing covers the action buttons', runOnTop === 'ok', runOnTop);
     }
     await ctx.close();
   }
