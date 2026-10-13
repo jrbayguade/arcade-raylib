@@ -25,12 +25,12 @@ describe('lesson 5: inside the screen', () => {
     expect(tryZone('top', '        if (palaY = 20) { palaY = 20; }')).toMatchObject({ kind: 'compile-error', diagnostic: { code: 'ASSIGN_IN_CONDITION' } });
   });
   it('bottom: the wrong comparison or a limit too high are caught', () => {
-    expect(firstFailing(tryZone('bottom', TOP + '\n        if (palaY < 370) { palaY = 370; }'))).not.toBeUndefined();
+    expect(firstFailing(tryZone('bottom', TOP + '\n        if (palaY < 350) { palaY = 350; }'))).not.toBeUndefined();
     expect(firstFailing(tryZone('bottom', TOP + '\n        if (palaY > 450) { palaY = 450; }'))).toBe('staysAboveBottom');
-    expect(tryZone('bottom', TOP + '\n        if (palaY >= 370) { palaY = 370; }')).toMatchObject({ passed: true });
+    expect(tryZone('bottom', TOP + '\n        if (palaY >= 350) { palaY = 350; }')).toMatchObject({ passed: true });
   });
   it('rightLimits: using palaY instead of palaDretaY is explained', () => {
-    const wrong = '        if (palaY < 20) { palaDretaY = 20; }\n        if (palaDretaY > 370) { palaDretaY = 370; }';
+    const wrong = '        if (palaY < 20) { palaDretaY = 20; }\n        if (palaDretaY > 350) { palaDretaY = 350; }';
     expect(firstFailing(tryZone('rightLimits', wrong))).toBe('rightTop');
   });
   it('wrap: both kinds of wrap pass, a stop does not', () => {

@@ -39,6 +39,7 @@ try {
         }
         if (lesson === 3) check(`${label}: if card`, await visible(page.locator('.if-card')));
         if (lesson === 4) check(`${label}: compare card`, await visible(page.locator('.compare-card')));
+        if (lesson === 5) check(`${label}: bounce card`, await visible(page.locator('.bounce-card')));
         if (lesson === 2) {
           check(`${label}: frames card`, await visible(page.locator('.frames-card')));
           const first = await page.locator('.frames-card .box-value').textContent();
@@ -158,7 +159,7 @@ try {
   check('lesson 3 shown', await visible(page.getByRole('heading', { name: /lliçó 3/ })));
   await page.locator('.cm-editor').waitFor();
   await playLesson(2, ['vars', 'explain', 'vars', 'vars', 'vars']);
-  for (const n of [3, 4]) {
+  for (const n of [3, 4, 5]) {
     check(`lesson ${n} done`, await visible(page.getByText('Has acabat la lliçó!')));
     await button('Següent lliçó →').click();
     check(`lesson ${n + 1} shown`, await visible(page.getByRole('heading', { name: new RegExp(`lliçó ${n + 1}`) })));
@@ -246,6 +247,9 @@ try {
   await page.waitForTimeout(400);
   await page.keyboard.up('KeyW');
   check('W moves the paddle up', (await palaY()) < y0, `${y0} → ${await palaY()}`);
+  await page.locator('.cm-content').click();
+  await button('▶ Executa').click();
+  check('after ▶ on a step with keys, the game has the keyboard', (await page.locator('.play-hint').count()) === 0 && (await page.evaluate(() => document.activeElement?.tagName)) === 'CANVAS');
 
   // 🐢 slows the game down and shows the frame number
   await page.goto(`${base}#/pong/2/0`);
@@ -383,6 +387,9 @@ try {
       await phone.waitForTimeout(400);
       await phone.mouse.up();
       check('phone: holding the on-screen S moves the paddle down', (await phoneY()) > before, `${before} → ${await phoneY()}`);
+      const yChip = await phone.locator('.vars .box', { hasText: 'palaY' }).first().boundingBox();
+      const row = await phone.locator('.vars .boxes').boundingBox();
+      check('phone: the box the zone talks about is in view', yChip.x >= row.x - 1 && yChip.x + yChip.width <= row.x + row.width + 1, JSON.stringify([yChip, row]));
       // Lesson 3's last step: five variable boxes and 🐢 under the screen must still fit
       await phone.goto(`${base}#/pong/2/4`);
       await phone.reload();

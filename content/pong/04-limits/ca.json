@@ -10,8 +10,8 @@
       "prompt": [
         "Ja tens les pales amb W, S, ↑ i ↓. Però si prems massa estona, la pala surt de la pantalla! 🙈",
         "La línia groga ho arregla: «si `palaY` és més petita que 0, torna-la a 0». El signe `<` vol dir «més petit que».",
-        "Fes clic al joc i mantén la W: la pala s'atura just a dalt de tot.",
-        "Fes que s'aturi una mica abans, a la y = 20: canvia els dos 0 per 20 i prem ▶ Executa."
+        "Fes clic al joc i mantén la W: la pala s'atura just a dalt de tot. (Al mòbil, fes servir els botons de la pantalla.)",
+        "Deixa-hi un marge: fes que s'aturi a la y = 20. Canvia els dos 0 per 20 i prem ▶ Executa."
       ],
       "hints": [
         "Hi ha dos 0 a la línia: el de la pregunta i el que es guarda.",
@@ -31,13 +31,13 @@
     "bottom": {
       "prompt": [
         "Per dalt ja no s'escapa. I per baix?",
-        "La pala fa 80 d'alt i la pantalla 450, així que la seva y no pot passar de 370 (450 − 80).",
-        "A la línia buida, escriu un `if` perquè `palaY` no passi mai de 370. Pista: aquí la pregunta és «més gran que», `>`."
+        "`palaY` és la vora de dalt de la pala, i la pala fa 80 cap avall. La pantalla fa 450: si la deixem baixar fins a 370 (450 − 80), tocarà la vora de baix. Però a dalt hem deixat 20 de marge, oi? Doncs a baix també: 350.",
+        "A la línia buida, escriu un `if` perquè `palaY` no passi mai de 350. Pista: aquí la pregunta és «més gran que», `>`."
       ],
       "hints": [
-        "És com la línia de dalt, però amb `>` i 370.",
-        "Si `palaY` és més gran que 370, torna-la a 370.",
-        "`if (palaY > 370) { palaY = 370; }`"
+        "És com la línia de dalt, però amb `>` i 350.",
+        "Si `palaY` és més gran que 350, torna-la a 350.",
+        "`if (palaY > 350) { palaY = 350; }`"
       ],
       "success": "La pala de l'esquerra ja no s'escapa ni per dalt ni per baix! 🧱"
     },
@@ -49,7 +49,7 @@
       "hints": [
         "Copia les dues línies de la pala esquerra.",
         "Canvia `palaY` per `palaDretaY` a tot arreu (quatre vegades).",
-        "`if (palaDretaY < 20) { palaDretaY = 20; }` i `if (palaDretaY > 370) { palaDretaY = 370; }`"
+        "`if (palaDretaY < 20) { palaDretaY = 20; }` i `if (palaDretaY > 350) { palaDretaY = 350; }`"
       ],
       "success": "Totes dues pales queden dins la pantalla. Ja comença a semblar un joc de veritat!"
     },
@@ -70,15 +70,16 @@
   "checks": {
     "staysOnScreen": "La pala encara surt per dalt. Comprova que la pregunta és `palaY < …`.",
     "stopsAt20": "La pala s'ha d'aturar a la y = 20: posa 20 a la pregunta i també al número que es guarda.",
-    "stillMoves": "Ara la pala no es mou bé. Toca només els números de la línia groga.",
-    "staysAboveBottom": "La pala encara surt per baix. Escriu `if (palaY > 370) { palaY = 370; }`",
-    "reachesBottom": "La pala s'atura massa amunt: ha de poder baixar fins a la y = 370.",
+    "stillMoves": "La pala salta de cop a la y = 20! Mira el signe de la pregunta: ha de ser `<`.",
+    "staysAboveBottom": "La pala encara baixa massa. Recorda que `palaY` és la vora de dalt de la pala: la pala arriba fins a `palaY + 80`, i volem 20 de marge.",
+    "reachesBottom": "La pala s'atura massa amunt: ha de poder baixar fins a la y = 350.",
     "topStillWorks": "Ara el límit de dalt ja no funciona! Deixa la primera línia com estava.",
-    "rightTop": "La pala de la dreta encara surt per dalt: falta un `if` amb `palaDretaY < 20`.",
-    "rightBottom": "La pala de la dreta encara surt per baix (o s'atura massa amunt): falta un `if` amb `palaDretaY > 370`.",
+    "rightTop": "La pala de la dreta encara surt per dalt. Revisa l'`if` de dalt: `palaDretaY` hi ha d'aparèixer dues vegades, a la pregunta i dins les claus.",
+    "rightBottom": "La pala de la dreta encara baixa massa (o s'atura massa amunt). Revisa l'`if` de baix: `palaDretaY` hi ha d'aparèixer dues vegades, i el número és 350.",
     "leftUntouched": "Ara la pala de l'esquerra no funciona bé. Fes servir `palaDretaY` als dos `if` nous.",
     "wrapsAround": "La pilota encara s'escapa per la dreta. Escriu un `if` amb `pilotaX > 800`.",
     "comesBackLeft": "La pilota ha de tornar a aparèixer per l'esquerra: guarda 0 a `pilotaX`.",
-    "movesBeforeEdge": "Ara la pilota fa coses estranyes abans d'arribar a la vora. La pregunta ha de ser `pilotaX > 800`."
+    "movesBeforeEdge": "Ara la pilota fa coses estranyes abans d'arribar a la vora. La pregunta ha de ser `pilotaX > 800`.",
+    "noJump": "La pala salta de cop a baix! A la pregunta has posat `=`, que vol dir «guarda-hi». Per comparar, fes servir `>`."
   }
 }

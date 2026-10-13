@@ -19,7 +19,7 @@ int main(void)
         if (IsKeyDown(KEY_UP)) { palaDretaY = palaDretaY - 6; }
         if (IsKeyDown(KEY_DOWN)) { palaDretaY = palaDretaY + 6; }
         if (palaY < 20) { palaY = 20; }
-        if (palaY > 370) { palaY = 370; }
+        if (palaY > 350) { palaY = 350; }
 //@edit
 //@placeholder els mateixos límits per a palaDretaY
 //@end

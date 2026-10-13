@@ -20,7 +20,7 @@ int main(void)
         if (IsKeyDown(KEY_DOWN)) { palaDretaY = palaDretaY + 6; }
 //@edit
         if (palaY < 20) { palaY = 20; }
-//@placeholder que no baixi més de la y = 370
+//@placeholder que no baixi més de la y = 350
 //@end
 
 //@fold dibuixar

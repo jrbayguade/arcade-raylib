@@ -10,12 +10,12 @@
       "prompt": [
         "Lliçó nova! La pilota fa una pausa: avui toca que la pala t'obeeixi. 🎮",
         "Mira la línia groga: comença amb `if`, que vol dir «si». La llegim així: «si la tecla W està premuda, puja la pala 2 píxels».",
-        "Fes clic a la pantalla del joc i mantén premuda la W. La pala puja... molt a poc a poc. Si no prems res, no es mou.",
+        "Fes clic a la pantalla del joc i mantén premuda la W. La pala puja... molt a poc a poc. Si no prems res, no es mou. (Al mòbil, fes servir els botons de la pantalla.) Si se t'escapa per dalt, prem ▶ Executa: a la lliçó 5 li posarem límits.",
         "Fes que la pala pugi més ràpid: canvia el 2 per un 6 i prem ▶ Executa. Després, fes clic al joc i prova-ho amb la W."
       ],
       "hints": [
-        "El número que diu quant puja és el que va després del -.",
-        "Canvia el 2 per un 6.",
+        "Busca a la línia groga el número que diu quants píxels puja la pala.",
+        "Només has de tocar un número: el que hi ha just després del `-`.",
         "`if (IsKeyDown(KEY_W)) { palaY = palaY - 6; }`"
       ],
       "success": "Ara sí que obeeix! Fes clic al joc i prem la W per veure-ho."
@@ -25,7 +25,7 @@
         "Un `if` és com una cruïlla: l'ordinador fa una pregunta i, segons la resposta, fa una cosa o no la fa.",
         "La pregunta va entre parèntesis: `(IsKeyDown(KEY_W))` vol dir «la W està premuda?».",
         "Si la resposta és sí, fa el que hi ha entre les claus `{ }`. Si és no, se les salta i continua.",
-        "I com que el bucle es repeteix 60 vegades per segon, l'ordinador fa la pregunta 60 vegades cada segon! Quan ho tinguis clar, prem Continua."
+        "I com que el bucle es repeteix 60 vegades per segon, la pregunta també! Mentre mantens la W, la pala puja 6 píxels a cada fotograma; quan la deixes anar, la resposta és no i s'atura. Quan ho tinguis clar, prem Continua."
       ]
     },
     "keyS": {
@@ -55,7 +55,7 @@
     },
     "space": {
       "prompt": [
-        "Últim repte! La pilota torna a moure's amb `velX`, i quan surt de la pantalla s'escapa.",
+        "Últim repte! La pilota torna a moure's amb `velX` i, quan arriba a la vora, se n'escapa.",
         "Fes un botó màgic: quan premis l'ESPAI (`KEY_SPACE`), la pilota ha de tornar al centre, a la x = 400.",
         "Escriu-ho a la línia buida, sota la línia que mou la pilota."
       ],
@@ -69,16 +69,16 @@
   },
   "checks": {
     "movesUp": "La pala no puja quan prems la W. Dins de les claus has de restar a `palaY`.",
-    "addsEveryFrame": "La pala ha saltat de cop: has guardat un número a `palaY` en lloc de restar-li. Escriu `palaY = palaY - …;`",
+    "addsEveryFrame": "La pala ha saltat de cop: has guardat un número a `palaY` en lloc de restar-l'hi. Escriu `palaY = palaY - …;`",
     "faster": "La pala encara va massa a poc a poc: el número després del - ha de ser 4 o més.",
     "notTooFast": "La pala va tan ràpid que surt volant! Prova un número entre 4 i 15.",
-    "stillWithoutKey": "La pala es mou encara que no premis res! Comprova que el canvi és dins de les claus `{ }` del `if`.",
+    "stillWithoutKey": "La pala es mou encara que no premis res! El canvi ha d'anar dins les claus `{ }` del `if`, i just després del `)` no hi pot haver cap `;`.",
     "sMovesDown": "La pala no baixa quan prems la S. Escriu un `if` amb `KEY_S` que sumi a `palaY`.",
     "wStillUp": "Ara la W ja no fa pujar la pala! Deixa la línia de la W com estava.",
-    "upMovesRight": "La pala de la dreta no puja amb ↑. Escriu un `if` amb `KEY_UP` que resti a `palaDretaY`.",
+    "upMovesRight": "La pala de la dreta no puja bé amb ↑. Escriu un `if` amb `KEY_UP` que resti a `palaDretaY`: `palaDretaY = palaDretaY - 6;`",
     "downMovesRight": "La pala de la dreta no baixa amb ↓. Escriu un `if` amb `KEY_DOWN` que sumi a `palaDretaY`.",
     "keysStayApart": "Les tecles s'han barrejat: la W i la S són per a la pala esquerra (`palaY`), i les fletxes per a la dreta (`palaDretaY`).",
-    "spaceCentres": "Quan prems l'ESPAI, la pilota no torna al centre. Escriu un `if` amb `KEY_SPACE` que guardi 400 a `pilotaX`.",
+    "spaceCentres": "Quan prems l'ESPAI, la pilota no torna al centre. Escriu un `if` amb `KEY_SPACE` que guardi 400 a `pilotaX` amb un sol `=`: guarda-hi, no comparis.",
     "ballStillMoves": "Ara la pilota no es mou quan no prems res! El canvi ha d'anar dins de les claus del `if`."
   }
 }

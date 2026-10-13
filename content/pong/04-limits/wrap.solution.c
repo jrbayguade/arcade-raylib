@@ -20,9 +20,9 @@ int main(void)
         if (IsKeyDown(KEY_UP)) { palaDretaY = palaDretaY - 6; }
         if (IsKeyDown(KEY_DOWN)) { palaDretaY = palaDretaY + 6; }
         if (palaY < 20) { palaY = 20; }
-        if (palaY > 370) { palaY = 370; }
+        if (palaY > 350) { palaY = 350; }
         if (palaDretaY < 20) { palaDretaY = 20; }
-        if (palaDretaY > 370) { palaDretaY = 370; }
+        if (palaDretaY > 350) { palaDretaY = 350; }
         pilotaX = pilotaX + velX;
 //@edit
         if (pilotaX > 800) { pilotaX = 0; }

@@ -81,6 +81,11 @@
     running = true;
   }
 
+  /** Hands the keyboard to the game (after ▶ on steps played with keys). */
+  export function focus(): void {
+    canvas.focus({ preventScroll: true });
+  }
+
   export function stop(): void {
     runner?.stop();
     running = false;

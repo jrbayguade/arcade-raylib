@@ -125,7 +125,7 @@
     "ifPressed": "premuda",
     "ifReleased": "no premuda",
     "ifYes": "sí → ho fa",
-    "ifNo": "no → se la salta",
+    "ifNo": "no → no ho fa",
     "ifNothing": "(res)",
     "keySpace": "ESPAI",
     "playHint": "Fes clic aquí per jugar amb {keys}",

@@ -17,11 +17,11 @@
 </script>
 
 <svg viewBox="0 0 800 450" class="compare-card" role="img" aria-label="palaY < 20">
-  <rect x="40" y="30" width="200" height="390" class="screen" />
+  <rect x="40" y="30" width="200" height="370" class="screen" />
   <line x1="40" y1="70" x2="240" y2="70" class="limit" />
   <text x="250" y="76" class="limit-label">y = 20</text>
   <rect x="60" y={30 + (yes ? 20 : y) * 1.6} width="14" height="80" class="paddle" />
-  <text x="90" y={30 + y * 1.6 + 46} class="y-label">palaY = {y}</text>
+  <text x="90" y={30 + y * 1.6 + 46} class="y-label">palaY = {y}{yes ? ' → 20' : ''}</text>
   <text x="330" y="90" class="question">palaY &lt; 20 ?</text>
   <text x="330" y="140" class="answer" class:yes>{yes ? t('cmpYesFix') : t('cmpNo')}</text>
   {#each OPS as [op, key], n (op)}

@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { ExplainCardId } from '../lessons/model';
+  import BounceCard from './BounceCard.svelte';
   import CompareCard from './CompareCard.svelte';
   import FramesCard from './FramesCard.svelte';
   import GridCard from './GridCard.svelte';
@@ -10,5 +11,5 @@
 </script>
 
 <div class="explain">
-  {#if card === 'grid'}<GridCard />{:else if card === 'frames'}<FramesCard />{:else if card === 'if'}<IfCard />{:else if card === 'compare'}<CompareCard />{:else}<VariableBoxCard />{/if}
+  {#if card === 'grid'}<GridCard />{:else if card === 'frames'}<FramesCard />{:else if card === 'if'}<IfCard />{:else if card === 'compare'}<CompareCard />{:else if card === 'bounce'}<BounceCard />{:else}<VariableBoxCard />{/if}
 </div>

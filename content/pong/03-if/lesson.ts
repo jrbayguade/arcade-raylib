@@ -38,15 +38,15 @@ export const lesson3: Lesson = {
       kind: 'practice', id: 'keyS', source: keyS, solution: keySSolution, showVariables: true, run: { frames: FRAMES, hold: ['KEY_S'] }, controls: ['KEY_W', 'KEY_S'],
       checks: [
         check('sMovesDown', (ctx) => left(ctx) > 185),
-        check('wStillUp', (ctx) => left(holding(ctx, 'KEY_W')) < 185),
         check('stillWithoutKey', (ctx) => left(still(ctx)) === 185),
+        check('wStillUp', (ctx) => left(holding(ctx, 'KEY_W')) < 185),
       ],
     },
     {
       kind: 'practice', id: 'right', source: right, solution: rightSolution, showVariables: true, run: { frames: FRAMES, hold: ['KEY_UP'] },
       controls: ['KEY_W', 'KEY_S', 'KEY_UP', 'KEY_DOWN'],
       checks: [
-        check('upMovesRight', (ctx) => rightY(ctx) < 185),
+        check('upMovesRight', (ctx) => rightY(ctx) < 185 && (185 - rightY(ctx)) % FRAMES === 0),
         check('downMovesRight', (ctx) => rightY(holding(ctx, 'KEY_DOWN')) > 185),
         check('keysStayApart', (ctx) => rightY(holding(ctx, 'KEY_W')) === 185 && left(ctx) === 185),
         check('stillWithoutKey', (ctx) => rightY(still(ctx)) === 185),
@@ -57,7 +57,7 @@ export const lesson3: Lesson = {
       controls: ['KEY_W', 'KEY_S', 'KEY_UP', 'KEY_DOWN', 'KEY_SPACE'],
       checks: [
         check('spaceCentres', (ctx) => variable(ctx, 'pilotaX') === 400),
-        check('ballStillMoves', (ctx) => variable(simulate(ctx, { frames: 30 }) ?? ctx, 'pilotaX') === 400 + 30 * 4),
+        check('ballStillMoves', (ctx) => variable(simulate(ctx, { frames: 30 }) ?? { program: ctx.program, frame: [], variables: [] }, 'pilotaX') === 400 + 30 * 4),
       ],
     },
   ],

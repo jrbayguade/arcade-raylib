@@ -45,6 +45,7 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 .ticket { display: none; }
 .bubble { background: var(--panel2); border: 2px solid var(--pink); border-radius: 14px; padding: 12px 16px; box-shadow: 0 0 10px var(--pink); line-height: 1.5; font-size: clamp(15px, 0.55vw + 8px, 20px); }
 .bubble p { margin: 4px 0; }
+.bubble code { white-space: nowrap; }
 .mission { margin-top: 8px; border: 2px solid var(--yellow); border-radius: 10px; padding: 8px 12px; color: var(--yellow); background: rgba(255, 225, 77, 0.08); font-weight: 600; }
 .mission small { display: block; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; font-size: 11px; }
 .answer { margin-top: 8px; animation: fade-up 0.3s ease-out both; }
@@ -147,10 +148,11 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 @media (pointer: coarse) {
   .play-hint { display: none; }
   .pad { display: block; position: absolute; inset: 0; z-index: 3; pointer-events: none; }
-  .pad-key { position: absolute; pointer-events: auto; width: 52px; height: 52px; padding: 0; border-radius: 50%; font: 900 18px ui-monospace, monospace; background: rgba(0, 0, 0, 0.55); touch-action: none; user-select: none; -webkit-user-select: none; }
-  .pad-key:active { background: rgba(57, 243, 255, 0.35); }
-  .pad-key_w { left: 8px; top: 8px; } .pad-key_s { left: 8px; bottom: 8px; }
-  .pad-key_up { right: 8px; top: 8px; } .pad-key_down { right: 8px; bottom: 8px; }
+  /* See-through and away from the paddle columns, so the paddles stay visible */
+  .pad-key { position: absolute; pointer-events: auto; width: 52px; height: 52px; padding: 0; border-radius: 50%; font: 900 18px ui-monospace, monospace; background: transparent; opacity: 0.5; box-shadow: none; touch-action: none; user-select: none; -webkit-user-select: none; }
+  .pad-key:active { opacity: 1; background: rgba(57, 243, 255, 0.35); }
+  .pad-key_w { left: 12%; top: 8px; } .pad-key_s { left: 12%; bottom: 8px; }
+  .pad-key_up { right: 12%; top: 8px; } .pad-key_down { right: 12%; bottom: 8px; }
   .pad-key_space { left: 50%; bottom: 8px; transform: translateX(-50%); width: auto; padding: 0 14px; border-radius: 26px; font-size: 13px; }
 }
 .ball-lost {
@@ -278,6 +280,16 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 .compare-card .answer.yes { fill: var(--green); }
 .compare-card .op { fill: var(--yellow); font: 700 24px ui-monospace, monospace; }
 .compare-card .op-text { fill: var(--text); font-size: 21px; }
+
+/* Bounce: the sign flips at the wall */
+.bounce-card .screen { fill: #000; stroke: var(--cyan); stroke-width: 3; }
+.bounce-card .ball { fill: #fdf900; }
+.bounce-card .arrow { fill: var(--yellow); font: 900 40px ui-monospace, monospace; text-anchor: middle; }
+.bounce-card .var-box { fill: #1d1446; stroke: var(--cyan); stroke-width: 4; }
+.bounce-card .box-name { fill: var(--muted); font: 24px ui-monospace, monospace; text-anchor: middle; }
+.bounce-card .box-value { fill: var(--yellow); font: 58px ui-monospace, monospace; text-anchor: middle; animation: pop 0.4s; transform-box: fill-box; transform-origin: center; }
+.bounce-card .code { fill: var(--text); font: 34px ui-monospace, monospace; transition: fill 0.2s; }
+.bounce-card .code.on { fill: var(--green); }
 
 /* Celebration */
 .confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; }

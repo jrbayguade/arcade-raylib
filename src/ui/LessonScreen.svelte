@@ -79,6 +79,14 @@
   // A primitive: effects that read it only re-run when the step really changes (not on every engine update).
   const stepId = $derived(view.step.id);
 
+  /** Names written in the yellow zone: their boxes are the ones the kid is watching. */
+  const zoneNames = $derived.by(() => {
+    const ex = view.exercise;
+    if (!ex) return [];
+    const zone = ex.code.slice(ex.shown.editable.from, ex.code.length - (ex.shown.code.length - ex.shown.editable.to));
+    return variables.map((v) => v.name).filter((n) => new RegExp(`\\b${n}\\b`).test(zone));
+  });
+
   const lessonStars = $derived.by(() => {
     version;
     let earned = 0;
@@ -168,6 +176,8 @@
       errorLine = null;
       broken = false;
       game?.start(ex.code);
+      // Steps played with keys: the keyboard goes to the game, so W moves the paddle instead of typing a "w".
+      if (isExercise(view.step) && view.step.controls?.length) game?.focus();
       if (result.passed && !wasDone) celebrate(ex.stars);
     } else {
       sounds.play('error');
@@ -297,7 +307,7 @@
         <div class="machine-row">
           <button class="slow-btn" class:on={slowMotion.on} aria-pressed={slowMotion.on} data-sound="page"
             title={t('slowMotion')} aria-label={t('slowMotion')} onclick={() => (slowMotion.on = !slowMotion.on)}>🐢 <span class="slow-label">{t('slowLabel')}</span>{#if slowMotion.on} ✓{/if}</button>
-          {#if view.step.showVariables}<VariablesPanel {variables} />{/if}
+          {#if view.step.showVariables}<VariablesPanel {variables} focus={zoneNames} />{/if}
         </div>
       {/if}
     </div>

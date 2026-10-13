@@ -30,7 +30,7 @@
   <rect x="470" y="50" width="200" height="60" rx="10" class="action" class:on={pressed} />
   <text x="570" y="88" class="action-text">palaY = palaY - 6;</text>
   <path d="M 330 285 L 330 360 L 470 360" class="road" class:on={!pressed} />
-  <text x="340" y="400" class="road-label" class:on={!pressed}>{t('ifNo')}</text>
+  <text x="340" y="425" class="road-label" class:on={!pressed}>{t('ifNo')}</text>
   <rect x="470" y="330" width="200" height="60" rx="10" class="action" class:on={!pressed} />
   <text x="570" y="368" class="action-text">{t('ifNothing')}</text>
   <rect x="740" y={paddleY} width="12" height="80" class="paddle" />

@@ -16,7 +16,8 @@ const left = (ctx: CheckContext | null) => (ctx ? variable(ctx, 'palaY') ?? NaN 
 const rightY = (ctx: CheckContext | null) => (ctx ? variable(ctx, 'palaDretaY') ?? NaN : NaN);
 const ballX = (ctx: CheckContext | null) => (ctx ? variable(ctx, 'pilotaX') ?? NaN : NaN);
 const hold = (ctx: CheckContext, key: string, frames = LONG) => simulate(ctx, { frames, hold: [key] });
-const PADDLE = 80;
+/** The paddles stop 20 px from the top and 20 px from the bottom: y between 20 and 350 (450 − 80 − 20). */
+const BOTTOM = 350;
 const CONTROLS = ['KEY_W', 'KEY_S', 'KEY_UP', 'KEY_DOWN'];
 
 export const lesson4: Lesson = {
@@ -37,8 +38,9 @@ export const lesson4: Lesson = {
     {
       kind: 'practice', id: 'bottom', source: bottom, solution: bottomSolution, showVariables: true, run: { frames: LONG, hold: ['KEY_S'] }, controls: CONTROLS,
       checks: [
-        check('staysAboveBottom', (ctx) => left(ctx) + PADDLE <= 450),
-        check('reachesBottom', (ctx) => left(ctx) >= 450 - PADDLE - 6),
+        check('noJump', (ctx) => left(simulate(ctx, { frames: 1 })) === 185),
+        check('staysAboveBottom', (ctx) => left(ctx) <= BOTTOM),
+        check('reachesBottom', (ctx) => left(ctx) >= BOTTOM - 6),
         check('topStillWorks', (ctx) => left(hold(ctx, 'KEY_W')) === 20),
       ],
     },
@@ -47,8 +49,8 @@ export const lesson4: Lesson = {
       controls: CONTROLS,
       checks: [
         check('rightTop', (ctx) => rightY(ctx) >= 0 && rightY(ctx) <= 20),
-        check('rightBottom', (ctx) => { const y = rightY(hold(ctx, 'KEY_DOWN')); return y + PADDLE <= 450 && y >= 450 - PADDLE - 6; }),
-        check('leftUntouched', (ctx) => left(hold(ctx, 'KEY_W')) === 20 && left(hold(ctx, 'KEY_S')) === 370),
+        check('rightBottom', (ctx) => { const y = rightY(hold(ctx, 'KEY_DOWN')); return y <= BOTTOM && y >= BOTTOM - 6; }),
+        check('leftUntouched', (ctx) => left(hold(ctx, 'KEY_W')) === 20 && left(hold(ctx, 'KEY_S')) === BOTTOM),
       ],
     },
     {
