@@ -8,11 +8,13 @@ export const LANGUAGE_KEY = 'bitarcade:lang';
 const isLanguage = (x: unknown): x is Language => (LANGUAGES as readonly unknown[]).includes(x);
 
 /**
- * The kid's own choice, else Catalan: the course is written in Catalan first, and many Catalan kids
- * use a browser set to Spanish. (`browser` is kept for a later "follow the browser" option.)
+ * The kid's own choice, else Catalan when the browser speaks Catalan or Spanish (the course is written in
+ * Catalan first, and many Catalan kids use a browser set to Spanish), else English for everyone else.
  */
-export function chooseLanguage(stored: string | null, _browser: readonly string[]): Language {
-  return isLanguage(stored) ? stored : 'ca';
+export function chooseLanguage(stored: string | null, browser: readonly string[]): Language {
+  if (isLanguage(stored)) return stored;
+  if (browser.length === 0) return 'ca';
+  return browser.some((l) => /^(ca|es)(-|$)/i.test(l)) ? 'ca' : 'en';
 }
 
 type Translation = { title?: string; folds?: Record<string, string>; steps?: Record<string, Partial<StepTexts>>; checks?: Record<string, string> };

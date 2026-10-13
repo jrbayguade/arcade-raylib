@@ -6,9 +6,17 @@ describe('choosing the language', () => {
   it('keeps the one the kid picked', () => {
     expect(chooseLanguage('en', ['es-ES'])).toBe('en');
   });
-  it('else Catalan, whatever the browser says (many Catalan kids have a Spanish browser)', () => {
+  it('else Catalan when the browser speaks Catalan or Spanish (many Catalan kids have a Spanish browser)', () => {
     expect(chooseLanguage(null, ['es-ES', 'en'])).toBe('ca');
-    expect(chooseLanguage('xx', ['en-GB'])).toBe('ca');
+    expect(chooseLanguage(null, ['en-GB', 'ca'])).toBe('ca');
+    expect(chooseLanguage('xx', ['ES'])).toBe('ca');
+  });
+  it('else English: someone who reads neither Catalan nor Spanish', () => {
+    expect(chooseLanguage(null, ['en-GB'])).toBe('en');
+    expect(chooseLanguage(null, ['fr-FR', 'de'])).toBe('en');
+  });
+  it('Catalan when the browser says nothing', () => {
+    expect(chooseLanguage(null, [])).toBe('ca');
   });
 });
 

@@ -29,5 +29,5 @@ Each phase adds its rulings here.
 - The final rival moves at 4 px per frame; hitting the edge of your paddle sends the ball off steeper (±5), which is how you beat it.
 - `'` is no longer auto-paired in the editor (Catalan apostrophes; the course has no char literals).
 - Keys go to the game automatically after ▶ on steps that use keys; touch screens get see-through on-screen buttons.
-- Catalan is the default language whatever the browser says (many Catalan kids use a Spanish browser); ES/EN are picked in the hall, the intro or the rotate screen, and remembered.
+- Catalan is the default language when the browser is in Catalan or Spanish (many Catalan kids use a Spanish browser); a browser in any other language starts in English. ES/EN/CA are picked in the hall, the intro or the rotate screen, and remembered.
 - Code names stay in Catalan in every language, with a short gloss the first time each one appears; only generic examples (`int nom = valor;`) are translated.

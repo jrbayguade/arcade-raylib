@@ -13,7 +13,7 @@ try {
   await server.listen();
   const base = server.resolvedUrls.local[0];
   browser = await chromium.launch({ channel: 'msedge', headless: true });
-  const page = await browser.newPage({ viewport: { width: 1600, height: 900 } });
+  const page = await browser.newPage({ locale: 'ca-ES', viewport: { width: 1600, height: 900 } });
   const errors = [];
   page.on('pageerror', (e) => errors.push(String(e)));
   page.on('console', (m) => { if (m.type() === 'error' && !m.text().includes('favicon')) errors.push(m.text()); });
@@ -353,7 +353,7 @@ try {
 
   // Phones: upright asks to rotate; sideways fits, with a symbol bar
   for (const [w, h] of [[390, 844], [844, 390]]) {
-    const ctx = await browser.newContext({ viewport: { width: w, height: h }, isMobile: true, hasTouch: true });
+    const ctx = await browser.newContext({ locale: 'ca-ES', viewport: { width: w, height: h }, isMobile: true, hasTouch: true });
     const phone = await ctx.newPage();
     phone.on('pageerror', (e) => errors.push(String(e)));
     await phone.goto(`${base}#/pong/0/0`);
@@ -446,7 +446,7 @@ try {
 
   // Reduced motion: the frames card holds still
   {
-    const ctx = await browser.newContext({ viewport: { width: 1366, height: 768 }, reducedMotion: 'reduce' });
+    const ctx = await browser.newContext({ locale: 'ca-ES', viewport: { width: 1366, height: 768 }, reducedMotion: 'reduce' });
     const still = await ctx.newPage();
     still.on('pageerror', (e) => errors.push(String(e)));
     await still.goto(`${base}#/pong/2/1`);
@@ -459,7 +459,7 @@ try {
 
   // Progress is saved and the arcade hall shows it
   {
-    const ctx = await browser.newContext({ viewport: { width: 1366, height: 768 } });
+    const ctx = await browser.newContext({ locale: 'ca-ES', viewport: { width: 1366, height: 768 } });
     const kid = await ctx.newPage();
     kid.on('pageerror', (e) => errors.push(String(e)));
     await kid.goto(`${base}#/pong/0/0`);
@@ -499,7 +499,7 @@ try {
     await kid.locator('.cm-editor').waitFor();
     check('hall: erased progress means the starting code again', (await kid.evaluate(() => window.__bitArcade.code())) !== solvedCode);
     await ctx.close();
-    const phoneCtx = await browser.newContext({ viewport: { width: 844, height: 390 }, isMobile: true, hasTouch: true });
+    const phoneCtx = await browser.newContext({ locale: 'ca-ES', viewport: { width: 844, height: 390 }, isMobile: true, hasTouch: true });
     const phoneHall = await phoneCtx.newPage();
     await phoneHall.goto(`${base}#/sala`);
     await phoneHall.locator('.hall').waitFor();
@@ -511,7 +511,7 @@ try {
 
   // Languages: the hall switches to Spanish or English, remembered, lessons included
   {
-    const ctx = await browser.newContext({ viewport: { width: 1366, height: 768 } });
+    const ctx = await browser.newContext({ locale: 'ca-ES', viewport: { width: 1366, height: 768 } });
     const lp = await ctx.newPage();
     lp.on('pageerror', (e) => errors.push(String(e)));
     await lp.goto(`${base}#/sala`);
@@ -532,7 +532,7 @@ try {
 
   // Intro: first visit to the front page, skippable, remembered; #/intro replays it to the end
   {
-    const ctx = await browser.newContext({ viewport: { width: 1366, height: 768 } });
+    const ctx = await browser.newContext({ locale: 'ca-ES', viewport: { width: 1366, height: 768 } });
     const fresh = await ctx.newPage();
     fresh.on('pageerror', (e) => errors.push(String(e)));
     await fresh.goto(base);
@@ -554,6 +554,15 @@ try {
     check('the last beat offers Som-hi!', await visible(fresh.getByRole('button', { name: 'Som-hi! ▶' })));
     await fresh.getByRole('button', { name: 'Som-hi! ▶' }).click();
     check('Som-hi! starts lesson 0', await visible(fresh.locator('.cm-editor'), 5000));
+    await ctx.close();
+  }
+
+  // Browser language: Spanish browsers still get Catalan; a browser in neither gets English
+  for (const [locale, run] of [['es-ES', '▶ Executa'], ['fr-FR', '▶ Run']]) {
+    const ctx = await browser.newContext({ locale, viewport: { width: 1366, height: 768 } });
+    const p = await ctx.newPage();
+    await p.goto(`${base}#/pong/0/0`);
+    check(`a ${locale} browser starts with ${run}`, await visible(p.getByRole('button', { name: run, exact: true }), 5000));
     await ctx.close();
   }
 
