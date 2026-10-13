@@ -1,0 +1,84 @@
+{
+  "title": "La pilota es mou",
+  "folds": {
+    "preparar": "preparar el joc",
+    "dibuixar": "comença a dibuixar: fons i pales",
+    "tancar": "tancar el joc"
+  },
+  "steps": {
+    "crawl": {
+      "prompt": [
+        "Lliçó nova! Fins ara tot estava quiet. Avui la pilota es mourà sola. 🏃",
+        "Mira el codi: ara es veu el `while`, que abans estava amagat a la barra «es repeteix a cada fotograma». Tot el que hi ha a dins es repeteix 60 vegades cada segon, fins que tanques el joc. Cada volta és un fotograma, com els dibuixos d'una pel·lícula.",
+        "La línia groga, `pilotaX = pilotaX + 1;`, suma 1 a la caixa `pilotaX` a cada fotograma. Per això la pilota s'arrossega cap a la dreta. Sembla rar, oi? De seguida t'explico com funciona. Quan arribi a la vora, sortirà de la pantalla: és normal, encara no sap rebotar.",
+        "Prem 🐢 (a sota del joc) i després ▶ Executa: veuràs la pilota avançar fotograma a fotograma i el número de `pilotaX` pujant d'1 en 1. Torna a prémer 🐢 per anar a velocitat normal.",
+        "Fes que la pilota vagi més ràpid: canvia l'1 per un 5 i prem ▶ Executa."
+      ],
+      "hints": [
+        "El número que diu quant avança és el que va després del +.",
+        "Canvia l'1 per un 5.",
+        "`pilotaX = pilotaX + 5;`"
+      ],
+      "success": "Se n'ha anat volant! Cap problema: a la lliçó 6 la farem rebotar. Prem ▶ Executa i tornarà a sortir del mig."
+    },
+    "frames": {
+      "prompt": [
+        "Com pot ser que `pilotaX = pilotaX + 3;` sigui veritat? A mates seria impossible!",
+        "Ja ho saps de la lliçó 2: el = no vol dir «igual», vol dir «guarda-hi».",
+        "L'ordinador primer calcula la part de la dreta: llegeix la caixa (400) i hi suma 3 (403). Després guarda el resultat a la caixa de l'esquerra, que és la mateixa.",
+        "Al fotograma següent torna a començar: llegeix 403, suma 3, guarda 406… i així 60 vegades cada segon! Quan ho tinguis clar, prem Continua."
+      ]
+    },
+    "diagonal": {
+      "prompt": [
+        "Ara la pilota va cap a la dreta. Fem que també baixi! (Si la 🐢 està encesa, tot va a poc a poc. Prem-la per apagar-la.)",
+        "Recorda la quadrícula: més avall vol dir una y més gran.",
+        "A la línia buida de la zona groga, fes que `pilotaY` també creixi a cada fotograma."
+      ],
+      "hints": [
+        "Copia la idea de la línia de `pilotaX`, però amb `pilotaY`.",
+        "Has de guardar a `pilotaY` el que ja hi ha a `pilotaY`, més 2.",
+        "`pilotaY = pilotaY + 2;`"
+      ],
+      "success": "En diagonal! Ja sembla un Pong de debò. 🎾"
+    },
+    "left": {
+      "prompt": [
+        "I si la vull cap a l'esquerra?",
+        "A l'esquerra, la x és més petita. Fes que la pilota hi vagi."
+      ],
+      "hints": [
+        "Ara a cada fotograma hi sumes 3. Què has de fer perquè la x es faci més petita?",
+        "Canvia el + per un -.",
+        "`pilotaX = pilotaX - 3;`"
+      ],
+      "success": "Cap a l'esquerra! Sumar la fa anar a la dreta, i restar, a l'esquerra."
+    },
+    "speed": {
+      "prompt": [
+        "Últim repte! Ara el bucle diu `pilotaX = pilotaX + velX;`… però la caixa `velX` no existeix. Per això la màquina fa neu.",
+        "`velX` vol dir «velocitat en x»: quants píxels avança la pilota cap als costats a cada fotograma.",
+        "Crea la caixa `velX` a la línia groga, amb un número entre -20 i 20 que no sigui 0 (prova un 4)."
+      ],
+      "hints": [
+        "Fes-ho igual que les altres caixes: `int nom = valor;`",
+        "El nom és `velX` i el valor, un número que no sigui 0.",
+        "`int velX = 4;`"
+      ],
+      "success": "Perfecte! I si hi poses un número negatiu, com -4, anirà cap a l'esquerra. A la lliçó 6 la farem rebotar només canviant el signe de `velX`. 😉"
+    }
+  },
+  "checks": {
+    "adds": "La pilota ha saltat de cop i s'ha quedat quieta: has guardat un número a la caixa en lloc de sumar-l'hi. Escriu `pilotaX = pilotaX + …;`",
+    "addsY": "La pilota ha saltat de cop: has guardat un número a `pilotaY` en lloc de sumar-l'hi. Escriu `pilotaY = pilotaY + …;`",
+    "faster": "La pilota encara va massa a poc a poc: el número després del + ha de ser 2 o més.",
+    "notTooFast": "Va tan ràpid que ni es veu! Prova un número entre 2 i 20.",
+    "yMoves": "La pilota encara no baixa: afegeix `pilotaY = pilotaY + …;` amb un número positiu.",
+    "xStillMoves": "La pilota també ha de continuar anant cap a la dreta: deixa la línia de `pilotaX` com estava.",
+    "goesLeft": "La pilota encara no va cap a l'esquerra. Per anar a l'esquerra, la x s'ha de fer més petita.",
+    "declaresSpeed": "Falta crear la caixa `velX`, per exemple `int velX = 4;`",
+    "speedNotZero": "Amb `velX` igual a 0, la pilota no es mou! Posa-hi un altre número.",
+    "speedNotTooFast": "Amb aquesta `velX` la pilota surt de la pantalla abans que la vegis! Prova un número entre -20 i 20.",
+    "usesSpeed": "La pilota ha d'avançar `velX` píxels a cada fotograma."
+  }
+}
