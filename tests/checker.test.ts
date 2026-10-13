@@ -39,8 +39,11 @@ describe('check: valid code', () => {
   it('allows implicit int/float conversions like C', () => {
     ok('int x = 2.7;\nfloat f = x;\nx += 1.5;\nbool b = x;');
   });
-  it('allows shadowing in an inner block and scopes for-variables', () => {
-    ok('int x = 1;\n{ int x = 2; }\nfor (int i = 0; i < 3; i++) { x += i; }\nint i = 9;');
+  it('scopes inner blocks and for-variables', () => {
+    ok('int x = 1;\n{ int y = 2; }\nfor (int i = 0; i < 3; i++) { x += i; }\nint i = 9;');
+  });
+  it('allows the same name in sibling blocks', () => {
+    expect(() => ok('for (int i = 0; i < 2; i++) { }\nfor (int i = 0; i < 2; i++) { }')).not.toThrow();
   });
 });
 
@@ -50,6 +53,11 @@ describe('check: errors', () => {
   });
   it('reports duplicate declarations with the first line', () => {
     expect(fails('int x = 0;\nint x = 1;')).toMatchObject({ code: 'ALREADY_DECLARED', line: 3, params: { name: 'x', prevLine: 2 } });
+  });
+  it('rejects a declaration that hides a variable of an outer block', () => {
+    expect(fails('int pilotaX = 400;\nwhile (1) { int pilotaX = pilotaX + 3; }')).toMatchObject({
+      code: 'ALREADY_DECLARED', params: { name: 'pilotaX', prevLine: 2 },
+    });
   });
   it('protects raylib names', () => {
     expect(fails('int RED = 1;')).toMatchObject({ code: 'RESERVED_NAME' });

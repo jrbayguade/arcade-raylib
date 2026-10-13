@@ -75,7 +75,8 @@ class Checker {
       case 'VarDecl': {
         if (this.isConstant(s.name) || this.isFunction(s.name) || RAYLIB_RESERVED.has(s.name)) throw error('RESERVED_NAME', s.line, s.col, { name: s.name });
         const scope = this.scopes[this.scopes.length - 1];
-        const prev = scope.get(s.name);
+        // An outer variable counts too: `int x = x + 3;` inside the loop would make a new box every frame.
+        const prev = this.lookup(s.name);
         if (prev) throw error('ALREADY_DECLARED', s.line, s.col, { name: s.name, prevLine: prev.line });
         this.requireAssignable(this.expr(s.init), s.varType, s.name, s.init);
         scope.set(s.name, { type: s.varType, line: s.line });
