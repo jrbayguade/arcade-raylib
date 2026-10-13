@@ -97,4 +97,36 @@ describe('Runner', () => {
     runner.stop();
     expect(runner.variables()).toEqual([]);
   });
+  it('counts frames from each start', () => {
+    const { runner, scheduler } = setup();
+    runner.start(pong);
+    for (let i = 0; i <= 30; i++) scheduler.fire((i * 1000) / 60);
+    expect(runner.frameCount).toBeGreaterThanOrEqual(29);
+    runner.start(pong);
+    expect(runner.frameCount).toBe(0);
+  });
+
+  it('does not count the call that finishes the program', () => {
+    const { runner, scheduler } = setup();
+    runner.start('int main(void) { return 0; }');
+    scheduler.fire(0);
+    expect(runner.frameCount).toBe(0);
+  });
+
+  it('runs slowly when asked, also after a restart', () => {
+    const { runner, scheduler, frames } = setup();
+    runner.setSlow(true);
+    runner.start(pong);
+    for (let i = 0; i <= 60; i++) scheduler.fire((i * 1000) / 60);
+    expect(frames.length).toBeLessThanOrEqual(4);
+    runner.setSlow(false);
+    const before = frames.length;
+    for (let i = 61; i <= 121; i++) scheduler.fire((i * 1000) / 60);
+    expect(frames.length - before).toBeGreaterThanOrEqual(55);
+  });
+
+  it('can switch speed while nothing runs', () => {
+    const { runner } = setup();
+    expect(() => runner.setSlow(true)).not.toThrow();
+  });
 });

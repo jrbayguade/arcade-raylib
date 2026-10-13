@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { FrameClock, MAX_FRAMES_PER_TICK } from '../src/runtime/frameClock';
+import { FrameClock, MAX_FRAMES_PER_TICK, SLOW_FPS } from '../src/runtime/frameClock';
 
 function framesInOneSecond(hz: number): number {
   const clock = new FrameClock();
@@ -25,5 +25,13 @@ describe('FrameClock', () => {
     const clock = new FrameClock();
     clock.tick(0);
     expect(clock.tick(5000)).toBe(MAX_FRAMES_PER_TICK);
+  });
+  it('can run slowly, a few frames per second', () => {
+    const clock = new FrameClock();
+    clock.setFps(SLOW_FPS);
+    let total = 0;
+    for (let i = 0; i <= 60; i++) total += clock.tick((i * 1000) / 60);
+    expect(total).toBeGreaterThanOrEqual(SLOW_FPS);
+    expect(total).toBeLessThanOrEqual(SLOW_FPS + 1);
   });
 });

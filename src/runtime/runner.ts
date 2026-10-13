@@ -2,7 +2,7 @@ import { compile } from '../lang/compile';
 import type { Diagnostic } from '../lang/diagnostics';
 import type { ExecEvent, VariableView } from '../lang/interpreter';
 import type { DrawCommand } from './drawList';
-import { FrameClock } from './frameClock';
+import { FrameClock, SLOW_FPS } from './frameClock';
 import type { InputState } from './input';
 import { Machine } from './machine';
 import { RaylibHost } from './raylib';
@@ -32,6 +32,8 @@ export class Runner {
   private machine: Machine | null = null;
   private pending: number | null = null;
   private clock = new FrameClock();
+  private slow = false;
+  private frames = 0;
 
   constructor(private readonly deps: RunnerDeps) {}
 
@@ -44,6 +46,16 @@ export class Runner {
     return this.machine?.variables() ?? [];
   }
 
+  /** Logic frames run since the last start (the "fotograma N" shown in slow motion). */
+  get frameCount(): number {
+    return this.frames;
+  }
+
+  setSlow(on: boolean): void {
+    this.slow = on;
+    this.clock.setFps(on ? SLOW_FPS : 60);
+  }
+
   start(source: string): void {
     this.halt();
     const host = new RaylibHost({ seed: this.deps.seed });
@@ -54,6 +66,8 @@ export class Runner {
     }
     this.machine = new Machine(compiled.program, host, this.deps.onEvent);
     this.clock = new FrameClock();
+    if (this.slow) this.clock.setFps(SLOW_FPS);
+    this.frames = 0;
     this.deps.onStatus({ kind: 'running' });
     this.schedule();
   }
@@ -82,7 +96,7 @@ export class Runner {
     let last: DrawCommand[] | null = null;
     for (let i = 0; i < due; i++) {
       const r = machine.runFrame(this.deps.input.snapshot());
-      if (r.status === 'frame') { last = r.drawList; continue; }
+      if (r.status === 'frame') { this.frames++; last = r.drawList; continue; }
       if (last) this.deps.onFrame(last, machine.host);
       this.machine = null;
       this.deps.onStatus(r.status === 'error' ? { kind: 'error', diagnostic: r.diagnostic } : { kind: 'finished' });
