@@ -98,15 +98,13 @@
     <p class="bubble hall-say">{say ?? (allDone ? t('hallAllDone') : started ? t('hallWelcomeBack') : t('hallWelcome'))}</p>
     {#if allDone}
       <button class="primary hall-continue" data-sound="next" onclick={() => (location.hash = routeHash({ lesson: LESSONS.length - 1, step: LESSONS[LESSONS.length - 1].steps.length - 1 }))}>{t('hallPlay')}</button>
+      <button class="download" data-sound="success" title={t('downloadMain')} onclick={() => download('main.c', mainC(progress, LESSONS))}>⬇ main.c</button>
     {:else}
     <button class="primary hall-continue" data-sound="next" onclick={() => (location.hash = routeHash(target))}>
       {started ? (LESSONS[target.lesson].final ? t('hallContinueFinal') : t('hallContinue', { n: LESSONS[target.lesson].number })) : t('hallStart')}
     </button>
     {/if}
   </div>
-  {#if lessonDone(progress, LESSONS[LESSONS.length - 1])}
-    <button class="download" data-sound="success" onclick={() => download('main.c', mainC(progress, LESSONS))}>{t('downloadMain')}</button>
-  {/if}
   {#if started}
     <button class="hall-reset" class:armed={resetArmed} onclick={reset}>{resetArmed ? t('hallResetConfirm') : t('hallReset')}</button>
   {/if}

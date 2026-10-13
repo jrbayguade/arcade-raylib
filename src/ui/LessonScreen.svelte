@@ -288,7 +288,7 @@
 
   <div class="actions" class:solved={view.canContinue}>
     {#if view.canContinue && !view.isLast}
-      {#key view.step.id}<button class="primary next" data-sound="next" onclick={next}>{t('continue')}</button>{/key}
+      {#key view.step.id}<button class="primary next" class:wait={view.step.kind === 'explain'} data-sound="next" onclick={next}>{t('continue')}</button>{/key}
     {:else if view.canContinue && hasNextLesson}
       <button class="primary next" data-sound="next" onclick={nextLesson}>{t('nextLesson')}</button>
     {/if}

@@ -95,6 +95,8 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 .actions .run { box-shadow: 0 0 12px var(--cyan); }
 .actions .run.secondary { font-size: 15px; padding: 8px 14px; box-shadow: none; border-color: #3a3358; color: var(--muted); font-weight: 500; }
 .actions .next { animation: next-in 0.6s cubic-bezier(0.3, 1.6, 0.5, 1) both, next-glow 1.6s ease-in-out 0.6s infinite; }
+/* Explanations: Continua shows up after a moment, so the card gets looked at first */
+.actions .next.wait { animation-delay: 3s, 3.6s; }
 .actions .hint-btn { border-color: #3a3358; box-shadow: none; color: var(--text); }
 .actions .reset { border: none; box-shadow: none; color: var(--muted); font-size: 22px; padding: 4px 8px; }
 .actions .reset.armed { font-size: 15px; color: var(--red); border: 2px solid var(--red); box-shadow: 0 0 8px var(--red); }
@@ -316,7 +318,7 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 
 /* The machine is fixed */
 .fixed-card .marquee-text { fill: var(--yellow); font: 900 64px system-ui, sans-serif; letter-spacing: 14px; text-anchor: middle; filter: drop-shadow(0 0 10px var(--yellow)) drop-shadow(0 0 22px var(--pink)); }
-.fixed-card .title { fill: var(--green); font: 900 48px system-ui, sans-serif; text-anchor: middle; filter: drop-shadow(0 0 8px var(--green)); animation: pulse 1.4s ease-in-out infinite; }
+.fixed-card .title { fill: var(--green); font: 900 48px system-ui, sans-serif; text-anchor: middle; filter: drop-shadow(0 0 8px var(--green)) drop-shadow(0 0 18px var(--green)); }
 .fixed-card .trophy { font-size: 96px; text-anchor: middle; }
 .fixed-card .sub { fill: var(--text); font-size: 24px; text-anchor: middle; }
 

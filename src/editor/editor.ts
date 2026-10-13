@@ -107,10 +107,13 @@ export function createLessonEditor(opts: {
       return span;
     },
   });
+  // The file's last newline is kept out of the editor (no empty line under the code) and added back to what it reports.
+  const tail = source.code.endsWith('\n') ? '\n' : '';
+  const doc = source.code.slice(0, source.code.length - tail.length);
   const view = new EditorView({
     parent: opts.parent,
-    state: EditorState.create({ doc: source.code, extensions: [
-      ...lessonExtensions(source, opts.onChange, opts.onBlocked),
+    state: EditorState.create({ doc, extensions: [
+      ...lessonExtensions(source, (code) => opts.onChange(code + tail), opts.onBlocked),
       folding,
       Prec.highest(keymap.of([{ key: 'Mod-Enter', run: () => { opts.onRun?.(); return true; } }])),
     ] }),
@@ -130,7 +133,7 @@ export function createLessonEditor(opts: {
       view.dispatch(view.state.replaceSelection(text));
       view.focus();
     },
-    code: () => view.state.doc.toString(),
+    code: () => view.state.doc.toString() + tail,
     destroy: () => view.destroy(),
   };
 }

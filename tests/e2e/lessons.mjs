@@ -114,6 +114,7 @@ try {
   await page.goto(`${base}#/pong/0/0`);
   await page.locator('.cm-editor').waitFor();
   check('fold placeholders shown', await visible(page.locator('.cm-lesson-fold')));
+  check('no empty line under the code', ((await page.locator('.cm-line').last().textContent()) ?? '').trim() !== '');
   check('parameter hints shown', (await page.locator('.cm-param-hint').allInnerTexts()).includes('alçada:'));
   check('parameter hints only inside the yellow zone', (await page.locator('.cm-line:not(.cm-zone) .cm-param-hint').count()) === 0);
   check('the mission is always visible', await visible(page.locator('.bubble .mission', { hasText: 'Canvia el 185 per un 50' })));
@@ -338,6 +339,8 @@ try {
   await page.evaluate(() => localStorage.removeItem('bitarcade:v1')); // each check starts from the exercise as written
   await page.reload();
   await page.locator('.cm-editor').waitFor();
+  await page.keyboard.press('Shift'); // a first gesture unlocks the sound
+  await page.waitForTimeout(1500); // Bit types (and ticks) until the kid runs the code
   await page.evaluate(() => window.__bitArcade.solve());
   await button('▶ Executa').click();
   await visible(page.locator('.bubble .success'));

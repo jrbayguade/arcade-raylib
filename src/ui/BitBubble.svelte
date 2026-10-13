@@ -47,7 +47,8 @@
     let raf = 0;
     const frame = (now: number) => {
       const before = tw.text.length;
-      tw.tick(rotateRequired() ? 0 : Math.min(now - last, 100)); // paused under the rotate overlay
+      // Paused under the rotate overlay, and once Bit has answered a run (the kid is busy with the answer, not the pages).
+      tw.tick(rotateRequired() || message ? 0 : Math.min(now - last, 100));
       last = now;
       if (tw.text.length > before && now - lastTick > 55) {
         sounds.play('type', { pitch: 0.9 + Math.random() * 0.2 });
@@ -74,6 +75,8 @@
   $effect(() => {
     if (!message) return;
     open = true;
+    // The page being typed is finished at once; no more pages turn by themselves.
+    untrack(() => { if (!tw.pageComplete) { tw.skip(); sync(); } });
     if (!phone) return;
     // A success folds sooner: the stars are in the ticket's ✓ and the kid wants to see the game and the variables.
     const success = message.kind === 'result' && message.feedback?.kind === 'success';

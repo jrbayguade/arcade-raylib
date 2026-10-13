@@ -38,7 +38,9 @@ export function parseLessonSource(raw: string): LessonSource {
     const ghost = PLACEHOLDER.exec(marker);
     if (ghost) {
       if (editOpen === null) throw new Error(`${where}: a placeholder must be inside the //@edit zone`);
-      const indent = /^\s*/.exec(out[out.length - 1] ?? '')?.[0] ?? '';
+      // The marker's own indentation if it has one, else the line above's.
+      const own = /^\s*/.exec(line)?.[0] ?? '';
+      const indent = own || (/^\s*/.exec(out[out.length - 1] ?? '')?.[0] ?? '');
       ghosts.push({ line: out.length, indent: indent.length, text: ghost[1].trim() });
       out.push(indent);
       return;

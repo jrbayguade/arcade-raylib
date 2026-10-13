@@ -88,3 +88,11 @@ describe('zoneOf', () => {
     expect(zoneOf(src, 'a\n')).toBeNull();
   });
 });
+
+describe('placeholder indentation', () => {
+  it('uses the marker line own indentation when it has one', () => {
+    const src = parseLessonSource('a\n    {\n//@edit\n        //@placeholder escriu aquí\n//@end\n    }\n');
+    expect(src.code.split('\n')[2]).toBe('        ');
+    expect(src.placeholders[0].pos).toBe(src.code.indexOf('        ') + 8);
+  });
+});
