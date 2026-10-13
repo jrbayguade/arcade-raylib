@@ -141,7 +141,7 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 .machine-row .vars { flex: 1; min-width: 0; }
 .slow-btn { flex: none; font-size: 20px; line-height: 1; padding: 6px 12px; border-color: var(--cyan); box-shadow: none; white-space: nowrap; }
 .slow-btn .slow-label { font-size: 15px; font-weight: 700; }
-.slow-btn.on { border-color: var(--green); color: var(--bg); background: var(--green); box-shadow: 0 0 14px var(--green); }
+.slow-btn.on, .slow-btn.on:hover:not(:disabled) { border-color: var(--green); color: var(--bg); background: var(--green); box-shadow: 0 0 14px var(--green); }
 .ball-lost {
   position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 3; max-width: 90%;
   font-size: clamp(12px, 1.3vw, 18px); color: var(--yellow); border-color: var(--yellow); background: rgba(0, 0, 0, 0.75); box-shadow: 0 0 10px var(--yellow);
@@ -261,6 +261,9 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
   .machine-row .boxes { flex-wrap: nowrap; overflow-x: auto; }
   .machine-row .vars { flex-wrap: nowrap; }
   .machine-row .vars h3 { display: none; }
+  .machine-row .boxes { mask-image: linear-gradient(90deg, #000 85%, transparent); padding-right: 24px; }
+  .ball-lost .lost-what { display: block; font-size: 10px; color: var(--muted); }
+  .screen:has(.talk.open) .ball-lost { display: none; } /* Bit is talking over the machine */
   .box .name { font-size: 11px; }
   .box .type { display: none; }
   .box { padding: 0 6px; }

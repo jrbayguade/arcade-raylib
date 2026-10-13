@@ -338,6 +338,9 @@ try {
       await phone.evaluate(() => window.__bitArcade.solve());
       await phone.getByRole('button', { name: '▶ Executa', exact: true }).click();
       await visible(phone.locator('.vars .box', { hasText: 'velX' }));
+      await phone.waitForTimeout(300);
+      const velBox = await phone.locator('.vars .box', { hasText: 'velX' }).boundingBox();
+      check('phone sideways, lesson 3: the new velX box is scrolled into view', velBox !== null && velBox.x + velBox.width <= w, JSON.stringify(velBox));
       check('phone sideways, lesson 3: nothing wider than the screen', (await phone.evaluate(() => document.documentElement.scrollWidth)) <= w);
       const canvasBox = await phone.locator('.machine canvas').boundingBox();
       check('phone sideways, lesson 3: the game fits', canvasBox.y + canvasBox.height <= h, JSON.stringify(canvasBox));

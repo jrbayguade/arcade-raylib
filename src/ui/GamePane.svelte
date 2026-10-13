@@ -101,7 +101,7 @@
     onmousemove={track} onmouseleave={() => (mouse = null)}></canvas>
   {#if broken}<div class="tv-static" aria-hidden="true"></div>{/if}
   {#if lost && !broken}
-    <button class="ball-lost" data-sound="page" onclick={() => lastCode && start(lastCode)}>{t('ballLost')}</button>
+    <button class="ball-lost" data-sound="page" onclick={() => lastCode && start(lastCode)}><span class="lost-what">{t('ballLost')}</span> <span class="lost-do">{t('ballLostAgain')}</span></button>
   {/if}
   {#if slow && !broken && frameNo > 0}<span class="frame-no">{t('frameNo', { n: frameNo })}</span>{/if}
   {#if mouse && !broken}<span class="coords">{t('mouseCoords', mouse)}</span>{/if}

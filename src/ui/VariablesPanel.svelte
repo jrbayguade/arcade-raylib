@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { tick } from 'svelte';
   import { t } from '../i18n/i18n';
   import type { VariableView } from '../lang/interpreter';
 
@@ -21,13 +22,21 @@
 
   $effect(() => () => clearTimeout(timer));
 
+  // A box that was just created goes last: when the row scrolls (phones), bring it into view.
+  let row: HTMLDivElement | undefined = $state();
+  const names = $derived(variables.map((v) => v.name).join(','));
+  $effect(() => {
+    if (!names || !row) return;
+    tick().then(() => row?.scrollTo({ left: row.scrollWidth }));
+  });
+
   const show = (v: VariableView) => (typeof v.value === 'object' ? 'Color' : String(v.value));
 </script>
 
 {#if variables.length > 0}
 <section class="vars">
   <h3>{t('variablesTitle')}</h3>
-  <div class="boxes">
+  <div class="boxes" bind:this={row}>
     {#each variables as v (v.name)}
       <div class="box" class:flash={flashing.has(v.name)}>
         <span class="name">{v.name}</span>
