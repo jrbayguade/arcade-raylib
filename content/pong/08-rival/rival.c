@@ -36,6 +36,8 @@ int main(void)
         if (pilotaY > 442) { velY = -velY; }
         if (pilotaX < 38 && pilotaY > palaY && pilotaY < palaY + alcada) { velX = -velX; }
         if (pilotaX > 762 && pilotaY > palaDretaY && pilotaY < palaDretaY + alcada) { velX = -velX; }
+        if (pilotaX < 38 && pilotaY > palaY && pilotaY < palaY + 40) { velY = -5; }
+        if (pilotaX < 38 && pilotaY >= palaY + 40 && pilotaY < palaY + alcada) { velY = 5; }
         if (pilotaX > 800) { puntsEsquerra++; pilotaX = 400; }
         if (pilotaX < 0) { puntsDreta++; pilotaX = 400; }
 //@endfold

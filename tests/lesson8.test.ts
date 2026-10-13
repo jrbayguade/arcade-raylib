@@ -22,7 +22,9 @@ describe('lesson 8: the scoreboard', () => {
     expect(firstFailing(tryZone('count', '        if (pilotaX > 800) { puntsEsquerra++; }'))).toBe('ballBack');
   });
   it('rightScore: the point for the wrong player or no reset are caught', () => {
-    expect(firstFailing(tryZone('rightScore', `${LPT}\n        if (pilotaX < 0) { puntsEsquerra++; pilotaX = 400; }`))).toBe('rightScores');
+    expect(firstFailing(tryZone('rightScore', `${LPT}\n        if (pilotaX < 0) { puntsEsquerra++; pilotaX = 400; }`))).toBe('leftUntouched');
+    expect(firstFailing(tryZone('rightScore', `${LPT}
+        if (pilotaX > 0) { puntsDreta++; pilotaX = 400; }`))).toBe('rightScores');
     expect(firstFailing(tryZone('rightScore', `${LPT}\n        if (pilotaX < 0) { puntsDreta++; }`))).not.toBeUndefined();
   });
   it('drawRight: drawing the left score twice is caught', () => {

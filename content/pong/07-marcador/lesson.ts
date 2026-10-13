@@ -38,9 +38,9 @@ export const lesson7: Lesson = {
       kind: 'practice', id: 'rightScore', source: rightScore, solution: rightScoreSolution, showVariables: true, controls: CONTROLS,
       run: { frames: 400, hold: ['KEY_W'] },
       checks: [
-        check('rightScores', (ctx) => v(ctx, 'puntsDreta') >= 3),
-        check('ballBackToCentre', (ctx) => history(ctx, { frames: 400, hold: ['KEY_W'] }, 'pilotaX').every((x) => x >= -10)),
         check('leftUntouched', (ctx) => v(ctx, 'puntsEsquerra') === 0),
+        check('rightScores', (ctx) => v(ctx, 'puntsDreta') === 4),
+        check('ballBackToCentre', (ctx) => history(ctx, { frames: 400, hold: ['KEY_W'] }, 'pilotaX').every((x) => x >= -10)),
       ],
     },
     {
@@ -56,7 +56,7 @@ export const lesson7: Lesson = {
       run: { frames: 600, hold: ['KEY_UP'] },
       checks: [
         check('showsWinner', (ctx) => texts(ctx).some((t) => !isNumber(t.text))),
-        check('notTooSoon', (ctx) => { const early = simulate(ctx, { frames: 200, hold: ['KEY_UP'] }); return early !== null && texts(early).every((t) => isNumber(t.text)); }),
+        check('notTooSoon', (ctx) => { const early = simulate(ctx, { frames: 390, hold: ['KEY_UP'] }); return early !== null && texts(early).every((t) => isNumber(t.text)); }),
       ],
     },
   ],

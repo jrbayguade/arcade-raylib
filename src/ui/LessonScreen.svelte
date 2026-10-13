@@ -11,6 +11,8 @@
   import { RaylibHost } from '../runtime/raylib';
   import { HALL_HASH, routeHash } from '../app/route';
   import { recordExercise, recordStep, savedExercises } from '../lessons/progress';
+  import { download, mainC } from '../lessons/export';
+  import { LESSONS } from '../../content/pong';
   import BitBubble from './BitBubble.svelte';
   import CodePane from './CodePane.svelte';
   import Confetti from './Confetti.svelte';
@@ -280,6 +282,9 @@
     {:else if view.canContinue && hasNextLesson}
       <button class="primary next" data-sound="next" onclick={nextLesson}>{t('nextLesson')}</button>
     {/if}
+    {#if view.step.kind === 'explain' && view.step.card === 'fixed'}
+      <button class="primary download" data-sound="success" onclick={() => download('main.c', mainC(progress, LESSONS))}>{t('downloadMain')}</button>
+    {/if}
     {#if view.canContinue && view.isLast}
       <button class="to-hall" data-sound="page" onclick={() => (location.hash = HALL_HASH)} aria-label={t('hallBack')}>🏠<span class="to-hall-label"> {t('hallBackLabelText')}</span></button>
     {/if}
@@ -302,7 +307,7 @@
   <section class="machine-area">
     <div class="cabinet">
       <div class="marquee">{lesson.machine ?? ''}</div>
-      <GamePane bind:this={game} {broken} slow={slowMotion.on} controls={isExercise(view.step) ? (view.step.controls ?? []) : []} onVariables={(v) => (variables = v)} onError={showLiveError} />
+      <GamePane bind:this={game} {broken} slow={slowMotion.on} controls={isExercise(view.step) ? (view.step.controls ?? []) : view.step.card === 'fixed' ? ['KEY_W', 'KEY_S'] : []} onVariables={(v) => (variables = v)} onError={showLiveError} />
       {#if isExercise(view.step)}
         <div class="machine-row">
           <button class="slow-btn" class:on={slowMotion.on} aria-pressed={slowMotion.on} data-sound="page"

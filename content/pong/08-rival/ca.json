@@ -13,7 +13,7 @@
         "Repte final! 🏆 El Pong ja funciona sencer... però per jugar-hi necessites algú a l'altra banda.",
         "Programaràs un rival: la pala de la dreta es mourà sola, seguint la pilota. Així podràs jugar contra la màquina!",
         "La idea: si la pilota és més amunt que el mig de la pala (`palaDretaY + 40`), la pala puja una mica. Si és més avall, baixa una mica.",
-        "Escriu els dos `if` a la línia groga. Mou la pala 4 píxels cada vegada: si va massa ràpid, serà imbatible!"
+        "Escriu els dos `if` a la línia groga. Mou la pala 4 píxels cada vegada: si fos més ràpida, no hi hauria manera de guanyar-li! (Pista per guanyar: si la pilota toca la vora de la teva pala, surt més inclinada.)"
       ],
       "hints": [
         "El mig de la pala és `palaDretaY + 40`. Compara-hi `pilotaY`.",
@@ -26,14 +26,15 @@
       "prompt": [
         "HO HAS ACONSEGUIT! La màquina del Pong torna a funcionar. 🎉",
         "Has après coordenades, variables, el bucle del joc, `if`, comparacions, rebots, `&&`, comptadors... i has programat un rival. Això és programar de debò!",
-        "Tot el codi que veus és C de veritat, el mateix que fan servir els programadors de videojocs amb raylib.",
+        "Tot el codi que veus és C de veritat, el mateix que fa servir la gent que programa videojocs amb raylib. I la partida continua: fes clic al joc i juga contra el teu rival amb la W i la S!",
+        "Prem «⬇ Descarrega el teu main.c» i emporta't el teu Pong: és teu!",
         "Gràcies per arreglar la meva sala recreativa. Quan vulguis, torna a la sala: aviat s'encendran altres màquines!"
       ]
     }
   },
   "checks": {
     "moves": "La pala dreta no es mou. Escriu dos `if` que la facin pujar i baixar segons on sigui la pilota.",
-    "fair": "La pala no es pot teletransportar! Mou-la uns pocs píxels a cada fotograma (com a molt, 6).",
+    "fair": "La pala no es pot teletransportar! En lloc de `palaDretaY = pilotaY`, suma-hi o resta-hi 4 a cada fotograma.",
     "neverMisses": "La pala dreta encara deixa passar la pilota. Comprova que puja quan la pilota és més amunt (`<`) i que baixa quan és més avall (`>`)."
   }
 }

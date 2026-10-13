@@ -3,6 +3,7 @@
   import { PONG_PLAN } from '../../content/pong/plan';
   import { routeHash } from '../app/route';
   import { t } from '../i18n/i18n';
+  import { download, mainC } from '../lessons/export';
   import { lessonDone, lessonStars, resumeStep, unlockedCount } from '../lessons/progress';
   import BitFace from './BitFace.svelte';
   import { clearProgress, progress } from './progressStore.svelte';
@@ -97,6 +98,9 @@
       {started ? (LESSONS[target.lesson].final ? t('hallContinueFinal') : t('hallContinue', { n: LESSONS[target.lesson].number })) : t('hallStart')}
     </button>
   </div>
+  {#if lessonDone(progress, LESSONS[LESSONS.length - 1])}
+    <button class="download" data-sound="success" onclick={() => download('main.c', mainC(progress, LESSONS))}>{t('downloadMain')}</button>
+  {/if}
   {#if started}
     <button class="hall-reset" class:armed={resetArmed} onclick={reset}>{resetArmed ? t('hallResetConfirm') : t('hallReset')}</button>
   {/if}

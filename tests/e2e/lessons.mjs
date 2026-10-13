@@ -176,6 +176,9 @@ try {
     await playLesson(n, ['vars', 'explain', ...LESSON_STEPS_AFTER_CARD[n]]);
   }
   check('all lessons done', await visible(page.getByText('Has acabat totes les lliçons')));
+  const [file] = await Promise.all([page.waitForEvent('download'), page.locator('.actions .download').click()]);
+  const fileText = await (await file.createReadStream()).toArray().then((chunks) => Buffer.concat(chunks).toString('utf8'));
+  check('the fixed machine downloads as main.c with the kid’s own code', file.suggestedFilename() === 'main.c' && fileText.includes('#include "raylib.h"') && fileText.includes('palaDretaY') && !fileText.includes('//@'));
 
   // Tall screens: the buttons follow the code, the machine lines up with Bit
   await page.setViewportSize({ width: 1920, height: 1080 });

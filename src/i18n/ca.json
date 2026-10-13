@@ -114,6 +114,7 @@
     "hallBack": "Torna a la sala",
     "hallBackLabelText": "Sala",
     "slowMotion": "Càmera lenta",
+    "downloadMain": "⬇ Descarrega el teu main.c",
     "fixedTitle": "MÀQUINA ARREGLADA!",
     "fixedSub": "Has programat un Pong sencer en C",
     "finalShort": "repte final",
