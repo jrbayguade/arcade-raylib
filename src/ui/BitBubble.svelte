@@ -127,7 +127,7 @@
       {/if}
     {/if}
     {#if mission}
-      <div class="mission"><small>{t('missionLabel')}</small><RichText text={mission} /></div>
+      <div class="mission"><small>{t('missionLabel')}</small> <RichText text={mission} /></div>
     {/if}
     {#if message}
       {#key message}

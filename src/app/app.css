@@ -244,6 +244,8 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 .hall-reset.armed { color: var(--red); border: 2px solid var(--red); text-decoration: none; }
 @media (max-height: 560px) {
   .hall { padding: 6px 12px 8px; gap: 6px; }
+  .hall .lang-picker { left: auto; right: 12px; top: 6px; } /* clear of the PONG cabinet */
+  .mini-soon { font-size: 10px; white-space: normal; overflow-wrap: anywhere; }
   .hall-sign { font-size: 20px; letter-spacing: 5px; }
   .hall-floor { gap: 10px; }
   .hall-pong { flex: 1 1 auto; }

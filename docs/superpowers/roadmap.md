@@ -16,7 +16,7 @@ Each phase works the same way:
 | 3 | Lessons 4–8 (if, comparisons, bounce, &&, counters) + final challenge (opponent) | ✅ done (teacher review for each lesson + UI review "ship as is") |
 | 4 | Touch controls for playing (▲▼) + download `main.c` | ✅ done |
 | 5 | Minor items: empty last line, Continua fade-in, Bit stops narrating after Run, frames card at 1920, done text at 1366 | ✅ done |
-| 6 | Spanish and English (UI + lessons) with a language selector | ⏳ |
+| 6 | Spanish and English (UI + lessons) with a language selector | ✅ done (bilingual review + UI review "ship as is") |
 
 Out of scope for this run: a second playable machine. The original spec warns against adding machines before Pong has been validated with real kids.
 
@@ -29,3 +29,5 @@ Each phase adds its rulings here.
 - The final rival moves at 4 px per frame; hitting the edge of your paddle sends the ball off steeper (±5), which is how you beat it.
 - `'` is no longer auto-paired in the editor (Catalan apostrophes; the course has no char literals).
 - Keys go to the game automatically after ▶ on steps that use keys; touch screens get see-through on-screen buttons.
+- Catalan is the default language whatever the browser says (many Catalan kids use a Spanish browser); ES/EN are picked in the hall, the intro or the rotate screen, and remembered.
+- Code names stay in Catalan in every language, with a short gloss the first time each one appears; only generic examples (`int nom = valor;`) are translated.

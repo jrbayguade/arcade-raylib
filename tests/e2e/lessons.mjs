@@ -517,15 +517,15 @@ try {
     lp.on('pageerror', (e) => errors.push(String(e)));
     await lp.goto(`${base}#/sala`);
     await lp.locator('.hall').waitFor();
-    check('language: Catalan by default', (await lp.evaluate(() => document.documentElement.lang)) === 'ca' && (await lp.locator('.lang-picker button.on').innerText()) === 'CA');
-    await lp.locator('.lang-picker button', { hasText: 'ES' }).click();
+    check('language: Catalan by default', (await lp.evaluate(() => document.documentElement.lang)) === 'ca' && (await lp.locator('.hall .lang-picker button.on').innerText()) === 'CA');
+    await lp.locator('.hall .lang-picker button', { hasText: 'ES' }).click();
     await lp.locator('.hall').waitFor();
     check('language: Spanish after picking ES', (await lp.evaluate(() => document.documentElement.lang)) === 'es' && !(await lp.locator('.hall-continue').innerText()).includes('Comença'));
     await lp.goto(`${base}#/pong/0/0`);
     await lp.locator('.cm-editor').waitFor();
     check('language: the lesson is in Spanish too, the code is not', !(await lp.locator('.top .brand').innerText()).includes('lliçó') && (await lp.evaluate(() => window.__bitArcade.code())).includes('DrawRectangle'));
     await lp.goto(`${base}#/sala`);
-    await lp.locator('.lang-picker button', { hasText: 'EN' }).click();
+    await lp.locator('.hall .lang-picker button', { hasText: 'EN' }).click();
     await lp.locator('.hall').waitFor();
     check('language: English after picking EN, and it is remembered', (await lp.evaluate(() => document.documentElement.lang)) === 'en' && (await lp.evaluate(() => localStorage.getItem('bitarcade:lang'))) === 'en');
     await ctx.close();

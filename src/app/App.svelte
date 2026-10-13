@@ -3,6 +3,7 @@
   import { t } from '../i18n/i18n';
   import Hall from '../ui/Hall.svelte';
   import Intro from '../ui/Intro.svelte';
+  import LanguagePicker from '../ui/LanguagePicker.svelte';
   import { INTRO_KEY, shouldShowIntro } from '../ui/intro';
   import LessonScreen from '../ui/LessonScreen.svelte';
   import { sounds, type SoundName } from '../ui/sound';
@@ -74,6 +75,7 @@
 {/if}
 
 <div class="rotate" role="alert">
+  <LanguagePicker />
   <div class="rotate-phone" aria-hidden="true">📱</div>
   <p>{t('rotate')}</p>
 </div>

@@ -81,6 +81,16 @@
   // A primitive: effects that read it only re-run when the step really changes (not on every engine update).
   const stepId = $derived(view.step.id);
 
+  /** Continua on an explanation card can only be pressed once it has faded in (about 3 s). */
+  let continueReady = $state(true);
+  $effect(() => {
+    stepId;
+    if (untrack(() => view.step.kind) !== 'explain') { continueReady = true; return; }
+    continueReady = false;
+    const timer = setTimeout(() => (continueReady = true), 3000);
+    return () => clearTimeout(timer);
+  });
+
   /** Names written in the yellow zone: their boxes are the ones the kid is watching. */
   const zoneNames = $derived.by(() => {
     const ex = view.exercise;
@@ -288,7 +298,7 @@
 
   <div class="actions" class:solved={view.canContinue}>
     {#if view.canContinue && !view.isLast}
-      {#key view.step.id}<button class="primary next" class:wait={view.step.kind === 'explain'} data-sound="next" onclick={next}>{t('continue')}</button>{/key}
+      {#key view.step.id}<button class="primary next" class:wait={view.step.kind === 'explain'} style:pointer-events={continueReady ? null : 'none'} data-sound="next" onclick={next}>{t('continue')}</button>{/key}
     {:else if view.canContinue && hasNextLesson}
       <button class="primary next" data-sound="next" onclick={nextLesson}>{t('nextLesson')}</button>
     {/if}
