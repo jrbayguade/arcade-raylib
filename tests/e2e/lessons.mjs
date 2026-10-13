@@ -37,6 +37,12 @@ try {
           const pt = await page.evaluate(() => { const g = document.querySelector('.grid-card .point'); return [g.dataset.x, g.dataset.y, g.querySelector('.coord').textContent, g.querySelector('.dot').getAttribute('cx'), g.querySelector('.dot').getAttribute('cy')]; });
           check(`${label}: grid label matches the dot`, pt[2] === `(${pt[0]}, ${pt[1]})` && pt[3] === pt[0] && pt[4] === pt[1], JSON.stringify(pt));
         }
+        if (lesson === 2) {
+          check(`${label}: frames card`, await visible(page.locator('.frames-card')));
+          const first = await page.locator('.frames-card .box-value').textContent();
+          await page.waitForTimeout(2000);
+          check(`${label}: the frames card box changes value`, (await page.locator('.frames-card .box-value').textContent()) !== first, first);
+        }
       } else if (kind === 'type185') {
         const before = await code();
         await page.locator('.cm-line').first().click();
@@ -77,6 +83,13 @@ try {
           check(`${label}: the missing star keeps its place`, (await page.locator('.star').count()) === 2);
         }
         if (kind === 'vars') check(`${label}: variables panel`, await visible(page.locator('.vars .box')));
+        if (lesson === 2 && i === 0) {
+          // The kid's code keeps running after the success: the ball's box keeps growing
+          const pilotaX = async () => Number(await page.locator('.vars .box', { hasText: 'pilotaX' }).locator('.value').innerText());
+          const a = await pilotaX();
+          await page.waitForTimeout(300);
+          check(`${label}: the ball keeps moving after a success`, (await pilotaX()) > a);
+        }
       }
       if (i < steps.length - 1) await button('Continua →').click();
     }
@@ -132,6 +145,11 @@ try {
   check('lessons count from 1, never 0', (await page.locator('.brand').innerText()).includes('lliçó 2'));
   await page.locator('.cm-editor').waitFor();
   await playLesson(1, ['solve', 'vars', 'explain', 'vars', 'vars', 'vars']);
+  check('lesson 2 done', await visible(page.getByText('Has acabat la lliçó!')));
+  await button('Següent lliçó →').click();
+  check('lesson 3 shown', await visible(page.getByRole('heading', { name: /lliçó 3/ })));
+  await page.locator('.cm-editor').waitFor();
+  await playLesson(2, ['vars', 'explain', 'vars', 'vars', 'vars']);
   check('all lessons done', await visible(page.getByText('Has acabat totes les lliçons')));
 
   // Tall screens: the buttons follow the code, the machine lines up with Bit
@@ -193,7 +211,52 @@ try {
   await page.locator('.cm-editor').waitFor();
   check('broken starting code shows TV static', await visible(page.locator('.cabinet .tv-static')));
 
+  // 🐢 slows the game down and shows the frame number
+  await page.goto(`${base}#/pong/2/0`);
+  await page.reload();
+  await page.locator('.cm-editor').waitFor();
+  check('no frame counter at full speed', (await page.locator('.frame-no').count()) === 0);
+  await page.locator('.slow-btn').click();
+  check('🐢 shows the frame number', await visible(page.locator('.frame-no')));
+  const rate = await page.evaluate(async () => {
+    const read = () => Number(document.querySelector('.frame-no').textContent.replace(/\D/g, ''));
+    const f1 = read(), t1 = performance.now();
+    await new Promise((r) => setTimeout(r, 1500));
+    return ((read() - f1) * 1000) / (performance.now() - t1);
+  });
+  check('🐢 runs about 3 frames per second', rate >= 1.5 && rate <= 4.5, rate.toFixed(2));
+  const frameAt = async () => Number((await page.locator('.frame-no').innerText()).replace(/\D/g, ''));
+  await button('▶ Executa').click();
+  check('▶ restarts the frame count in slow motion', (await frameAt()) <= 3);
+  check('🐢 makes a sound', (await page.evaluate(() => [...window.__bitArcadeSounds])).includes('page'));
+  // It stays on from step to step
+  await page.evaluate(() => window.__bitArcade.solve());
+  await button('▶ Executa').click();
+  await visible(page.locator('.bubble .success'), 5000);
+  await button('Continua →').click();
+  await button('Continua →').click();
+  await page.locator('.cm-editor').waitFor();
+  check('🐢 stays on in the next steps', await visible(page.locator('.slow-btn[aria-pressed="true"]')) && await visible(page.locator('.frame-no')));
+  await page.locator('.slow-btn').click();
+  check('🐢 again goes back to full speed', (await page.locator('.frame-no').count()) === 0);
+  // The speed step starts broken: TV static, no counter, even in slow motion
+  await page.goto(`${base}#/pong/2/4`);
+  await page.reload();
+  await page.locator('.cm-editor').waitFor();
+  check('lesson 3 speed step starts with TV static', await visible(page.locator('.cabinet .tv-static')));
+  check('lesson 3 speed step shows the velX ghost', await visible(page.locator('.cm-ghost', { hasText: 'velX' })));
+  await page.locator('.slow-btn').click();
+  await page.waitForTimeout(500);
+  check('🐢 on TV static shows no counter', (await page.locator('.frame-no').count()) === 0);
+  await page.evaluate(() => window.__bitArcade.solve());
+  await button('▶ Executa').click();
+  check('🐢 counts from the first frame after fixing the machine', await visible(page.locator('.frame-no')) && (await frameAt()) <= 3);
+  await page.locator('.slow-btn').click();
+
   // The empty line in the zone shows a ghost hint that is not code: typing there replaces it
+  await page.goto(`${base}#/pong/1/4`);
+  await page.reload();
+  await page.locator('.cm-editor').waitFor();
   check('ghost hint on the empty line', await visible(page.locator('.cm-ghost', { hasText: 'crea aquí la caixa alcada' })));
   check('the ghost hint is not part of the code', !(await page.evaluate(() => window.__bitArcade.code())).includes('crea aquí'));
   await page.locator('.cm-line:has(.cm-ghost)').click(); // a kid clicks the grey words: they let the click through
@@ -236,6 +299,8 @@ try {
       const run = await phone.getByRole('button', { name: '▶ Executa', exact: true }).boundingBox();
       check('phone sideways: Run in view', run !== null && run.y + run.height <= h);
       check('phone sideways: buttons are at least 44 px tall', run !== null && run.height >= 44);
+      const slowBox = await phone.locator('.slow-btn').boundingBox();
+      check('phone sideways: 🐢 is at least 44 px tall', slowBox !== null && slowBox.height >= 44);
       check('phone sideways: Bit opens his bubble while he talks', await visible(phone.locator('.talk.open .bubble')));
       const bubbleBox = await phone.locator('.talk .bubble').boundingBox();
       const zoneBox = await phone.locator('.cm-zone').first().boundingBox();
@@ -261,7 +326,32 @@ try {
       check('phone sideways: the answer leaves the top of the game in view', answerBox.y > screenBox.y + screenBox.height / 3, JSON.stringify([answerBox, screenBox]));
       check('phone sideways: the answer steps aside by itself', await visible(phone.locator('.talk:not(.open)'), 6000));
       check('phone sideways: the folded ticket shows the success', await visible(phone.locator('.ticket .ticket-mark', { hasText: '✓' })));
+      // Lesson 3's last step: five variable boxes and 🐢 under the screen must still fit
+      await phone.goto(`${base}#/pong/2/4`);
+      await phone.reload();
+      await phone.locator('.cm-editor').waitFor();
+      await phone.evaluate(() => window.__bitArcade.solve());
+      await phone.getByRole('button', { name: '▶ Executa', exact: true }).click();
+      await visible(phone.locator('.vars .box', { hasText: 'velX' }));
+      check('phone sideways, lesson 3: nothing wider than the screen', (await phone.evaluate(() => document.documentElement.scrollWidth)) <= w);
+      const canvasBox = await phone.locator('.machine canvas').boundingBox();
+      check('phone sideways, lesson 3: the game fits', canvasBox.y + canvasBox.height <= h, JSON.stringify(canvasBox));
+      const slow3 = await phone.locator('.slow-btn').boundingBox();
+      check('phone sideways, lesson 3: 🐢 in view and thumb-sized', slow3 !== null && slow3.height >= 44 && slow3.y + slow3.height <= h);
     }
+    await ctx.close();
+  }
+
+  // Reduced motion: the frames card holds still
+  {
+    const ctx = await browser.newContext({ viewport: { width: 1366, height: 768 }, reducedMotion: 'reduce' });
+    const still = await ctx.newPage();
+    still.on('pageerror', (e) => errors.push(String(e)));
+    await still.goto(`${base}#/pong/2/1`);
+    await still.locator('.frames-card').waitFor();
+    const v1 = await still.locator('.frames-card .box-value').textContent();
+    await still.waitForTimeout(1500);
+    check('reduced motion: the frames card holds still', (await still.locator('.frames-card .box-value').textContent()) === v1);
     await ctx.close();
   }
 
