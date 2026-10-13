@@ -16,7 +16,7 @@ const paddle = (ctx: CheckContext, x: number) => visibleRects(ctx).find((r) => r
 
 export const lesson1: Lesson = {
   id: 'pong-1',
-  number: 1,
+  number: 2,
   machine: 'PONG',
   texts,
   steps: [

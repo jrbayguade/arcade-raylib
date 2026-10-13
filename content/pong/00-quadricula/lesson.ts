@@ -16,7 +16,7 @@ const leftPaddle = (ctx: CheckContext) => visibleRects(ctx).find((r) => r.x === 
 
 export const lesson0: Lesson = {
   id: 'pong-0',
-  number: 0,
+  number: 1,
   machine: 'PONG',
   texts,
   steps: [

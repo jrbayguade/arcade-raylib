@@ -128,7 +128,8 @@ try {
   check('lesson 0 done', await visible(page.getByText('Has acabat la lliçó!')));
   await button('Següent lliçó →').click();
   // The hash change re-mounts the screen in a later task: wait for the new lesson, not the old editor.
-  check('lesson 1 shown', await visible(page.getByRole('heading', { name: /lliçó 1/ })));
+  check('lesson 2 shown', await visible(page.getByRole('heading', { name: /lliçó 2/ })));
+  check('lessons count from 1, never 0', (await page.locator('.brand').innerText()).includes('lliçó 2'));
   await page.locator('.cm-editor').waitFor();
   await playLesson(1, ['solve', 'vars', 'explain', 'vars', 'vars', 'vars']);
   check('all lessons done', await visible(page.getByText('Has acabat totes les lliçons')));
