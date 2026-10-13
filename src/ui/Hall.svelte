@@ -15,8 +15,9 @@
   /** Where "Continua" goes: the last place, else the first lesson not finished. */
   const target = $derived.by(() => {
     const last = progress.last;
-    if (last && last.lesson < LESSONS.length) return last;
-    const lesson = Math.max(0, Math.min(unlocked - 1, LESSONS.findIndex((l) => !lessonDone(progress, l))));
+    if (last && LESSONS[last.lesson]) return { lesson: last.lesson, step: Math.min(last.step, LESSONS[last.lesson].steps.length - 1) };
+    const firstOpen = LESSONS.findIndex((l) => !lessonDone(progress, l));
+    const lesson = firstOpen < 0 ? LESSONS.length - 1 : Math.min(unlocked - 1, firstOpen);
     return { lesson, step: resumeStep(progress, LESSONS[lesson]) };
   });
   const rows = $derived(PONG_PLAN.map((planned, i) => {

@@ -23,6 +23,13 @@ export function emptyProgress(): Progress {
 }
 
 const isObject = (x: unknown): x is Record<string, unknown> => typeof x === 'object' && x !== null && !Array.isArray(x);
+const isCount = (x: unknown): x is number => typeof x === 'number' && Number.isFinite(x) && x >= 0;
+
+/** A stored exercise, cleaned up; null when it is not one (hand-edited or from a buggy version). */
+function readExercise(x: unknown): SavedExercise | null {
+  if (!isObject(x) || typeof x.code !== 'string' || typeof x.done !== 'boolean' || !isCount(x.stars) || !isCount(x.hintsShown)) return null;
+  return { code: x.code, stars: Math.min(Math.trunc(x.stars), MAX_STARS), hintsShown: Math.trunc(x.hintsShown), done: x.done };
+}
 
 /** Never throws: missing, corrupt or unknown data (or a storage that refuses) gives an empty progress. */
 export function loadProgress(storage: Reader | null): Progress {
@@ -31,9 +38,17 @@ export function loadProgress(storage: Reader | null): Progress {
     if (!raw) return emptyProgress();
     const data: unknown = JSON.parse(raw);
     if (!isObject(data) || data.v !== 1 || !isObject(data.exercises) || !isObject(data.at)) return emptyProgress();
-    const last = isObject(data.last) && typeof data.last.lesson === 'number' && typeof data.last.step === 'number'
-      ? { lesson: data.last.lesson, step: data.last.step } : null;
-    return { v: 1, exercises: data.exercises as Progress['exercises'], at: data.at as Progress['at'], last };
+    const exercises: Progress['exercises'] = {};
+    for (const [key, value] of Object.entries(data.exercises)) {
+      const ex = readExercise(value);
+      if (ex) exercises[key] = ex;
+    }
+    const at: Progress['at'] = {};
+    for (const [key, value] of Object.entries(data.at)) if (isCount(value)) at[key] = Math.trunc(value);
+    const last = isObject(data.last) && Number.isInteger(data.last.lesson) && Number.isInteger(data.last.step)
+      && (data.last.lesson as number) >= 0 && (data.last.step as number) >= 0
+      ? { lesson: data.last.lesson as number, step: data.last.step as number } : null;
+    return { v: 1, exercises, at, last };
   } catch {
     return emptyProgress();
   }

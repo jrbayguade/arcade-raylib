@@ -17,7 +17,7 @@
   import ExplainCard from './ExplainCard.svelte';
   import GamePane from './GamePane.svelte';
   import type { BitMessage } from './message';
-  import { persist, progress } from './progressStore.svelte';
+  import { persist, persistSoon, progress } from './progressStore.svelte';
   import { slowMotion } from './slowMotion.svelte';
   import { sounds } from './sound';
   import VariablesPanel from './VariablesPanel.svelte';
@@ -35,11 +35,12 @@
   const engine = untrack(() => new LessonEngine(lesson, startStep, savedExercises(progress, lesson)));
 
   /** Saves where the kid is and what they have done in this step (code, stars, hints). */
-  function save(): void {
+  function save(soon = false): void {
     const ex = engine.saved(engine.step.id);
     if (ex) recordExercise(progress, lesson, engine.step.id, ex);
     recordStep(progress, lessonIndex, lesson, engine.stepIndex);
-    persist();
+    if (soon) persistSoon();
+    else persist();
   }
   untrack(save);
   let version = $state(0);
@@ -132,7 +133,7 @@
   function changed(code: string): void {
     engine.setCode(code);
     errorLine = null;
-    save();
+    save(true);
   }
 
   function showLiveError(d: Diagnostic): void {

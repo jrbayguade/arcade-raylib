@@ -29,6 +29,26 @@ describe('progress', () => {
     expect(loadProgress(null)).toEqual(emptyProgress());
   });
 
+  it('drops saved entries with the wrong shape instead of crashing later', () => {
+    const s = new MemoryStorage();
+    s.setItem(PROGRESS_KEY, JSON.stringify({
+      v: 1,
+      exercises: {
+        'pong-0/a': { stars: 1 },
+        'pong-0/b': { code: 5, stars: 1, hintsShown: 0, done: true },
+        'pong-0/c': { code: 'ok', stars: 1.5, hintsShown: -1, done: 'yes' },
+        'pong-0/d': { code: 'ok', stars: 9, hintsShown: 2.7, done: true },
+      },
+      at: { 'pong-0': 'x', 'pong-1': -2, 'pong-2': 3 },
+      last: { lesson: -1, step: 0 },
+    }));
+    const p = loadProgress(s);
+    expect(Object.keys(p.exercises)).toEqual(['pong-0/d']);
+    expect(p.exercises['pong-0/d']).toEqual({ code: 'ok', stars: 2, hintsShown: 2, done: true });
+    expect(p.at).toEqual({ 'pong-2': 3 });
+    expect(p.last).toBeNull();
+  });
+
   it('saves and loads back', () => {
     const s = new MemoryStorage();
     const p = emptyProgress();

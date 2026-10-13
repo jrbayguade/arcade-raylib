@@ -18,6 +18,9 @@ export interface ExerciseState {
   result: Evaluation | null;
 }
 
+/** A whole number between 0 and max (anything else stored becomes 0). */
+const clamp = (n: number | undefined, max: number) => (Number.isFinite(n) ? Math.min(Math.max(Math.trunc(n as number), 0), max) : 0);
+
 /** State of one lesson in progress. Pure logic: the UI reads it and calls its methods. */
 export class LessonEngine {
   private index: number;
@@ -44,8 +47,8 @@ export class LessonEngine {
       const shown = zone === null ? source : withZone(source, zone);
       state = {
         source, shown, code: shown.code,
-        hintsShown: Math.min(saved?.hintsShown ?? 0, this.texts.hints?.length ?? 0),
-        stars: (Math.min(Math.max(saved?.stars ?? 0, 0), MAX_STARS) as 0 | 1 | 2),
+        hintsShown: clamp(saved?.hintsShown, this.texts.hints?.length ?? 0),
+        stars: clamp(saved?.stars, MAX_STARS) as 0 | 1 | 2,
         done: saved?.done ?? false, result: null,
       };
       this.states.set(step.id, state);
