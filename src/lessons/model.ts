@@ -14,7 +14,7 @@ export interface ExerciseStep {
   showVariables?: boolean;
 }
 
-export interface ExplainStep { kind: 'explain'; id: string; card: 'grid' | 'variable-box' }
+export interface ExplainStep { kind: 'explain'; id: string; card: 'grid' | 'variable-box' | 'frames' }
 
 export type Step = ExerciseStep | ExplainStep;
 

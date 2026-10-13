@@ -172,6 +172,20 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 .box-card .paddle { fill: #fff; transition: y 0.6s; }
 .box-card .paddle-label { fill: var(--text); font-size: 22px; font-family: ui-monospace, monospace; transition: y 0.6s; }
 
+/* The game loop, frame by frame */
+.frames-card .var-box { fill: #1d1446; stroke: var(--cyan); stroke-width: 4; }
+.frames-card .lid { fill: #2a1d5e; stroke: var(--cyan); stroke-width: 3; }
+.frames-card .box-name { fill: var(--muted); font-size: 24px; text-anchor: middle; font-family: ui-monospace, monospace; }
+.frames-card .box-value { fill: var(--yellow); font-size: 58px; text-anchor: middle; font-family: ui-monospace, monospace; animation: pop 0.4s; transform-box: fill-box; transform-origin: center; }
+.frames-card .film-frame { fill: #000; stroke: #3a3358; stroke-width: 3; }
+.frames-card .film.now .film-frame { stroke: var(--pink); filter: drop-shadow(0 0 6px var(--pink)); }
+.frames-card .film-ball { fill: #fdf900; }
+.frames-card .film-label { fill: var(--muted); font-size: 18px; text-anchor: middle; font-family: ui-monospace, monospace; }
+.frames-card .film.now .film-label { fill: var(--pink); }
+.frames-card .frames-code { fill: var(--text); font-size: 30px; font-family: ui-monospace, monospace; }
+.frames-card .beat { fill: #5a5380; font-size: 22px; font-family: ui-monospace, monospace; transition: fill 0.2s; }
+.frames-card .beat.on { fill: var(--yellow); }
+
 /* Celebration */
 .confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; }
 
