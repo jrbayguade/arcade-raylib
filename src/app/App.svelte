@@ -1,20 +1,23 @@
 <script lang="ts">
   import { LESSONS } from '../../content/pong';
   import { t } from '../i18n/i18n';
+  import Hall from '../ui/Hall.svelte';
   import Intro from '../ui/Intro.svelte';
   import { INTRO_KEY, shouldShowIntro } from '../ui/intro';
   import LessonScreen from '../ui/LessonScreen.svelte';
   import { sounds, type SoundName } from '../ui/sound';
-  import { parseRoute, routeHash } from './route';
+  import { isHall, parseRoute, routeHash } from './route';
 
   const introSeen = () => { try { return localStorage.getItem(INTRO_KEY) === '1'; } catch { return false; } };
 
   let route = $state(parseRoute(location.hash, LESSONS.length));
   let showIntro = $state(shouldShowIntro(location.hash, introSeen()));
+  let hall = $state(isHall(location.hash));
 
   $effect(() => {
     const onHash = () => {
       route = parseRoute(location.hash, LESSONS.length);
+      hall = isHall(location.hash);
       if (location.hash === '#/intro') showIntro = true;
     };
     addEventListener('hashchange', onHash);
@@ -27,6 +30,7 @@
     const start = routeHash({ lesson: 0, step: 0 });
     if (location.hash !== start) location.hash = start;
     route = parseRoute(start, LESSONS.length);
+    hall = false;
   }
 
   // Audio may only start after a user gesture; every button then clicks (or plays its own data-sound).
@@ -56,6 +60,8 @@
 
 {#if showIntro}
   <Intro onDone={introDone} />
+{:else if hall}
+  <Hall />
 {:else}
   {#key `${route.lesson}/${route.step}`}
     <LessonScreen

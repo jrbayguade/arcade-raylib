@@ -86,3 +86,24 @@ export function zoneText(src: LessonSource): string {
 export function replaceZone(src: LessonSource, text: string): string {
   return src.code.slice(0, src.editable.from) + text + src.code.slice(src.editable.to);
 }
+
+/** The same exercise with other text in the zone: what comes after moves, placeholders only stay if nothing changed. */
+export function withZone(src: LessonSource, text: string): LessonSource {
+  if (text === zoneText(src)) return src;
+  const delta = text.length - (src.editable.to - src.editable.from);
+  const after = (n: number) => (n >= src.editable.to ? n + delta : n);
+  return {
+    code: replaceZone(src, text),
+    editable: { from: src.editable.from, to: src.editable.to + delta },
+    folds: src.folds.map((f) => ({ ...f, from: after(f.from), to: after(f.to) })),
+    placeholders: [],
+  };
+}
+
+/** The zone text of a saved program, or null when the code around the zone is not this exercise's any more. */
+export function zoneOf(src: LessonSource, code: string): string | null {
+  const before = src.code.slice(0, src.editable.from);
+  const after = src.code.slice(src.editable.to);
+  if (code.length < before.length + after.length || !code.startsWith(before) || !code.endsWith(after)) return null;
+  return code.slice(before.length, code.length - after.length);
+}

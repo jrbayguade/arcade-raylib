@@ -117,3 +117,31 @@ describe('starsOf', () => {
     expect(e.starsOf('nope')).toBe(0);
   });
 });
+
+describe('LessonEngine with saved progress', () => {
+  const solved = source(50).replace('//@edit\n', '').replace('//@end\n', '');
+  it('reopens a saved exercise with its code, stars and hints', () => {
+    const e = new LessonEngine(lesson, 0, { move: { code: solved, stars: 1, hintsShown: 2, done: true } });
+    expect(e.exercise).toMatchObject({ code: solved, stars: 1, hintsShown: 2, done: true });
+    expect(e.exercise!.shown.code).toBe(solved);
+    expect(e.canContinue).toBe(true);
+  });
+  it('drops saved code that no longer fits the exercise, but keeps the stars', () => {
+    const e = new LessonEngine(lesson, 0, { move: { code: 'something else entirely', stars: 2, hintsShown: 0, done: true } });
+    expect(e.exercise!.code).toBe(e.exercise!.source.code);
+    expect(e.exercise!.stars).toBe(2);
+  });
+  it('reset goes back to the original starting code', () => {
+    const e = new LessonEngine(lesson, 0, { move: { code: solved, stars: 1, hintsShown: 0, done: true } });
+    e.reset();
+    expect(e.exercise!.shown).toBe(e.exercise!.source);
+    expect(e.exercise!.code).toBe(e.exercise!.source.code);
+  });
+  it('tells what to save', () => {
+    const e = new LessonEngine(lesson, 0);
+    e.setCode(solved);
+    e.run();
+    expect(e.saved('move')).toEqual({ code: solved, stars: 2, hintsShown: 0, done: true });
+    expect(e.saved('card')).toBeNull();
+  });
+});

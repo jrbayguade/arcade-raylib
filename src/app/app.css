@@ -191,6 +191,48 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 .frames-card .beat { fill: #5a5380; font-size: 22px; font-family: ui-monospace, monospace; transition: fill 0.2s; }
 .frames-card .beat.on { fill: var(--yellow); }
 
+/* The arcade hall */
+.top .home { flex: none; font-size: 18px; line-height: 1; padding: 4px 8px; border-color: #3a3358; box-shadow: none; }
+.actions .to-hall { border-color: #3a3358; box-shadow: none; color: var(--text); }
+.hall { min-height: 100vh; box-sizing: border-box; padding: 16px 28px 24px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.hall-sign { margin: 0; font-size: clamp(26px, 3.4vw, 46px); font-weight: 900; letter-spacing: 8px; color: var(--pink); text-shadow: 0 0 10px var(--pink), 0 0 26px var(--pink); }
+.hall-floor { display: flex; gap: clamp(16px, 3vw, 40px); align-items: flex-start; justify-content: center; width: 100%; max-width: 1200px; }
+.hall-pong { flex: 0 1 560px; min-width: 0; }
+.lesson-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.lesson-item { width: 100%; display: flex; align-items: center; gap: 12px; text-align: left; padding: 8px 12px; min-height: 44px; border-color: #3a3358; box-shadow: none; color: var(--text); }
+.lesson-item .lesson-no { flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-weight: 900; border: 2px solid currentColor; }
+.lesson-item .lesson-title { flex: 1; min-width: 0; font-weight: 600; }
+.lesson-item .lesson-state { flex: none; color: var(--yellow); font-weight: 700; white-space: nowrap; }
+.lesson-item.done { border-color: var(--green); }
+.lesson-item.done .lesson-no { color: var(--green); }
+.lesson-item.open { border-color: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
+.lesson-item.open .lesson-no { color: var(--cyan); }
+.lesson-item:disabled { opacity: 0.45; }
+.lesson-item.soon .lesson-state { color: var(--muted); font-weight: 500; }
+.hall-others { display: flex; flex-direction: column; gap: 14px; flex: none; }
+.mini-cab { width: clamp(110px, 12vw, 160px); border: 2px solid #4a4370; border-radius: 12px 12px 4px 4px; padding: 6px; background: linear-gradient(#1b1240, #120b2c); }
+.mini-roof { text-align: center; font-weight: 900; letter-spacing: 3px; color: var(--muted); font-size: 13px; }
+.mini-screen { position: relative; aspect-ratio: 16 / 10; margin-top: 6px; background: #000; border-radius: 4px; overflow: hidden; }
+.mini-soon { text-align: center; color: var(--muted); font-size: 12px; margin-top: 4px; }
+.hall-bit { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center; }
+.hall-say { margin: 0; }
+.hall-continue { font-size: 20px; padding: 10px 26px; }
+.hall-reset { border: none; box-shadow: none; color: var(--muted); font-size: 13px; text-decoration: underline; }
+.hall-reset.armed { color: var(--red); border: 2px solid var(--red); text-decoration: none; }
+@media (max-height: 560px) {
+  .hall { padding: 6px 12px 8px; gap: 6px; }
+  .hall-sign { font-size: 20px; letter-spacing: 5px; }
+  .hall-floor { gap: 10px; }
+  .hall-pong { flex: 1 1 auto; }
+  .hall-pong .lesson-list { max-height: calc(100vh - 150px); overflow-y: auto; }
+  .lesson-item { padding: 4px 8px; font-size: 13px; }
+  .hall-others { flex-direction: row; }
+  .mini-cab { width: 84px; }
+  .hall-say { font-size: 13px; padding: 6px 10px; }
+  .hall-continue { font-size: 15px; padding: 8px 16px; min-height: 44px; }
+  .hall-bit .bit-face { display: none; }
+}
+
 /* Celebration */
 .confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; }
 

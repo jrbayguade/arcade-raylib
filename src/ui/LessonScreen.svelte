@@ -9,13 +9,15 @@
   import { isExercise, promptPages, type Lesson } from '../lessons/model';
   import { parseLessonSource, zoneText } from '../lessons/source';
   import { RaylibHost } from '../runtime/raylib';
-  import { routeHash } from '../app/route';
+  import { HALL_HASH, routeHash } from '../app/route';
+  import { recordExercise, recordStep, savedExercises } from '../lessons/progress';
   import BitBubble from './BitBubble.svelte';
   import CodePane from './CodePane.svelte';
   import Confetti from './Confetti.svelte';
   import ExplainCard from './ExplainCard.svelte';
   import GamePane from './GamePane.svelte';
   import type { BitMessage } from './message';
+  import { persist, progress } from './progressStore.svelte';
   import { slowMotion } from './slowMotion.svelte';
   import { sounds } from './sound';
   import VariablesPanel from './VariablesPanel.svelte';
@@ -30,7 +32,16 @@
   } = $props();
 
   // App re-keys this screen on every route change, so reading the initial props here is intended.
-  const engine = untrack(() => new LessonEngine(lesson, startStep));
+  const engine = untrack(() => new LessonEngine(lesson, startStep, savedExercises(progress, lesson)));
+
+  /** Saves where the kid is and what they have done in this step (code, stars, hints). */
+  function save(): void {
+    const ex = engine.saved(engine.step.id);
+    if (ex) recordExercise(progress, lesson, engine.step.id, ex);
+    recordStep(progress, lessonIndex, lesson, engine.stepIndex);
+    persist();
+  }
+  untrack(save);
   let version = $state(0);
   let resetCount = $state(0);
   let errorLine = $state<number | null>(null);
@@ -121,6 +132,7 @@
   function changed(code: string): void {
     engine.setCode(code);
     errorLine = null;
+    save();
   }
 
   function showLiveError(d: Diagnostic): void {
@@ -146,6 +158,7 @@
     sounds.play('run');
     const wasDone = engine.exercise?.done ?? false;
     const result = engine.run();
+    save();
     version++;
     if (!result) return;
     const ex = engine.exercise!;
@@ -165,6 +178,7 @@
 
   function hint(): void {
     const text = engine.showHint();
+    save();
     version++;
     if (text) message = { kind: 'hint', n: engine.shownHints().length, text };
   }
@@ -180,6 +194,7 @@
     resetArmed = false;
     clearTimeout(resetTimer);
     engine.reset();
+    save();
     errorLine = null;
     message = null;
     resetCount++;
@@ -194,6 +209,7 @@
     symbolsOpen = false;
     toldAboutZone = false;
     history.replaceState(null, '', routeHash({ lesson: lessonIndex, step: engine.stepIndex }));
+    save();
     version++;
   }
 
@@ -214,6 +230,7 @@
 
 <div class="screen">
   <header class="top">
+    <button class="home" data-sound="page" title={t('hallBack')} aria-label={t('hallBack')} onclick={() => (location.hash = HALL_HASH)}>🏠</button>
     <h1 class="brand">BIT ARCADE <span>· {lesson.machine ?? ''} · {t('lessonShort', { n: lesson.number })} · {lesson.texts.title}</span></h1>
     <div class="lights" role="img" aria-label={t('stepOf', { n: view.index + 1, total: lesson.steps.length })}>
       {#each lesson.steps as s, i (s.id)}
@@ -238,7 +255,7 @@
         </div>
       {/if}
       {#key `${view.step.id}/${resetCount}`}
-        <CodePane bind:this={codePane} source={view.exercise.source} foldLabels={lesson.texts.folds}
+        <CodePane bind:this={codePane} source={view.exercise.shown} foldLabels={lesson.texts.folds}
           {errorLine} onChange={changed} onRun={run} onBlocked={blocked} />
       {/key}
     {:else if view.step.kind === 'explain'}
@@ -251,6 +268,9 @@
       {#key view.step.id}<button class="primary next" data-sound="next" onclick={next}>{t('continue')}</button>{/key}
     {:else if view.canContinue && hasNextLesson}
       <button class="primary next" data-sound="next" onclick={nextLesson}>{t('nextLesson')}</button>
+    {/if}
+    {#if view.canContinue && view.isLast}
+      <button class="to-hall" data-sound="page" onclick={() => (location.hash = HALL_HASH)}>{t('hallBackLabel')}</button>
     {/if}
     {#if isExercise(view.step)}
       <button class="run" class:secondary={view.canContinue} data-sound="none" onclick={run} title={t('runShortcut')} aria-label={t('run')}><span aria-hidden="true">▶</span> <span class="run-label" aria-hidden="true">{t('runLabel')}</span></button>

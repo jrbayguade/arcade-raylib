@@ -9,3 +9,10 @@ export function parseRoute(hash: string, lessonCount: number): Route {
 export function routeHash(route: Route): string {
   return `#/pong/${route.lesson}/${route.step}`;
 }
+
+export const HALL_HASH = '#/sala';
+
+/** The arcade hall: its own hash, or the bare address (the intro, shown first on a first visit, takes precedence). */
+export function isHall(hash: string): boolean {
+  return hash === HALL_HASH || hash === '' || hash === '#' || hash === '#/';
+}

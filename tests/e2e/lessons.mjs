@@ -121,6 +121,7 @@ try {
   check('reset after confirming restores the code', !(await code()).includes('(60,'));
 
   // Bit types the first bubble, then moves on by itself; a click skips the wait
+  await page.evaluate(() => localStorage.removeItem('bitarcade:v1')); // each check starts from the exercise as written
   await page.reload();
   await page.locator('.cm-editor').waitFor();
   const say = page.locator('.bubble .say');
@@ -160,6 +161,7 @@ try {
   // Tall screens: the buttons follow the code, the machine lines up with Bit
   await page.setViewportSize({ width: 1920, height: 1080 });
   await page.goto(`${base}#/pong/0/0`);
+  await page.evaluate(() => localStorage.removeItem('bitarcade:v1')); // each check starts from the exercise as written
   await page.reload();
   await page.locator('.cm-editor').waitFor();
   const paneBox = await page.locator('.code-pane').boundingBox();
@@ -168,6 +170,7 @@ try {
   const talkBox = await page.locator('.talk').boundingBox();
   check('1920×1080: the machine starts level with Bit', Math.abs((await page.locator('.machine-area').boundingBox()).y - talkBox.y) < 40);
   await page.goto(`${base}#/pong/0/1`);
+  await page.evaluate(() => localStorage.removeItem('bitarcade:v1')); // each check starts from the exercise as written
   await page.reload();
   await page.locator('.explain svg').waitFor();
   const nextBox = await page.locator('.actions').boundingBox();
@@ -177,6 +180,7 @@ try {
 
   // A compile error is explained and marked in the editor
   await page.goto(`${base}#/pong/0/0`);
+  await page.evaluate(() => localStorage.removeItem('bitarcade:v1')); // each check starts from the exercise as written
   await page.reload();
   await page.locator('.cm-editor').waitFor();
   await page.locator('.cm-zone').first().click();
@@ -188,6 +192,7 @@ try {
 
   // Triple-click selects the line *with* its newline: typing must replace the zone line, not append to it
   await page.goto(`${base}#/pong/0/0`);
+  await page.evaluate(() => localStorage.removeItem('bitarcade:v1')); // each check starts from the exercise as written
   await page.reload();
   await page.locator('.cm-editor').waitFor();
   await page.locator('.cm-zone').getByText('DrawRectangle').first().click({ clickCount: 3 });
@@ -200,6 +205,7 @@ try {
 
   // The `order` hint: cut the ClearBackground line with Ctrl+X (no selection) and paste it above
   await page.goto(`${base}#/pong/0/4`);
+  await page.evaluate(() => localStorage.removeItem('bitarcade:v1')); // each check starts from the exercise as written
   await page.reload();
   await page.locator('.cm-editor').waitFor();
   await page.locator('.cm-zone').nth(1).click();
@@ -212,12 +218,14 @@ try {
 
   // A starting code that does not compile shows TV static
   await page.goto(`${base}#/pong/1/4`);
+  await page.evaluate(() => localStorage.removeItem('bitarcade:v1')); // each check starts from the exercise as written
   await page.reload();
   await page.locator('.cm-editor').waitFor();
   check('broken starting code shows TV static', await visible(page.locator('.cabinet .tv-static')));
 
   // 🐢 slows the game down and shows the frame number
   await page.goto(`${base}#/pong/2/0`);
+  await page.evaluate(() => localStorage.removeItem('bitarcade:v1')); // each check starts from the exercise as written
   await page.reload();
   await page.locator('.cm-editor').waitFor();
   check('no frame counter at full speed', (await page.locator('.frame-no').count()) === 0);
@@ -246,6 +254,7 @@ try {
   check('🐢 again goes back to full speed', (await page.locator('.frame-no').count()) === 0);
   // The speed step starts broken: TV static, no counter, even in slow motion
   await page.goto(`${base}#/pong/2/4`);
+  await page.evaluate(() => localStorage.removeItem('bitarcade:v1')); // each check starts from the exercise as written
   await page.reload();
   await page.locator('.cm-editor').waitFor();
   check('lesson 3 speed step starts with TV static', await visible(page.locator('.cabinet .tv-static')));
@@ -260,6 +269,7 @@ try {
 
   // The empty line in the zone shows a ghost hint that is not code: typing there replaces it
   await page.goto(`${base}#/pong/1/4`);
+  await page.evaluate(() => localStorage.removeItem('bitarcade:v1')); // each check starts from the exercise as written
   await page.reload();
   await page.locator('.cm-editor').waitFor();
   check('ghost hint on the empty line', await visible(page.locator('.cm-ghost', { hasText: 'crea aquí la caixa alcada' })));
@@ -271,6 +281,7 @@ try {
 
   // Sounds: run, success and stars are heard; the mute button silences and is remembered
   await page.goto(`${base}#/pong/0/0`);
+  await page.evaluate(() => localStorage.removeItem('bitarcade:v1')); // each check starts from the exercise as written
   await page.reload();
   await page.locator('.cm-editor').waitFor();
   await page.evaluate(() => window.__bitArcade.solve());
@@ -370,6 +381,50 @@ try {
     await ctx.close();
   }
 
+  // Progress is saved and the arcade hall shows it
+  {
+    const ctx = await browser.newContext({ viewport: { width: 1366, height: 768 } });
+    const kid = await ctx.newPage();
+    kid.on('pageerror', (e) => errors.push(String(e)));
+    await kid.goto(`${base}#/pong/0/0`);
+    await kid.locator('.cm-editor').waitFor();
+    await kid.evaluate(() => window.__bitArcade.solve());
+    const solvedCode = await kid.evaluate(() => window.__bitArcade.code());
+    await kid.getByRole('button', { name: '▶ Executa', exact: true }).click();
+    await visible(kid.locator('.bubble .success'));
+    await kid.reload();
+    await kid.locator('.cm-editor').waitFor();
+    check('progress: the code is still there after a reload', (await kid.evaluate(() => window.__bitArcade.code())) === solvedCode);
+    check('progress: the stars are still there', (await kid.locator('.top .total').innerText()).includes('2/'));
+    check('progress: Continue is still offered', await visible(kid.locator('.actions .next')));
+    await kid.locator('.top .home').click();
+    check('🏠 goes to the arcade hall', await visible(kid.locator('.hall')) && (await kid.evaluate(() => location.hash)) === '#/sala');
+    const items = kid.locator('.lesson-item');
+    check('hall: the first lesson is open with its stars', (await items.nth(0).getAttribute('class')).includes('open') && (await items.nth(0).innerText()).includes('⭐ 2/'));
+    check('hall: the next lessons are locked', await items.nth(1).isDisabled() && (await items.nth(1).innerText()).includes('🔒'));
+    check('hall: lessons still to come say so', (await items.nth(3).innerText()).includes('Properament'));
+    check('hall: other machines are coming soon', (await kid.locator('.mini-cab').count()) === 3);
+    await kid.locator('.hall-continue', { hasText: 'Continua: lliçó 1' }).click();
+    check('hall: Continue goes back to the last place', await visible(kid.locator('.cm-editor')) && (await kid.evaluate(() => location.hash)) === '#/pong/0/0');
+    await kid.goto(`${base}#/sala`);
+    await kid.locator('.hall-reset').click();
+    check('hall: erasing progress asks first', await visible(kid.locator('.hall-reset.armed')));
+    await kid.locator('.hall-reset').click();
+    check('hall: after erasing, it starts again from lesson 1', await visible(kid.locator('.hall-continue', { hasText: 'Comença la lliçó 1' })));
+    await kid.goto(`${base}#/pong/0/0`);
+    await kid.locator('.cm-editor').waitFor();
+    check('hall: erased progress means the starting code again', (await kid.evaluate(() => window.__bitArcade.code())) !== solvedCode);
+    await ctx.close();
+    const phoneCtx = await browser.newContext({ viewport: { width: 844, height: 390 }, isMobile: true, hasTouch: true });
+    const phoneHall = await phoneCtx.newPage();
+    await phoneHall.goto(`${base}#/sala`);
+    await phoneHall.locator('.hall').waitFor();
+    check('phone hall: nothing wider than the screen', (await phoneHall.evaluate(() => document.documentElement.scrollWidth)) <= 844);
+    const go = await phoneHall.locator('.hall-continue').boundingBox();
+    check('phone hall: the start button is in view and thumb-sized', go !== null && go.y + go.height <= 390 && go.height >= 44, JSON.stringify(go));
+    await phoneCtx.close();
+  }
+
   // Intro: first visit to the front page, skippable, remembered; #/intro replays it to the end
   {
     const ctx = await browser.newContext({ viewport: { width: 1366, height: 768 } });
@@ -386,6 +441,7 @@ try {
     await fresh.reload();
     await fresh.waitForTimeout(800);
     check('no intro on the next visit', (await fresh.locator('.intro').count()) === 0);
+    check('the next visit opens the arcade hall', await visible(fresh.locator('.hall')));
     await fresh.goto(`${base}#/intro`);
     await fresh.reload();
     check('#/intro replays it', await visible(fresh.locator('.intro')));

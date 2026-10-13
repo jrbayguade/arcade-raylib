@@ -1,0 +1,90 @@
+<script lang="ts">
+  import { LESSONS } from '../../content/pong';
+  import { PONG_PLAN } from '../../content/pong/plan';
+  import { routeHash } from '../app/route';
+  import { t } from '../i18n/i18n';
+  import { lessonDone, lessonStars, resumeStep, unlockedCount } from '../lessons/progress';
+  import BitFace from './BitFace.svelte';
+  import { clearProgress, progress } from './progressStore.svelte';
+
+  /** The arcade hall: the Pong cabinet with its lessons, the machines still to come, and "Continua". */
+  const OTHERS = ['BRICK', 'SNAKE', '???'];
+
+  const unlocked = $derived(unlockedCount(progress, LESSONS));
+  const started = $derived(Object.keys(progress.exercises).length > 0);
+  /** Where "Continua" goes: the last place, else the first lesson not finished. */
+  const target = $derived.by(() => {
+    const last = progress.last;
+    if (last && last.lesson < LESSONS.length) return last;
+    const lesson = Math.max(0, Math.min(unlocked - 1, LESSONS.findIndex((l) => !lessonDone(progress, l))));
+    return { lesson, step: resumeStep(progress, LESSONS[lesson]) };
+  });
+  const rows = $derived(PONG_PLAN.map((planned, i) => {
+    const lesson = LESSONS[i];
+    if (!lesson) return { i, planned, lesson: null, state: 'soon' as const, stars: null };
+    const state = lessonDone(progress, lesson) ? 'done' as const : i < unlocked ? 'open' as const : 'locked' as const;
+    return { i, planned, lesson, state, stars: lessonStars(progress, lesson) };
+  }));
+
+  function open(i: number): void {
+    location.hash = routeHash({ lesson: i, step: resumeStep(progress, LESSONS[i]) });
+  }
+
+  let resetArmed = $state(false);
+  let resetTimer: ReturnType<typeof setTimeout> | undefined;
+  function reset(): void {
+    if (!resetArmed) {
+      resetArmed = true;
+      clearTimeout(resetTimer);
+      resetTimer = setTimeout(() => (resetArmed = false), 3000);
+      return;
+    }
+    resetArmed = false;
+    clearTimeout(resetTimer);
+    clearProgress();
+  }
+</script>
+
+<div class="hall">
+  <h1 class="hall-sign">BIT ARCADE</h1>
+  <div class="hall-floor">
+    <section class="hall-pong cabinet" aria-label="PONG">
+      <div class="marquee">PONG</div>
+      <ol class="lesson-list">
+        {#each rows as row (row.i)}
+          <li>
+            <button class="lesson-item {row.state}" disabled={row.state === 'soon' || row.state === 'locked'}
+              title={row.state === 'locked' ? t('hallLocked') : undefined} onclick={() => open(row.i)}>
+              <span class="lesson-no">{row.planned.number ?? '🏆'}</span>
+              <span class="lesson-title">{row.lesson?.texts.title ?? row.planned.title}</span>
+              <span class="lesson-state">
+                {#if row.state === 'soon'}{t('hallComing')}
+                {:else if row.state === 'locked'}🔒
+                {:else}⭐ {row.stars?.earned}/{row.stars?.max}{#if row.state === 'done'} ✓{/if}{/if}
+              </span>
+            </button>
+          </li>
+        {/each}
+      </ol>
+    </section>
+    <aside class="hall-others">
+      {#each OTHERS as name (name)}
+        <div class="mini-cab">
+          <div class="mini-roof">{name}</div>
+          <div class="mini-screen"><div class="tv-static"></div></div>
+          <div class="mini-soon">{t('hallComing')}</div>
+        </div>
+      {/each}
+    </aside>
+  </div>
+  <div class="hall-bit">
+    <BitFace mood="happy" size={56} />
+    <p class="bubble hall-say">{started ? t('hallWelcomeBack') : t('hallWelcome')}</p>
+    <button class="primary hall-continue" data-sound="next" onclick={() => (location.hash = routeHash(target))}>
+      {started ? t('hallContinue', { n: LESSONS[target.lesson].number }) : t('hallStart')}
+    </button>
+  </div>
+  {#if started}
+    <button class="hall-reset" class:armed={resetArmed} onclick={reset}>{resetArmed ? t('hallResetConfirm') : t('hallReset')}</button>
+  {/if}
+</div>
