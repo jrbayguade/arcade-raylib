@@ -59,7 +59,7 @@
     "faster": {
       "prompt": [
         "Last challenge! Let's make the game more exciting: every time the ball bounces on the right, it goes a bit faster.",
-        "Clue: right now it does `velX = -velX;`. If you also subtract 1 (`-velX - 1`), the ball will head left with more speed.",
+        "Hint: right now it does `velX = -velX;`. If you also subtract 1 (`-velX - 1`), the ball will head left with more speed.",
         "Change the first yellow line so that, as well as turning, the ball speeds up."
       ],
       "hints": [

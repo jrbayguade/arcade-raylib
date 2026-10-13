@@ -32,7 +32,7 @@
       "prompt": [
         "It can't escape off the top any more. What about the bottom?",
         "`palaY` is the top edge of the paddle, and the paddle is 80 tall going down. The screen is 450: if we let it go down to 370 (450 − 80), it'll touch the bottom edge. But we left a 20 gap at the top, right? So the same at the bottom: 350.",
-        "On the empty line, write an `if` so `palaY` never goes past 350. Clue: here the question is «greater than», `>`."
+        "On the empty line, write an `if` so `palaY` never goes past 350. Hint: here the question is «greater than», `>`."
       ],
       "hints": [
         "It's like the top line, but with `>` and 350.",
@@ -43,7 +43,7 @@
     },
     "rightLimits": {
       "prompt": [
-        "Now it's the right paddle's turn, which still escapes.",
+        "Now it's the right paddle's turn: it still escapes.",
         "Give it the same two limits, but with `palaDretaY` (pala dreta = right paddle). You'll need two `if`s."
       ],
       "hints": [

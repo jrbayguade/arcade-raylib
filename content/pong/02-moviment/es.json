@@ -56,7 +56,7 @@
     },
     "speed": {
       "prompt": [
-        "¡Último reto! Ahora el bucle dice `pilotaX = pilotaX + velX;`… pero la caja `velX` no existe. Por eso la máquina hace nieve.",
+        "¡Último reto! Ahora el bucle dice `pilotaX = pilotaX + velX;`… pero la caja `velX` no existe. Por eso la pantalla se llena de nieve.",
         "`velX` significa «velocidad en x»: cuántos píxeles avanza la pelota hacia los lados en cada fotograma.",
         "Crea la caja `velX` en la línea amarilla, con un número entre -20 y 20 que no sea 0 (prueba con un 4)."
       ],

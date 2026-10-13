@@ -82,7 +82,7 @@
   "ui": {
     "title": "Bit Arcade — demo del intérprete",
     "run": "▶ Ejecuta",
-    "stop": "⏹ Detén",
+    "stop": "⏹ Para",
     "restore": "↺ Restaura",
     "running": "¡En marcha! Haz clic en el juego y usa W/S y ↑/↓.",
     "stopped": "Detenido.",

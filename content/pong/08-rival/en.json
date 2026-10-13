@@ -10,7 +10,7 @@
   "steps": {
     "rival": {
       "prompt": [
-        "Final challenge! 🏆 The Pong works from start to finish... but to play it you need someone on the other side.",
+        "Final challenge! 🏆 The whole Pong works now... but to play it you need someone on the other side.",
         "You're going to program a rival: the right paddle will move on its own, following the ball. That way you can play against the machine!",
         "The idea: if the ball is higher than the middle of the paddle (`palaDretaY + 40`, pala dreta = right paddle), the paddle moves up a bit. If it's lower, it moves down a bit.",
         "Write the two `if`s on the yellow line. Move the paddle 4 pixels each time: any faster and there'd be no way to beat it! (Tip for winning: if the ball hits the edge of your paddle, it comes off at a sharper angle.)"
@@ -26,7 +26,7 @@
       "prompt": [
         "YOU DID IT! The Pong machine works again. 🎉",
         "You've learned coordinates, variables, the game loop, `if`, comparisons, bounces, `&&`, counters... and you programmed a rival. That's real programming!",
-        "All the code you see is real C, the same that people who make video games with raylib use. And the match goes on: click the game and play against your rival with W and S!",
+        "All the code you see is real C, the same code game developers write with raylib. And the match goes on: click the game and play against your rival with W and S!",
         "Press «⬇ Download your main.c» and take your Pong with you: it's yours!",
         "Thanks for fixing my arcade. Come back to the arcade whenever you like: other machines will light up soon!"
       ]

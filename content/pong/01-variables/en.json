@@ -35,7 +35,7 @@
         "When the code says `palaY`, the computer opens the box and uses whatever is inside.",
         "The word `int` means only whole numbers fit in the box.",
         "The = sign means «store in it»: `int palaY = 185;` reads as «make a box for whole numbers called palaY and store 185 in it».",
-        "Careful: the computer tells capitals and lowercase apart. `palaY` and `palay` are different boxes! When it's clear, press Continue."
+        "Careful: the computer tells capital and lowercase letters apart. `palaY` and `palay` are different boxes! When it's clear, press Continue."
       ]
     },
     "together": {

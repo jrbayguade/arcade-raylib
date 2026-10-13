@@ -8,8 +8,8 @@
     "observe": {
       "prompt": [
         "Let's go! This machine is broken and we're going to fix it together.",
-        "You can only write in the yellow zone. The rest of the code is already done: the grey bars hide chunks of code, and if you click them, they open.",
-        "The grey words x:, y:... aren't code: they just tell you what each number means.",
+        "You can only write in the yellow zone. The rest of the code is already done: the gray bars hide chunks of code, and if you click them, they open.",
+        "The gray words x:, y:... aren't code: they just tell you what each number means.",
         "The yellow line draws the left paddle. Change the 185 to 50 and press ▶ Run. What happens?"
       ],
       "hints": [
@@ -45,7 +45,7 @@
         "This paddle is too small to stop anything. Make it twice as tall."
       ],
       "hints": [
-        "Which number has the grey label height: in front of it?",
+        "Which number has the gray label height: in front of it?",
         "The height is 80 right now. Twice 80 is...",
         "Put 160 as the height: `DrawRectangle(20, 185, 10, 160, WHITE);`"
       ],
