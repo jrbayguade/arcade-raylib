@@ -88,7 +88,7 @@
   const replay = () => { tw.restart(); sync(); };
 
   /** Mistakes Bit recognises and explains: no "there is something I don't understand" before the explanation. */
-  const EXPLAINED = new Set(['VALUE_NOT_STORED', 'ALREADY_DECLARED', 'UNDECLARED_VAR', 'MISSING_SEMICOLON', 'ASSIGN_IN_CONDITION']);
+  const EXPLAINED = new Set(['VALUE_NOT_STORED', 'ALREADY_DECLARED', 'UNDECLARED_VAR', 'MISSING_SEMICOLON', 'ASSIGN_IN_CONDITION', 'UNSUPPORTED']);
 
   function diagnosticText(intro: string, d: Diagnostic): string {
     return `${intro} ${formatDiagnostic(d)}`;

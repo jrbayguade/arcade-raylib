@@ -212,6 +212,7 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 .hall-sign { margin: 0; font-size: clamp(26px, 3.4vw, 46px); font-weight: 900; letter-spacing: 8px; color: var(--pink); text-shadow: 0 0 10px var(--pink), 0 0 26px var(--pink); }
 .hall-floor { display: flex; gap: clamp(16px, 3vw, 40px); align-items: flex-start; justify-content: center; width: 100%; max-width: 1200px; }
 .hall-pong { flex: 0 1 560px; min-width: 0; }
+.hall-pong.fixed { border-color: var(--green); box-shadow: 0 0 22px var(--green), 0 0 40px var(--yellow); }
 .lesson-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
 .lesson-item { width: 100%; display: flex; align-items: center; gap: 12px; text-align: left; padding: 5px 12px; min-height: 44px; border-color: #3a3358; box-shadow: none; color: var(--text); }
 .lesson-item .lesson-no { flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-weight: 900; border: 2px solid currentColor; }

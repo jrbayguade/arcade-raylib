@@ -175,9 +175,13 @@ try {
     await page.locator('.cm-editor').waitFor();
     await playLesson(n, ['vars', 'explain', ...LESSON_STEPS_AFTER_CARD[n]]);
   }
-  check('all lessons done', await visible(page.getByText('Has acabat totes les lliçons')));
+  check('the course ends with the machine fixed', await visible(page.locator('.actions .done', { hasText: 'Has arreglat el Pong' })));
+  check('the fixed machine is alive, not static', (await page.locator('.cabinet .tv-static').count()) === 0);
   const [file] = await Promise.all([page.waitForEvent('download'), page.locator('.actions .download').click()]);
   const fileText = await (await file.createReadStream()).toArray().then((chunks) => Buffer.concat(chunks).toString('utf8'));
+  await page.goto(`${base}#/sala`);
+  check('hall: everything done is celebrated', await visible(page.locator('.hall-say', { hasText: 'Has arreglat el Pong' })) && await visible(page.locator('.hall-continue', { hasText: 'Juga al Pong' })));
+  check('hall: the finished course can be downloaded', await visible(page.locator('.hall .download')));
   check('the fixed machine downloads as main.c with the kid’s own code', file.suggestedFilename() === 'main.c' && fileText.includes('#include "raylib.h"') && fileText.includes('palaDretaY') && !fileText.includes('//@'));
 
   // Tall screens: the buttons follow the code, the machine lines up with Bit
@@ -306,6 +310,16 @@ try {
   await button('▶ Executa').click();
   check('🐢 counts from the first frame after fixing the machine', await visible(page.locator('.frame-no')) && (await frameAt()) <= 3);
   await page.locator('.slow-btn').click();
+
+  // Catalan apostrophes are typed as they are (no auto-paired ')
+  await page.goto(`${base}#/pong/7/4`);
+  await page.evaluate(() => localStorage.removeItem('bitarcade:v1'));
+  await page.reload();
+  await page.locator('.cm-editor').waitFor();
+  await page.locator('.cm-line:has(.cm-ghost)').click();
+  await page.keyboard.type(`DrawText("GUANYA L'ESQUERRA!", 200, 200, 40, YELLOW);`);
+  const typedLine = (await code()).split(/\r?\n/).find((l) => l.includes('GUANYA')) ?? '';
+  check('an apostrophe inside a text is not doubled', typedLine.trim() === `DrawText("GUANYA L'ESQUERRA!", 200, 200, 40, YELLOW);`, typedLine);
 
   // The empty line in the zone shows a ghost hint that is not code: typing there replaces it
   await page.goto(`${base}#/pong/1/4`);

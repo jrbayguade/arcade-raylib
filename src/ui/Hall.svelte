@@ -12,6 +12,8 @@
   const OTHERS = ['BRICK', 'SNAKE', '???'];
 
   const unlocked = $derived(unlockedCount(progress, LESSONS));
+  /** The whole machine is fixed: the hall celebrates and offers to play. */
+  const allDone = $derived(LESSONS.every((l) => lessonDone(progress, l)));
   const started = $derived(Object.keys(progress.exercises).length > 0);
   /** Where "Continua" goes: the last place, else the first lesson not finished. */
   const target = $derived.by(() => {
@@ -61,8 +63,8 @@
 <div class="hall">
   <h1 class="hall-sign">BIT ARCADE</h1>
   <div class="hall-floor">
-    <section class="hall-pong cabinet" aria-label="PONG">
-      <div class="marquee">PONG</div>
+    <section class="hall-pong cabinet" class:fixed={allDone} aria-label="PONG">
+      <div class="marquee">PONG{#if allDone} 🏆{/if}</div>
       <ol class="lesson-list">
         {#each rows as row (row.i)}
           <li>
@@ -93,10 +95,14 @@
   </div>
   <div class="hall-bit">
     <BitFace mood="happy" size={56} />
-    <p class="bubble hall-say">{say ?? (started ? t('hallWelcomeBack') : t('hallWelcome'))}</p>
+    <p class="bubble hall-say">{say ?? (allDone ? t('hallAllDone') : started ? t('hallWelcomeBack') : t('hallWelcome'))}</p>
+    {#if allDone}
+      <button class="primary hall-continue" data-sound="next" onclick={() => (location.hash = routeHash({ lesson: LESSONS.length - 1, step: LESSONS[LESSONS.length - 1].steps.length - 1 }))}>{t('hallPlay')}</button>
+    {:else}
     <button class="primary hall-continue" data-sound="next" onclick={() => (location.hash = routeHash(target))}>
       {started ? (LESSONS[target.lesson].final ? t('hallContinueFinal') : t('hallContinue', { n: LESSONS[target.lesson].number })) : t('hallStart')}
     </button>
+    {/if}
   </div>
   {#if lessonDone(progress, LESSONS[LESSONS.length - 1])}
     <button class="download" data-sound="success" onclick={() => download('main.c', mainC(progress, LESSONS))}>{t('downloadMain')}</button>

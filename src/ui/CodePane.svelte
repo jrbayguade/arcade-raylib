@@ -20,6 +20,8 @@
   let flashTimer: ReturnType<typeof setTimeout> | undefined;
 
   onMount(() => {
+    // Leaving the editor brings its left edge back (phones can end up scrolled sideways while typing).
+    parent.addEventListener('focusout', () => parent.querySelector('.cm-scroller')?.scrollTo({ left: 0 }));
     editor = createLessonEditor({
       parent,
       source,

@@ -116,7 +116,17 @@
     untrack(() => {
       if (!game) return;
       // Opened straight on an explanation (a shared or resumed link): nothing has run yet, so show snow, not a black screen.
-      if (!isExercise(view.step) || !view.exercise) { if (!game.isRunning()) broken = true; return; }
+      if (!isExercise(view.step) || !view.exercise) {
+        // The machine-fixed card: the kid's own finished game plays on, never TV static.
+        if (view.step.kind === 'explain' && view.step.card === 'fixed') {
+          const last = lesson.steps.filter(isExercise).at(-1);
+          const saved = last ? engine.saved(last.id) ?? savedExercises(progress, lesson)[last.id] : undefined;
+          const code = saved?.done ? saved.code : last ? parseLessonSource(last.solution).code : null;
+          if (code) { broken = false; game.start(code); return; }
+        }
+        if (!game.isRunning()) broken = true;
+        return;
+      }
       const code = view.exercise.source.code;
       if (compile(code, new RaylibHost({ seed: 1 })).ok) {
         broken = false;
@@ -300,7 +310,7 @@
       </button>
     {/if}
     {#if view.canContinue && view.isLast}
-      <span class="done">{t('lessonDone')}{#if !hasNextLesson}<span class="all-done"> {t('allDone')}</span>{/if}</span>
+      <span class="done">{#if lesson.final}{t('finalDone')}{:else}{t('lessonDone')}{#if !hasNextLesson}<span class="all-done"> {t('allDone')}</span>{/if}{/if}</span>
     {/if}
   </div>
 

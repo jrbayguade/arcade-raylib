@@ -51,6 +51,8 @@ export function lessonExtensions(source: LessonSource, onChange: (code: string) 
     history(),
     drawSelection(),
     closeBrackets(),
+    // No ' pairs: the course has no char literals, and Catalan texts are full of apostrophes ("GUANYA L'ESQUERRA!").
+    Prec.highest(EditorState.languageData.of(() => [{ closeBrackets: { brackets: ['(', '[', '{', '"'] } }])),
     cpp(),
     oneDark,
     autocompletion({ override: [completionSource(completions)], activateOnTyping: true }),
