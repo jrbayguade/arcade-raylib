@@ -33,6 +33,16 @@ export class KeyboardInput {
     };
   }
 
+  /** On-screen buttons (phones): held like a key until released. */
+  press(code: number): void {
+    if (!this.down.has(code)) this.pressed.add(code);
+    this.down.add(code);
+  }
+
+  release(code: number): void {
+    this.down.delete(code);
+  }
+
   /** Current state for one logic frame; "pressed" keys are consumed. */
   snapshot(): InputState {
     const state = { down: new Set(this.down), pressed: this.pressed };

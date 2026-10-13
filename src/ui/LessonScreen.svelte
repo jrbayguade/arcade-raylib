@@ -292,7 +292,7 @@
   <section class="machine-area">
     <div class="cabinet">
       <div class="marquee">{lesson.machine ?? ''}</div>
-      <GamePane bind:this={game} {broken} slow={slowMotion.on} onVariables={(v) => (variables = v)} onError={showLiveError} />
+      <GamePane bind:this={game} {broken} slow={slowMotion.on} controls={isExercise(view.step) ? (view.step.controls ?? []) : []} onVariables={(v) => (variables = v)} onError={showLiveError} />
       {#if isExercise(view.step)}
         <div class="machine-row">
           <button class="slow-btn" class:on={slowMotion.on} aria-pressed={slowMotion.on} data-sound="page"

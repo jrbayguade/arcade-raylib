@@ -37,6 +37,8 @@ try {
           const pt = await page.evaluate(() => { const g = document.querySelector('.grid-card .point'); return [g.dataset.x, g.dataset.y, g.querySelector('.coord').textContent, g.querySelector('.dot').getAttribute('cx'), g.querySelector('.dot').getAttribute('cy')]; });
           check(`${label}: grid label matches the dot`, pt[2] === `(${pt[0]}, ${pt[1]})` && pt[3] === pt[0] && pt[4] === pt[1], JSON.stringify(pt));
         }
+        if (lesson === 3) check(`${label}: if card`, await visible(page.locator('.if-card')));
+        if (lesson === 4) check(`${label}: compare card`, await visible(page.locator('.compare-card')));
         if (lesson === 2) {
           check(`${label}: frames card`, await visible(page.locator('.frames-card')));
           const first = await page.locator('.frames-card .box-value').textContent();
@@ -156,6 +158,13 @@ try {
   check('lesson 3 shown', await visible(page.getByRole('heading', { name: /lliçó 3/ })));
   await page.locator('.cm-editor').waitFor();
   await playLesson(2, ['vars', 'explain', 'vars', 'vars', 'vars']);
+  for (const n of [3, 4]) {
+    check(`lesson ${n} done`, await visible(page.getByText('Has acabat la lliçó!')));
+    await button('Següent lliçó →').click();
+    check(`lesson ${n + 1} shown`, await visible(page.getByRole('heading', { name: new RegExp(`lliçó ${n + 1}`) })));
+    await page.locator('.cm-editor').waitFor();
+    await playLesson(n, ['vars', 'explain', 'vars', 'vars', 'vars']);
+  }
   check('all lessons done', await visible(page.getByText('Has acabat totes les lliçons')));
 
   // Tall screens: the buttons follow the code, the machine lines up with Bit
@@ -222,6 +231,21 @@ try {
   await page.reload();
   await page.locator('.cm-editor').waitFor();
   check('broken starting code shows TV static', await visible(page.locator('.cabinet .tv-static')));
+
+  // Playing with the keyboard: the hint focuses the game, W moves the paddle
+  await page.goto(`${base}#/pong/3/0`);
+  await page.evaluate(() => localStorage.removeItem('bitarcade:v1'));
+  await page.reload();
+  await page.locator('.cm-editor').waitFor();
+  check('a game with keys says how to play', await visible(page.locator('.play-hint', { hasText: 'W' })));
+  await page.locator('.play-hint').click();
+  check('the hint puts the keyboard on the game', (await page.locator('.play-hint').count()) === 0);
+  const palaY = async () => Number(await page.locator('.vars .box', { hasText: 'palaY' }).locator('.value').innerText());
+  const y0 = await palaY();
+  await page.keyboard.down('KeyW');
+  await page.waitForTimeout(400);
+  await page.keyboard.up('KeyW');
+  check('W moves the paddle up', (await palaY()) < y0, `${y0} → ${await palaY()}`);
 
   // 🐢 slows the game down and shows the frame number
   await page.goto(`${base}#/pong/2/0`);
@@ -342,6 +366,23 @@ try {
       check('phone sideways: the answer leaves the top of the game in view', answerBox.y > screenBox.y + screenBox.height / 3, JSON.stringify([answerBox, screenBox]));
       check('phone sideways: the answer steps aside by itself', await visible(phone.locator('.talk:not(.open)'), 6000));
       check('phone sideways: the folded ticket shows the success', await visible(phone.locator('.ticket .ticket-mark', { hasText: '✓' })));
+      // Touch screens get buttons for the game's keys
+      await phone.goto(`${base}#/pong/3/2`);
+      await phone.reload();
+      await phone.locator('.cm-editor').waitFor();
+      check('phone: no keyboard hint, on-screen keys instead', (await phone.locator('.play-hint').isVisible()) === false && await visible(phone.locator('.pad-key', { hasText: 'W' })));
+      await phone.evaluate(() => window.__bitArcade.solve());
+      await phone.getByRole('button', { name: '▶ Executa', exact: true }).click();
+      await visible(phone.locator('.vars .box', { hasText: 'palaY' }));
+      const phoneY = async () => Number(await phone.locator('.vars .box', { hasText: 'palaY' }).locator('.value').innerText());
+      await visible(phone.locator('.talk:not(.open)'), 8000); // Bit's answer steps aside from the machine first
+      const before = await phoneY();
+      const sKey = await phone.locator('.pad-key', { hasText: /^S$/ }).boundingBox();
+      await phone.mouse.move(sKey.x + sKey.width / 2, sKey.y + sKey.height / 2);
+      await phone.mouse.down();
+      await phone.waitForTimeout(400);
+      await phone.mouse.up();
+      check('phone: holding the on-screen S moves the paddle down', (await phoneY()) > before, `${before} → ${await phoneY()}`);
       // Lesson 3's last step: five variable boxes and 🐢 under the screen must still fit
       await phone.goto(`${base}#/pong/2/4`);
       await phone.reload();
@@ -404,7 +445,7 @@ try {
     check('hall: the next lessons are locked', (await items.nth(1).getAttribute('aria-disabled')) === 'true' && (await items.nth(1).innerText()).includes('🔒'));
     await items.nth(1).click({ force: true }); // aria-disabled, but a tap still gets an answer from Bit
     check('hall: Bit says why a locked lesson does not open', await visible(kid.locator('.hall-say', { hasText: 'Primer acaba la lliçó 1' })) && (await kid.evaluate(() => location.hash)) === '#/sala');
-    check('hall: lessons still to come say so', (await items.nth(3).innerText()).includes('Properament'));
+    check('hall: lessons still to come say so', (await kid.locator('.lesson-item.soon').first().innerText()).includes('Properament'));
     check('hall: other machines are coming soon', (await kid.locator('.mini-cab').count()) === 3);
     await kid.goto(`${base}#/pong/0/2`);
     await kid.locator('.cm-editor').waitFor();

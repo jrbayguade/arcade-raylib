@@ -1,0 +1,84 @@
+{
+  "title": "La pala obeeix",
+  "folds": {
+    "preparar": "preparar el joc",
+    "dibuixar": "comença a dibuixar",
+    "tancar": "tancar el joc"
+  },
+  "steps": {
+    "keyW": {
+      "prompt": [
+        "Lliçó nova! La pilota fa una pausa: avui toca que la pala t'obeeixi. 🎮",
+        "Mira la línia groga: comença amb `if`, que vol dir «si». La llegim així: «si la tecla W està premuda, puja la pala 2 píxels».",
+        "Fes clic a la pantalla del joc i mantén premuda la W. La pala puja... molt a poc a poc. Si no prems res, no es mou.",
+        "Fes que la pala pugi més ràpid: canvia el 2 per un 6 i prem ▶ Executa. Després, fes clic al joc i prova-ho amb la W."
+      ],
+      "hints": [
+        "El número que diu quant puja és el que va després del -.",
+        "Canvia el 2 per un 6.",
+        "`if (IsKeyDown(KEY_W)) { palaY = palaY - 6; }`"
+      ],
+      "success": "Ara sí que obeeix! Fes clic al joc i prem la W per veure-ho."
+    },
+    "ifCard": {
+      "prompt": [
+        "Un `if` és com una cruïlla: l'ordinador fa una pregunta i, segons la resposta, fa una cosa o no la fa.",
+        "La pregunta va entre parèntesis: `(IsKeyDown(KEY_W))` vol dir «la W està premuda?».",
+        "Si la resposta és sí, fa el que hi ha entre les claus `{ }`. Si és no, se les salta i continua.",
+        "I com que el bucle es repeteix 60 vegades per segon, l'ordinador fa la pregunta 60 vegades cada segon! Quan ho tinguis clar, prem Continua."
+      ]
+    },
+    "keyS": {
+      "prompt": [
+        "La pala ja puja amb la W. Ara ha de baixar amb la S.",
+        "Recorda: més avall vol dir una y més gran. Per tant, aquí has de sumar.",
+        "A la línia buida, escriu un `if` que faci baixar la pala quan prems la S (`KEY_S`)."
+      ],
+      "hints": [
+        "Copia la línia de la W i canvia-hi dues coses: la tecla i el signe.",
+        "La tecla és `KEY_S` i, per baixar, has de sumar.",
+        "`if (IsKeyDown(KEY_S)) { palaY = palaY + 6; }`"
+      ],
+      "success": "Amunt i avall! Ja controles la pala de l'esquerra."
+    },
+    "right": {
+      "prompt": [
+        "El Pong és per a dues persones! La pala de la dreta fa servir la caixa `palaDretaY`.",
+        "Fes que es mogui amb les fletxes: `KEY_UP` (↑) per pujar i `KEY_DOWN` (↓) per baixar. Necessitaràs dos `if`."
+      ],
+      "hints": [
+        "Són com les línies de la W i la S, però amb `palaDretaY` i les fletxes.",
+        "Un `if` per a `KEY_UP` que resti, i un altre per a `KEY_DOWN` que sumi.",
+        "`if (IsKeyDown(KEY_UP)) { palaDretaY = palaDretaY - 6; }` i `if (IsKeyDown(KEY_DOWN)) { palaDretaY = palaDretaY + 6; }`"
+      ],
+      "success": "Dues pales, dos jugadors! Convida algú a jugar amb tu. 🏓"
+    },
+    "space": {
+      "prompt": [
+        "Últim repte! La pilota torna a moure's amb `velX`, i quan surt de la pantalla s'escapa.",
+        "Fes un botó màgic: quan premis l'ESPAI (`KEY_SPACE`), la pilota ha de tornar al centre, a la x = 400.",
+        "Escriu-ho a la línia buida, sota la línia que mou la pilota."
+      ],
+      "hints": [
+        "És un `if` com els de les pales, però amb `KEY_SPACE`.",
+        "A dins de les claus, guarda 400 a la caixa `pilotaX`.",
+        "`if (IsKeyDown(KEY_SPACE)) { pilotaX = 400; }`"
+      ],
+      "success": "Botó màgic fet! Prem l'ESPAI quan la pilota s'escapi i tornarà al centre. ✨"
+    }
+  },
+  "checks": {
+    "movesUp": "La pala no puja quan prems la W. Dins de les claus has de restar a `palaY`.",
+    "addsEveryFrame": "La pala ha saltat de cop: has guardat un número a `palaY` en lloc de restar-li. Escriu `palaY = palaY - …;`",
+    "faster": "La pala encara va massa a poc a poc: el número després del - ha de ser 4 o més.",
+    "notTooFast": "La pala va tan ràpid que surt volant! Prova un número entre 4 i 15.",
+    "stillWithoutKey": "La pala es mou encara que no premis res! Comprova que el canvi és dins de les claus `{ }` del `if`.",
+    "sMovesDown": "La pala no baixa quan prems la S. Escriu un `if` amb `KEY_S` que sumi a `palaY`.",
+    "wStillUp": "Ara la W ja no fa pujar la pala! Deixa la línia de la W com estava.",
+    "upMovesRight": "La pala de la dreta no puja amb ↑. Escriu un `if` amb `KEY_UP` que resti a `palaDretaY`.",
+    "downMovesRight": "La pala de la dreta no baixa amb ↓. Escriu un `if` amb `KEY_DOWN` que sumi a `palaDretaY`.",
+    "keysStayApart": "Les tecles s'han barrejat: la W i la S són per a la pala esquerra (`palaY`), i les fletxes per a la dreta (`palaDretaY`).",
+    "spaceCentres": "Quan prems l'ESPAI, la pilota no torna al centre. Escriu un `if` amb `KEY_SPACE` que guardi 400 a `pilotaX`.",
+    "ballStillMoves": "Ara la pilota no es mou quan no prems res! El canvi ha d'anar dins de les claus del `if`."
+  }
+}

@@ -61,3 +61,14 @@ describe('KeyboardInput', () => {
     expect([...kb.snapshot().down]).toEqual([]);
   });
 });
+
+describe('KeyboardInput on-screen buttons', () => {
+  it('a held on-screen button counts as a held key until released', () => {
+    const input = new KeyboardInput();
+    input.press(87);
+    expect(input.snapshot()).toMatchObject({ down: new Set([87]), pressed: new Set([87]) });
+    expect(input.snapshot()).toMatchObject({ down: new Set([87]), pressed: new Set() });
+    input.release(87);
+    expect(input.snapshot().down.size).toBe(0);
+  });
+});

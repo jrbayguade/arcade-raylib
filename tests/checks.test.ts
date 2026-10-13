@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { argIsVar, callsOf, check, circles, declares, evaluate, variable, visibleRects } from '../src/lessons/checks';
+import { argIsVar, callsOf, check, circles, declares, evaluate, simulate, variable, visibleRects } from '../src/lessons/checks';
 
 const game = (draw: string, setup = '') => `#include "raylib.h"
 int main(void) {
@@ -66,5 +66,40 @@ describe('helpers', () => {
       check('secondDoesNot', (ctx) => !argIsVar(callsOf(ctx.program, 'DrawRectangle')[1], 3, 'alcada')),
     ]);
     expect(r).toMatchObject({ passed: true });
+  });
+});
+
+describe('simulate: the same program in another situation', () => {
+  const program = `#include "raylib.h"
+int main(void) {
+    InitWindow(800, 450, "x");
+    int y = 100;
+    while (!WindowShouldClose()) {
+        if (IsKeyDown(KEY_W)) { y = y - 2; }
+        if (IsKeyDown(KEY_S)) { y = y + 2; }
+        BeginDrawing();
+        ClearBackground(BLACK);
+        DrawRectangle(20, y, 10, 80, WHITE);
+        EndDrawing();
+    }
+    return 0;
+}
+`;
+  it('runs the checked program again with other keys and frame counts', () => {
+    const seen: number[] = [];
+    const r = evaluate(program, [check('both', (ctx) => {
+      seen.push(variable(simulate(ctx, { frames: 10, hold: ['KEY_W'] })!, 'y')!);
+      seen.push(variable(simulate(ctx, { frames: 10, hold: ['KEY_S'] })!, 'y')!);
+      seen.push(variable(simulate(ctx, { frames: 5 })!, 'y')!);
+      return true;
+    })]);
+    expect(r).toMatchObject({ passed: true });
+    expect(seen).toEqual([80, 120, 100]);
+  });
+  it('gives null when the program fails at run time in that situation', () => {
+    const crash = program.replace('y = y + 2;', 'y = y / 0;');
+    let got: unknown = 'unset';
+    evaluate(crash, [check('c', (ctx) => { got = simulate(ctx, { frames: 3, hold: ['KEY_S'] }); return true; })]);
+    expect(got).toBeNull();
   });
 });

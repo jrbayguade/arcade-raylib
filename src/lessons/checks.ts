@@ -28,20 +28,33 @@ export function evaluate(source: string, checks: Check[], run: RunSpec = DEFAULT
   const host = new RaylibHost({ seed: 1 });
   const compiled = compile(source, host);
   if (!compiled.ok) return { kind: 'compile-error', diagnostic: compiled.diagnostic };
-  const machine = new Machine(compiled.program, host);
+  const ran = runProgram(compiled.program, host, run);
+  if ('diagnostic' in ran) return { kind: 'runtime-error', diagnostic: ran.diagnostic };
+  const ctx: CheckContext = ran;
+  const results = checks.map((c) => ({ key: c.key, ok: safely(() => c.test(ctx)) }));
+  return { kind: 'checked', passed: results.every((r) => r.ok), results };
+}
+
+/** Runs a compiled program for some frames with keys held, headless. */
+function runProgram(program: Program, host: RaylibHost, run: RunSpec): CheckContext | { diagnostic: Diagnostic } {
+  const machine = new Machine(program, host);
   const input = run.hold?.length ? holding(...run.hold.map((k) => KEYS[k])) : NO_INPUT;
   let frame: DrawCommand[] = [];
   let variables = machine.variables();
   for (let i = 0; i < run.frames; i++) {
     const r = machine.runFrame(input);
-    if (r.status === 'error') return { kind: 'runtime-error', diagnostic: r.diagnostic };
+    if (r.status === 'error') return { diagnostic: r.diagnostic };
     if (r.status === 'finished') break;
     frame = r.drawList;
     variables = machine.variables();
   }
-  const ctx: CheckContext = { program: compiled.program, frame, variables };
-  const results = checks.map((c) => ({ key: c.key, ok: safely(() => c.test(ctx)) }));
-  return { kind: 'checked', passed: results.every((r) => r.ok), results };
+  return { program, frame, variables };
+}
+
+/** The checked program again, from the start, in another situation (other keys held, more frames): null if it fails. */
+export function simulate(ctx: CheckContext, run: RunSpec): CheckContext | null {
+  const ran = runProgram(ctx.program, new RaylibHost({ seed: 1 }), run);
+  return 'diagnostic' in ran ? null : ran;
 }
 
 function safely(test: () => boolean): boolean {

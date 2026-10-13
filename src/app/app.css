@@ -142,6 +142,17 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 .slow-btn { flex: none; font-size: 20px; line-height: 1; padding: 6px 12px; border-color: var(--cyan); box-shadow: none; white-space: nowrap; }
 .slow-btn .slow-label { font-size: 15px; font-weight: 700; }
 .slow-btn.on, .slow-btn.on:hover:not(:disabled) { border-color: var(--green); color: var(--bg); background: var(--green); box-shadow: 0 0 14px var(--green); }
+.play-hint { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); z-index: 3; font-size: clamp(12px, 1.2vw, 16px); background: rgba(0, 0, 0, 0.75); white-space: nowrap; }
+.pad { display: none; }
+@media (pointer: coarse) {
+  .play-hint { display: none; }
+  .pad { display: block; position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+  .pad-key { position: absolute; pointer-events: auto; width: 52px; height: 52px; padding: 0; border-radius: 50%; font: 900 18px ui-monospace, monospace; background: rgba(0, 0, 0, 0.55); touch-action: none; user-select: none; -webkit-user-select: none; }
+  .pad-key:active { background: rgba(57, 243, 255, 0.35); }
+  .pad-key_w { left: 8px; top: 8px; } .pad-key_s { left: 8px; bottom: 8px; }
+  .pad-key_up { right: 8px; top: 8px; } .pad-key_down { right: 8px; bottom: 8px; }
+  .pad-key_space { left: 50%; bottom: 8px; transform: translateX(-50%); width: auto; padding: 0 14px; border-radius: 26px; font-size: 13px; }
+}
 .ball-lost {
   position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 3; max-width: 90%;
   font-size: clamp(12px, 1.3vw, 18px); color: var(--yellow); border-color: var(--yellow); background: rgba(0, 0, 0, 0.75); box-shadow: 0 0 10px var(--yellow);
@@ -238,6 +249,35 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
   .hall-continue { font-size: 15px; padding: 8px 16px; min-height: 44px; }
   .hall-bit .bit-face { display: none; }
 }
+
+/* if: the key decides the road */
+.if-card .key-cap { fill: #1d1446; stroke: var(--cyan); stroke-width: 4; transition: all 0.15s; }
+.if-card .key.down .key-cap { fill: var(--cyan); transform: translateY(6px); }
+.if-card .key-label { fill: var(--text); font: 900 44px ui-monospace, monospace; text-anchor: middle; }
+.if-card .key.down .key-label { fill: var(--bg); }
+.if-card .caption { fill: var(--muted); font-size: 20px; text-anchor: middle; }
+.if-card .diamond { fill: #1d1446; stroke: var(--yellow); stroke-width: 4; }
+.if-card .question { fill: var(--yellow); font: 700 19px ui-monospace, monospace; text-anchor: middle; }
+.if-card .road { fill: none; stroke: #3a3358; stroke-width: 6; transition: stroke 0.2s; }
+.if-card .road.on { stroke: var(--green); filter: drop-shadow(0 0 6px var(--green)); }
+.if-card .road-label { fill: #5a5380; font-size: 20px; }
+.if-card .road-label.on { fill: var(--green); }
+.if-card .action { fill: #120b2c; stroke: #3a3358; stroke-width: 3; }
+.if-card .action.on { stroke: var(--green); }
+.if-card .action-text { fill: var(--text); font: 18px ui-monospace, monospace; text-anchor: middle; }
+.if-card .paddle { fill: #fff; transition: y 0.1s linear; }
+
+/* Comparisons: a limit line and the six operators */
+.compare-card .screen { fill: #000; stroke: var(--cyan); stroke-width: 3; }
+.compare-card .limit { stroke: var(--yellow); stroke-width: 3; stroke-dasharray: 8 6; }
+.compare-card .limit-label { fill: var(--yellow); font: 700 20px ui-monospace, monospace; }
+.compare-card .paddle { fill: #fff; transition: y 0.5s ease-in-out; }
+.compare-card .y-label { fill: var(--muted); font: 16px ui-monospace, monospace; transition: y 0.5s ease-in-out; }
+.compare-card .question { fill: var(--text); font: 700 34px ui-monospace, monospace; }
+.compare-card .answer { fill: #5a5380; font: 700 26px ui-monospace, monospace; }
+.compare-card .answer.yes { fill: var(--green); }
+.compare-card .op { fill: var(--yellow); font: 700 24px ui-monospace, monospace; }
+.compare-card .op-text { fill: var(--text); font-size: 21px; }
 
 /* Celebration */
 .confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; }

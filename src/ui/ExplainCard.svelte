@@ -1,11 +1,14 @@
 <script lang="ts">
+  import type { ExplainCardId } from '../lessons/model';
+  import CompareCard from './CompareCard.svelte';
   import FramesCard from './FramesCard.svelte';
   import GridCard from './GridCard.svelte';
+  import IfCard from './IfCard.svelte';
   import VariableBoxCard from './VariableBoxCard.svelte';
 
-  let { card }: { card: 'grid' | 'variable-box' | 'frames' } = $props();
+  let { card }: { card: ExplainCardId } = $props();
 </script>
 
 <div class="explain">
-  {#if card === 'grid'}<GridCard />{:else if card === 'frames'}<FramesCard />{:else}<VariableBoxCard />{/if}
+  {#if card === 'grid'}<GridCard />{:else if card === 'frames'}<FramesCard />{:else if card === 'if'}<IfCard />{:else if card === 'compare'}<CompareCard />{:else}<VariableBoxCard />{/if}
 </div>

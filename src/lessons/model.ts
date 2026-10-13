@@ -12,9 +12,12 @@ export interface ExerciseStep {
   checks: Check[];
   run?: RunSpec;
   showVariables?: boolean;
+  /** Keys the game uses (raylib names, e.g. KEY_W): phones get on-screen buttons for them. */
+  controls?: string[];
 }
 
-export interface ExplainStep { kind: 'explain'; id: string; card: 'grid' | 'variable-box' | 'frames' }
+export type ExplainCardId = 'grid' | 'variable-box' | 'frames' | 'if' | 'compare' | 'bounce' | 'and' | 'counter' | 'fixed';
+export interface ExplainStep { kind: 'explain'; id: string; card: ExplainCardId }
 
 export type Step = ExerciseStep | ExplainStep;
 

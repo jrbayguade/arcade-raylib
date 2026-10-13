@@ -6,13 +6,16 @@
   import { renderFrame } from '../render/canvas';
   import { allBallsOffScreen } from '../runtime/drawList';
   import { KeyboardInput } from '../runtime/keyboard';
+  import { KEYS } from '../runtime/keys';
   import { Runner } from '../runtime/runner';
 
-  let { broken, slow = false, onVariables, onError }: {
+  let { broken, slow = false, controls = [], onVariables, onError }: {
     /** No working program on screen: show TV static instead of a black screen. */
     broken: boolean;
     /** 🐢 slow motion: a few frames per second, with the frame number on screen. */
     slow?: boolean;
+    /** Keys this game listens to: a "click here to play" hint, and on-screen buttons on touch screens. */
+    controls?: string[];
     onVariables: (variables: VariableView[]) => void;
     onError: (diagnostic: Diagnostic) => void;
   } = $props();
@@ -22,6 +25,10 @@
   let runner: Runner | null = null;
   let mouse = $state<{ x: number; y: number } | null>(null);
   let frameNo = $state(0);
+  let focused = $state(false);
+  const keyboard = new KeyboardInput();
+  const LABELS: Record<string, string> = { KEY_W: 'W', KEY_S: 'S', KEY_UP: '↑', KEY_DOWN: '↓', KEY_SPACE: t('keySpace') };
+  const label = (k: string) => LABELS[k] ?? k;
   /** Every ball has left the screen: offer to launch it again instead of showing an empty machine. */
   let lost = $state(false);
   let lastCode: string | null = null;
@@ -30,7 +37,6 @@
     const ctx = canvas.getContext('2d')!;
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    const keyboard = new KeyboardInput();
     const detach = keyboard.attach(canvas);
     runner = new Runner({
       scheduler: { request: (cb) => requestAnimationFrame(cb), cancel: (id) => cancelAnimationFrame(id) },
@@ -98,7 +104,20 @@
 <div class="machine" bind:this={frame}>
   <!-- svelte-ignore a11y_mouse_events_have_key_events, a11y_no_noninteractive_tabindex -->
   <canvas bind:this={canvas} width="800" height="450" tabindex="0"
-    onmousemove={track} onmouseleave={() => (mouse = null)}></canvas>
+    onmousemove={track} onmouseleave={() => (mouse = null)} onfocus={() => (focused = true)} onblur={() => (focused = false)}></canvas>
+  {#if controls.length > 0 && !broken}
+    {#if !focused}
+      <button class="play-hint" data-sound="page" onclick={() => canvas.focus()}>🎮 {t('playHint', { keys: controls.map(label).join(' ') })}</button>
+    {/if}
+    <div class="pad" aria-label={t('padLabel')}>
+      {#each controls as k (k)}
+        <button class="pad-key pad-{k.toLowerCase()}" data-sound="none" aria-label={label(k)}
+          onpointerdown={(e) => { e.preventDefault(); keyboard.press(KEYS[k]); }}
+          onpointerup={() => keyboard.release(KEYS[k])} onpointerleave={() => keyboard.release(KEYS[k])}
+          onpointercancel={() => keyboard.release(KEYS[k])} oncontextmenu={(e) => e.preventDefault()}>{label(k)}</button>
+      {/each}
+    </div>
+  {/if}
   {#if broken}<div class="tv-static" aria-hidden="true"></div>{/if}
   {#if lost && !broken}
     <button class="ball-lost" data-sound="page" onclick={() => lastCode && start(lastCode)}><span class="lost-what">{t('ballLost')}</span> <span class="lost-do">{t('ballLostAgain')}</span></button>
