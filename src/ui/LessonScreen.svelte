@@ -16,6 +16,7 @@
   import ExplainCard from './ExplainCard.svelte';
   import GamePane from './GamePane.svelte';
   import type { BitMessage } from './message';
+  import { slowMotion } from './slowMotion.svelte';
   import { sounds } from './sound';
   import VariablesPanel from './VariablesPanel.svelte';
 
@@ -270,9 +271,13 @@
   <section class="machine-area">
     <div class="cabinet">
       <div class="marquee">{lesson.machine ?? ''}</div>
-      <GamePane bind:this={game} {broken} onVariables={(v) => (variables = v)} onError={showLiveError} />
-      {#if isExercise(view.step) && view.step.showVariables}
-        <VariablesPanel {variables} />
+      <GamePane bind:this={game} {broken} slow={slowMotion.on} onVariables={(v) => (variables = v)} onError={showLiveError} />
+      {#if isExercise(view.step)}
+        <div class="machine-row">
+          <button class="slow-btn" class:on={slowMotion.on} aria-pressed={slowMotion.on} data-sound="page"
+            title={t('slowMotion')} aria-label={t('slowMotion')} onclick={() => (slowMotion.on = !slowMotion.on)}>🐢</button>
+          {#if view.step.showVariables}<VariablesPanel {variables} />{/if}
+        </div>
       {/if}
     </div>
   </section>

@@ -102,6 +102,8 @@
     "success": "Molt bé! Ho has aconseguit! 🎉",
     "compileErrorIntro": "Uf, a la línia {line} (marcada en vermell) hi ha alguna cosa que no entenc:",
     "runtimeErrorIntro": "El joc s'ha aturat a la línia {line}:",
+    "slowMotion": "Càmera lenta",
+    "frameNo": "fotograma {n}",
     "mouseCoords": "x: {x}   y: {y}",
     "variablesTitle": "Les teves variables",
     "foldLines": "▸ {label} ({lines} línies amagades)",

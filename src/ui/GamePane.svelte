@@ -7,9 +7,11 @@
   import { KeyboardInput } from '../runtime/keyboard';
   import { Runner } from '../runtime/runner';
 
-  let { broken, onVariables, onError }: {
+  let { broken, slow = false, onVariables, onError }: {
     /** No working program on screen: show TV static instead of a black screen. */
     broken: boolean;
+    /** 🐢 slow motion: a few frames per second, with the frame number on screen. */
+    slow?: boolean;
     onVariables: (variables: VariableView[]) => void;
     onError: (diagnostic: Diagnostic) => void;
   } = $props();
@@ -18,6 +20,7 @@
   let canvas: HTMLCanvasElement;
   let runner: Runner | null = null;
   let mouse = $state<{ x: number; y: number } | null>(null);
+  let frameNo = $state(0);
 
   onMount(() => {
     const ctx = canvas.getContext('2d')!;
@@ -34,6 +37,7 @@
           canvas.height = host.height;
         }
         renderFrame(ctx, drawList);
+        frameNo = runner?.frameCount ?? 0;
         onVariables(runner?.variables() ?? []);
       },
       // The checks only run 2 frames: a later runtime error in the live game must still reach Bit.
@@ -45,11 +49,15 @@
     };
   });
 
+  // Declared after onMount, so it first runs once the runner exists; applies now and to every later run.
+  $effect(() => { runner?.setSlow(slow); });
+
   /** Runs a program, with the old-TV "switching on" effect (restarted by toggling the class). */
   export function start(code: string): void {
     frame.classList.remove('power');
     void frame.offsetWidth;
     frame.classList.add('power');
+    frameNo = 0;
     runner?.start(code);
     running = true;
   }
@@ -79,5 +87,6 @@
   <canvas bind:this={canvas} width="800" height="450" tabindex="0"
     onmousemove={track} onmouseleave={() => (mouse = null)}></canvas>
   {#if broken}<div class="tv-static" aria-hidden="true"></div>{/if}
+  {#if slow && !broken && frameNo > 0}<span class="frame-no">{t('frameNo', { n: frameNo })}</span>{/if}
   {#if mouse && !broken}<span class="coords">{t('mouseCoords', mouse)}</span>{/if}
 </div>
