@@ -12,6 +12,7 @@ export const lessonFinal: Lesson = {
   number: 9,
   final: true,
   machine: 'PONG',
+  slowMotion: true,
   texts,
   steps: [
     {

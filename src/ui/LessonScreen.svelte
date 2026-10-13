@@ -327,11 +327,11 @@
   <section class="machine-area">
     <div class="cabinet">
       <div class="marquee">{lesson.machine ?? ''}</div>
-      <GamePane bind:this={game} {broken} slow={slowMotion.on} controls={isExercise(view.step) ? (view.step.controls ?? []) : view.step.card === 'fixed' ? ['KEY_W', 'KEY_S'] : []} onVariables={(v) => (variables = v)} onError={showLiveError} />
+      <GamePane bind:this={game} {broken} slow={!!lesson.slowMotion && slowMotion.on} controls={isExercise(view.step) ? (view.step.controls ?? []) : view.step.card === 'fixed' ? ['KEY_W', 'KEY_S'] : []} onVariables={(v) => (variables = v)} onError={showLiveError} />
       {#if isExercise(view.step)}
         <div class="machine-row">
-          <button class="slow-btn" class:on={slowMotion.on} aria-pressed={slowMotion.on} data-sound="page"
-            title={t('slowMotion')} aria-label={t('slowMotion')} onclick={() => (slowMotion.on = !slowMotion.on)}>🐢 <span class="slow-label">{t('slowLabel')}</span>{#if slowMotion.on} ✓{/if}</button>
+          {#if lesson.slowMotion}<button class="slow-btn" class:on={slowMotion.on} aria-pressed={slowMotion.on} data-sound="page"
+            title={t('slowMotion')} aria-label={t('slowMotion')} onclick={() => (slowMotion.on = !slowMotion.on)}>🐢 <span class="slow-label">{t('slowLabel')}</span>{#if slowMotion.on} ✓{/if}</button>{/if}
           {#if view.step.showVariables}<VariablesPanel {variables} focus={zoneNames} />{/if}
         </div>
       {/if}

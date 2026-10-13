@@ -372,8 +372,7 @@ try {
       const run = await phone.getByRole('button', { name: '▶ Executa', exact: true }).boundingBox();
       check('phone sideways: Run in view', run !== null && run.y + run.height <= h);
       check('phone sideways: buttons are at least 44 px tall', run !== null && run.height >= 44);
-      const slowBox = await phone.locator('.slow-btn').boundingBox();
-      check('phone sideways: 🐢 is at least 44 px tall', slowBox !== null && slowBox.height >= 44);
+      check('phone sideways, lesson 1: no 🐢 (nothing moves yet)', (await phone.locator('.slow-btn').count()) === 0);
       check('phone sideways: Bit opens his bubble while he talks', await visible(phone.locator('.talk.open .bubble')));
       const bubbleBox = await phone.locator('.talk .bubble').boundingBox();
       const zoneBox = await phone.locator('.cm-zone').first().boundingBox();

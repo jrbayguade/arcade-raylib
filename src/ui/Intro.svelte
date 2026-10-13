@@ -3,6 +3,7 @@
   import { t } from '../i18n/i18n';
   import BitFace from './BitFace.svelte';
   import LanguagePicker from './LanguagePicker.svelte';
+  import MiniPong from './MiniPong.svelte';
   import { INTRO_BEATS, IntroPlayer } from './intro';
   import { rotateRequired } from './motion';
   import { sounds } from './sound';
@@ -115,7 +116,7 @@
         <div class="promise-row">
           <div class="big-cab cabinet">
             <div class="marquee">PONG</div>
-            <div class="mini"><i class="p l play-l"></i><i class="p r play-r"></i><i class="b bounce"></i></div>
+            <div class="mini"><MiniPong /></div>
             <div style="text-align:center; font-size: 30px">⭐⭐⭐</div>
           </div>
           <div class="say-line">
@@ -127,7 +128,7 @@
         <div class="row go-row">
           <div class="cab">
             <div class="roof">PONG</div><div class="body"></div>
-            <div class="scr"><div class="mini" style="border: none; box-shadow: none; height: 100%"><i class="p l play-l"></i><i class="p r play-r"></i><i class="b bounce"></i></div></div>
+            <div class="scr"><div class="mini" style="border: none; box-shadow: none; height: 100%"><MiniPong /></div></div>
           </div>
         </div>
         <div class="say-line go-say">

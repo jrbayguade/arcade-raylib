@@ -21,6 +21,7 @@ export const lesson3: Lesson = {
   id: 'pong-3',
   number: 4,
   machine: 'PONG',
+  slowMotion: true,
   texts,
   steps: [
     {

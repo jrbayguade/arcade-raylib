@@ -42,6 +42,8 @@ export interface Lesson {
   final?: boolean;
   /** Name on the arcade cabinet's sign, e.g. PONG. */
   machine?: string;
+  /** Things move on screen, so the 🐢 slow motion button is offered (not in the still lessons). */
+  slowMotion?: boolean;
   steps: Step[];
   texts: LessonTexts;
 }

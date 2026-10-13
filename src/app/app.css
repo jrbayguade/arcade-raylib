@@ -449,10 +449,8 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 .intro .mini .p { position: absolute; width: 3%; height: 22%; background: #fff; }
 .intro .mini .p.l { left: 4%; } .intro .mini .p.r { right: 4%; top: 40%; }
 .intro .mini .p.up { animation: paddle-up 4s infinite; }
-.intro .mini .p.play-l { animation: pad-l 1.8s ease-in-out infinite; } .intro .mini .p.play-r { animation: pad-r 1.8s ease-in-out infinite; }
-.intro .mini .b { position: absolute; width: 4%; aspect-ratio: 1; border-radius: 50%; background: #fdf900; }
-.intro .mini .b.bounce { animation: pong-ball 1.8s linear infinite; }
 .intro .scr .mini { aspect-ratio: auto; height: 100%; }
+.intro .mini-pong { display: block; width: 100%; height: 100%; }
 .intro .promise-row { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 4vw; padding: 0 6vw; }
 .intro .big-cab { flex: none; width: min(38vw, 440px); }
 .intro .promise-row .say-line { position: static; flex: 0 1 520px; }
@@ -504,9 +502,6 @@ button.primary { color: var(--yellow); border-color: var(--yellow); box-shadow: 
 @keyframes swap-b { 0%, 35% { opacity: 0; } 40%, 100% { opacity: 1; } }
 @keyframes run-glow { 0%, 45% { box-shadow: 0 0 6px var(--cyan); } 50%, 60% { box-shadow: 0 0 30px var(--cyan); background: rgba(57, 243, 255, 0.2); } 100% { box-shadow: 0 0 6px var(--cyan); } }
 @keyframes paddle-up { 0%, 55% { top: 39%; } 70%, 100% { top: 9%; } }
-@keyframes pad-l { 0%, 100% { top: 10%; } 50% { top: 62%; } }
-@keyframes pad-r { 0%, 100% { top: 60%; } 50% { top: 12%; } }
-@keyframes pong-ball { 0% { left: 12%; top: 20%; } 50% { left: 82%; top: 70%; } 100% { left: 12%; top: 20%; } }
 @keyframes zoom-in { to { transform: scale(4); opacity: 0; } }
 
 @media (prefers-reduced-motion: reduce) {
