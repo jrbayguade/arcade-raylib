@@ -1,0 +1,86 @@
+{
+  "title": "Rebotes",
+  "folds": {
+    "preparar": "preparar el juego",
+    "pales": "mover las palas y sus límites (lecciones 4 y 5)",
+    "dibuixar": "empieza a dibujar",
+    "tancar": "cerrar el juego"
+  },
+  "steps": {
+    "edge": {
+      "prompt": [
+        "¡Lección nueva! Hasta ahora la pelota se escapaba. Hoy aprenderá a rebotar. 🏓",
+        "Mira la línea amarilla: cuando la pelota llega a la derecha, hace `velX = -velX;`. Eso le da la vuelta al signo: si `velX` valía 4, ahora vale -4, y la pelota vuelve atrás.",
+        "Pero rebota demasiado tarde: `pilotaX` es el centro de la pelota, y la pelota tiene 8 de radio. Cuando el centro llega a 800, media pelota ya está fuera de la pantalla. (Y por la izquierda todavía se escapa: lo arreglaremos dentro de dos pasos.)",
+        "Haz que rebote justo cuando toca el borde: cambia el 800 por 792 (800 − 8) y pulsa ▶ Ejecuta."
+      ],
+      "hints": [
+        "Solo tienes que cambiar el número de la pregunta.",
+        "La pelota tiene 8 de radio: 800 − 8.",
+        "`if (pilotaX > 792) { velX = -velX; }`"
+      ],
+      "success": "¡Rebote perfecto! La pelota toca el borde y vuelve atrás."
+    },
+    "bounceCard": {
+      "prompt": [
+        "¿Cómo funciona `velX = -velX;`? El signo - pegado delante de una caja significa «el mismo número, pero con el signo cambiado».",
+        "Si `velX` es 4, `-velX` es -4. Si `velX` es -4, `-velX` es 4: lo contrario de un número negativo es positivo.",
+        "Recuerda la lección 3: con `velX` positiva la pelota va a la derecha, y con `velX` negativa, a la izquierda. Así, cambiando el signo, la pelota cambia de dirección. ¡Eso es un rebote!",
+        "Ojo: el - pegado a `velX` (`-velX`) cambia el signo. El - entre dos cosas (`velX - 1`) resta. ¡Son dos trabajos distintos!",
+        "Cuando lo tengas claro, pulsa Continúa."
+      ]
+    },
+    "left": {
+      "prompt": [
+        "Ahora la pelota sale hacia la izquierda (`velX` empieza en -4). Por la derecha ya rebota, pero por la izquierda se escapa.",
+        "A la izquierda, el borde está en la x = 0, y la pelota lo toca cuando `pilotaX` es menor que 8.",
+        "En la línea vacía, escribe un `if` que la haga rebotar en la pared de la izquierda."
+      ],
+      "hints": [
+        "Es como la línea de arriba, pero con `<` y 8.",
+        "La pregunta es `pilotaX < 8`, y dentro cambias el signo de `velX`.",
+        "`if (pilotaX < 8) { velX = -velX; }`"
+      ],
+      "success": "¡Ahora rebota en las dos paredes! Ya no se escapa nunca."
+    },
+    "updown": {
+      "prompt": [
+        "Una pelota que solo va y viene en línea recta es aburrida. Mira arriba: hay una caja nueva, `int velY = 3;`, y la línea `pilotaY = pilotaY + velY;`. Es como `velX`, pero en vertical. ¡Y se escapa por arriba y por abajo!",
+        "Haz lo mismo que con la x: cuando `pilotaY` es menor que 8, cambia el signo de `velY`. Y cuando es mayor que 442 (450 − 8), también.",
+        "Escribe los dos `if` en la línea vacía."
+      ],
+      "hints": [
+        "Son como los dos rebotes de la x, pero con `pilotaY`, `velY` y los números 8 y 442.",
+        "Un `if` para arriba (`pilotaY < 8`) y otro para abajo (`pilotaY > 442`).",
+        "`if (pilotaY < 8) { velY = -velY; }` y `if (pilotaY > 442) { velY = -velY; }`"
+      ],
+      "success": "¡La pelota rebota por todas partes, como un salvapantallas! 📺"
+    },
+    "faster": {
+      "prompt": [
+        "¡Último reto! Hagamos el juego más emocionante: cada vez que la pelota rebote a la derecha, que vaya un poco más rápido.",
+        "Pista: ahora hace `velX = -velX;`. Si además le restas 1 (`-velX - 1`), la pelota saldrá hacia la izquierda con más velocidad.",
+        "Cambia la primera línea amarilla para que, además de girar, la pelota acelere."
+      ],
+      "hints": [
+        "Después del rebote, `velX` es negativa. Para ir más rápido hacia la izquierda, tiene que ser todavía más negativa.",
+        "Réstale 1 justo después de `-velX`.",
+        "`if (pilotaX > 792) { velX = -velX - 1; }`"
+      ],
+      "success": "¡Cada rebote, más rápido! 🔥 En la lección 7, las palas también la harán rebotar."
+    }
+  },
+  "checks": {
+    "bounces": "La pelota no vuelve atrás en el borde. Revisa el número (792) y que dentro de las llaves esté `velX = -velX;`.",
+    "bouncesAtEdge": "La pelota todavía rebota demasiado tarde: cambia el 800 por 792.",
+    "bouncesLeft": "La pelota no rebota a la izquierda. Mira la línea de arriba: necesitas lo mismo, pero con `<` y 8.",
+    "bothWalls": "La pelota sale de la pantalla por algún lado. Comprueba los dos `if`: el de la derecha con `>` y 792, y el de la izquierda con `<` y 8.",
+    "bouncesBottom": "La pelota no rebota abajo. Revisa el `if` con `pilotaY > 442`: dentro, `velY = -velY;`.",
+    "allWalls": "La pelota se escapa por arriba. Comprueba el `if` con `pilotaY < 8`: dentro tiene que cambiar el signo de `velY`, no de `velX`.",
+    "speedsUp": "La pelota no acelera lo suficiente. En el rebote de la derecha, después de cambiar el signo, réstale 1.",
+    "notCrazy": "¡La pelota acelera demasiado! Haz que cada rebote solo le añada 1: `-velX - 1`.",
+    "stillInside": "Ahora la pelota se escapa. Deja los otros tres rebotes como estaban.",
+    "bouncesTooEarly": "La pelota rebota antes de tocar el borde. El número tiene que ser 792.",
+    "slowsDown": "¡Ahora la pelota va más lenta! Después de cambiar el signo, `velX` es negativa: para ir más rápido, réstale 1."
+  }
+}

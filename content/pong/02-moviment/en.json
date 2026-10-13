@@ -1,0 +1,84 @@
+{
+  "title": "The ball moves",
+  "folds": {
+    "preparar": "set up the game",
+    "dibuixar": "start drawing: background and paddles",
+    "tancar": "close the game"
+  },
+  "steps": {
+    "crawl": {
+      "prompt": [
+        "New lesson! Until now everything stood still. Today the ball will move on its own. 🏃",
+        "Look at the code: now you can see the `while`, which used to be hidden in the «repeats every frame» bar. Everything inside it repeats 60 times every second, until you close the game. Each round is a frame, like the drawings in a cartoon.",
+        "The yellow line `pilotaX = pilotaX + 1;` (pilota = ball) adds 1 to the `pilotaX` box every frame. That's why the ball crawls to the right. Looks weird, right? I'll explain how it works in a moment. When it reaches the edge, it'll leave the screen: that's normal, it doesn't know how to bounce yet.",
+        "Press 🐢 (under the game) and then ▶ Run: you'll see the ball move frame by frame and the `pilotaX` number go up 1 at a time. Press 🐢 again to go back to normal speed.",
+        "Make the ball go faster: change the 1 to 5 and press ▶ Run."
+      ],
+      "hints": [
+        "The number that says how far it moves is the one after the +.",
+        "Change the 1 to 5.",
+        "`pilotaX = pilotaX + 5;`"
+      ],
+      "success": "Off it flew! No problem: in lesson 6 we'll make it bounce. Press ▶ Run and it'll start from the middle again."
+    },
+    "frames": {
+      "prompt": [
+        "How can `pilotaX = pilotaX + 3;` be true? In math it would be impossible!",
+        "You know it from lesson 2: = doesn't mean «equals», it means «store in it».",
+        "The computer works out the right-hand side first: it reads the box (400) and adds 3 (403). Then it stores the result in the box on the left, which is the same one.",
+        "On the next frame it starts again: reads 403, adds 3, stores 406… and so on, 60 times every second! When it's clear, press Continue."
+      ]
+    },
+    "diagonal": {
+      "prompt": [
+        "Now the ball goes to the right. Let's make it go down too! (If the 🐢 is on, everything goes slowly. Press it to turn it off.)",
+        "Remember the grid: further down means a bigger y.",
+        "On the empty line in the yellow zone, make `pilotaY` grow every frame too."
+      ],
+      "hints": [
+        "Copy the idea of the `pilotaX` line, but with `pilotaY`.",
+        "You need to store in `pilotaY` what's already in `pilotaY`, plus 2.",
+        "`pilotaY = pilotaY + 2;`"
+      ],
+      "success": "Diagonally! It already looks like a real Pong. 🎾"
+    },
+    "left": {
+      "prompt": [
+        "What if I want it to go left?",
+        "On the left, x is smaller. Make the ball go there."
+      ],
+      "hints": [
+        "Right now you add 3 every frame. What do you need to do to make x smaller?",
+        "Change the + to a -.",
+        "`pilotaX = pilotaX - 3;`"
+      ],
+      "success": "To the left! Adding makes it go right, and subtracting, left."
+    },
+    "speed": {
+      "prompt": [
+        "Last challenge! Now the loop says `pilotaX = pilotaX + velX;`… but the `velX` box doesn't exist. That's why the machine shows static.",
+        "`velX` means «velocity in x» (vel = velocity): how many pixels the ball moves sideways each frame.",
+        "Create the `velX` box on the yellow line, with a number between -20 and 20 that isn't 0 (try 4)."
+      ],
+      "hints": [
+        "Do it the same way as the other boxes: `int name = value;`",
+        "The name is `velX` and the value is a number that isn't 0.",
+        "`int velX = 4;`"
+      ],
+      "success": "Perfect! And if you use a negative number, like -4, it'll go left. In lesson 6 we'll make it bounce just by changing the sign of `velX`. 😉"
+    }
+  },
+  "checks": {
+    "adds": "The ball jumped all at once and then stood still: you stored a number in the box instead of adding it. Write `pilotaX = pilotaX + …;`",
+    "addsY": "The ball jumped all at once: you stored a number in `pilotaY` instead of adding it. Write `pilotaY = pilotaY + …;`",
+    "faster": "The ball is still too slow: the number after the + has to be 2 or more.",
+    "notTooFast": "It's so fast you can't even see it! Try a number between 2 and 20.",
+    "yMoves": "The ball isn't going down yet: add `pilotaY = pilotaY + …;` with a positive number.",
+    "xStillMoves": "The ball also has to keep going right: leave the `pilotaX` line as it was.",
+    "goesLeft": "The ball isn't going left yet. To go left, x has to get smaller.",
+    "declaresSpeed": "You still need to create the `velX` box, for example `int velX = 4;`",
+    "speedNotZero": "With `velX` at 0, the ball doesn't move! Use another number.",
+    "speedNotTooFast": "With this `velX` the ball leaves the screen before you can see it! Try a number between -20 and 20.",
+    "usesSpeed": "The ball has to move `velX` pixels every frame."
+  }
+}

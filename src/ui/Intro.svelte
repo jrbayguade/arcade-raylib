@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { t } from '../i18n/i18n';
   import BitFace from './BitFace.svelte';
+  import LanguagePicker from './LanguagePicker.svelte';
   import { INTRO_BEATS, IntroPlayer } from './intro';
   import { rotateRequired } from './motion';
   import { sounds } from './sound';
@@ -64,6 +65,7 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
 <div class="intro" class:lit onclick={press} data-beat={beat} role="presentation">
+  <LanguagePicker />
   <button class="skip" data-sound="none" onclick={(e) => { e.stopPropagation(); finish(); }}>{t('introSkip')}</button>
 
   {#key beat}

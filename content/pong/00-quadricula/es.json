@@ -1,0 +1,90 @@
+{
+  "title": "La pantalla es una cuadrícula",
+  "folds": {
+    "preparar": "preparar el juego",
+    "tancar": "cerrar el juego"
+  },
+  "steps": {
+    "observe": {
+      "prompt": [
+        "¡Empezamos! Esta máquina está estropeada y la vamos a arreglar entre tú y yo.",
+        "Solo puedes escribir en la zona amarilla. El resto del código ya está hecho: las barras grises esconden trozos y, si haces clic en ellas, se abren.",
+        "Las palabras grises x:, y:... no son código: solo te explican qué significa cada número.",
+        "La línea amarilla dibuja la pala de la izquierda. Cambia el 185 por un 50 y pulsa ▶ Ejecuta. ¿Qué pasa?"
+      ],
+      "hints": [
+        "Busca el número 185 en la línea amarilla. Es el segundo número.",
+        "Haz doble clic sobre el 185 para seleccionarlo y escribe 50.",
+        "La línea tiene que quedar así: `DrawRectangle(20, 50, 10, 80, WHITE);`"
+      ],
+      "success": "¡La pala ha subido! Acabas de mover tu primer objeto. 🎉"
+    },
+    "grid": {
+      "prompt": [
+        "La pantalla del juego es como una hoja cuadriculada de 800 × 450 puntos.",
+        "Cada punto tiene dos coordenadas: la x cuenta hacia la derecha desde la izquierda, y la y cuenta hacia abajo desde arriba.",
+        "Ojo: ¡la y crece hacia abajo! Por eso, cuando has puesto un número más pequeño, la pala ha subido.",
+        "La x y la y de un rectángulo marcan su esquina de arriba a la izquierda.",
+        "Pasa el ratón (o el dedo) por encima del juego y mira los números. Cuando lo tengas claro, pulsa Continúa."
+      ]
+    },
+    "floor": {
+      "prompt": [
+        "Pista de detective: la pantalla mide 450 de alto y la pala, 80.",
+        "Pon la pala tocando el suelo, abajo del todo. ¿Dónde tiene que empezar la pala?"
+      ],
+      "hints": [
+        "Tienes que cambiar la y, que es el segundo número.",
+        "Si la pala empieza en la y y mide 80 de alto, termina en y + 80. Tiene que terminar en 450.",
+        "450 − 80 = 370. Pon `DrawRectangle(20, 370, 10, 80, WHITE);`"
+      ],
+      "success": "¡Perfecto, tocando el suelo! Has usado las coordenadas como una persona experta."
+    },
+    "tall": {
+      "prompt": [
+        "Esta pala es demasiado pequeña para parar nada. Hazla el doble de alta."
+      ],
+      "hints": [
+        "¿Qué número tiene delante la etiqueta gris alto:?",
+        "El alto ahora es 80. El doble de 80 es...",
+        "Pon 160 en el alto: `DrawRectangle(20, 185, 10, 160, WHITE);`"
+      ],
+      "success": "¡Ahora sí que es una pala de verdad! 💪"
+    },
+    "order": {
+      "prompt": [
+        "¡Ups! Alguien ha desordenado el código y la pala de la izquierda ha desaparecido.",
+        "El ordenador hace las instrucciones de una en una, de arriba abajo.",
+        "¿Por qué no se ve la pala? Arréglalo."
+      ],
+      "hints": [
+        "ClearBackground pinta toda la pantalla de negro.",
+        "Si primero dibujas la pala y después lo pintas todo de negro, ¿qué queda?",
+        "Selecciona la línea de `ClearBackground(BLACK);`, córtala con Ctrl+X, pon el cursor al principio de la línea del `DrawRectangle` y pégala con Ctrl+V."
+      ],
+      "success": "Exacto: ¡el orden importa! Primero se borra la pantalla y después se dibuja."
+    },
+    "ball": {
+      "prompt": [
+        "¡Un Pong sin pelota no es un Pong!",
+        "La pelota se dibuja con `DrawCircle`. Se escribe como `DrawRectangle`, pero con 4 valores: x, y, radio y color. En un círculo, la x y la y son el centro.",
+        "Escribe Draw..., elige `DrawCircle` de la lista con Enter y rellena los huecos (Tab salta al siguiente). Los colores van en inglés y en mayúsculas: `YELLOW`. ¡Pon la pelota en el centro de la pantalla!"
+      ],
+      "hints": [
+        "El centro de la pantalla es la mitad de 800 y la mitad de 450.",
+        "`DrawCircle` necesita x, y, radio y color. Un radio de 8 queda bien.",
+        "En la línea vacía, debajo de la pala, escribe: `DrawCircle(400, 225, 8, YELLOW);`"
+      ],
+      "success": "¡Ya tenemos pelota! La máquina empieza a tener buena pinta. 🏓"
+    }
+  },
+  "checks": {
+    "paddleMoved": "La pala de la izquierda todavía no ha subido: cambia la y (el segundo número), no la x.",
+    "paddleOnFloor": "La pala todavía no toca el suelo: la y tiene que ser 450 − 80 = 370.",
+    "paddleHeight80": "El alto de la pala tiene que seguir siendo 80.",
+    "paddleTall": "La pala todavía no mide 160 de alto: cambia el alto (el cuarto número).",
+    "paddleVisible": "La pala todavía no se ve: el `ClearBackground` tiene que ir antes del `DrawRectangle`.",
+    "ballExists": "Todavía no se ve ninguna pelota: escribe un `DrawCircle` con un radio de 3 o más y un color que no sea `BLACK`.",
+    "ballCentered": "La pelota todavía no está en el centro: el centro tiene que ser x = 400, y = 225."
+  }
+}

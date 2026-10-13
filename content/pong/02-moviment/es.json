@@ -1,0 +1,84 @@
+{
+  "title": "La pelota se mueve",
+  "folds": {
+    "preparar": "preparar el juego",
+    "dibuixar": "empieza a dibujar: fondo y palas",
+    "tancar": "cerrar el juego"
+  },
+  "steps": {
+    "crawl": {
+      "prompt": [
+        "¡Lección nueva! Hasta ahora todo estaba quieto. Hoy la pelota se moverá sola. 🏃",
+        "Mira el código: ahora se ve el `while`, que antes estaba escondido en la barra «se repite en cada fotograma». Todo lo que hay dentro se repite 60 veces por segundo, hasta que cierras el juego. Cada vuelta es un fotograma, como los dibujos de una película.",
+        "La línea amarilla `pilotaX = pilotaX + 1;` suma 1 a la caja `pilotaX` (pilota = pelota) en cada fotograma. Por eso la pelota se arrastra hacia la derecha. Parece raro, ¿verdad? Enseguida te explico cómo funciona. Cuando llegue al borde, saldrá de la pantalla: es normal, todavía no sabe rebotar.",
+        "Pulsa 🐢 (debajo del juego) y después ▶ Ejecuta: verás la pelota avanzar fotograma a fotograma y el número de `pilotaX` subiendo de 1 en 1. Vuelve a pulsar 🐢 para ir a velocidad normal.",
+        "Haz que la pelota vaya más rápido: cambia el 1 por un 5 y pulsa ▶ Ejecuta."
+      ],
+      "hints": [
+        "El número que dice cuánto avanza es el que va después del +.",
+        "Cambia el 1 por un 5.",
+        "`pilotaX = pilotaX + 5;`"
+      ],
+      "success": "¡Ha salido volando! No pasa nada: en la lección 6 la haremos rebotar. Pulsa ▶ Ejecuta y volverá a salir del centro."
+    },
+    "frames": {
+      "prompt": [
+        "¿Cómo puede ser que `pilotaX = pilotaX + 3;` sea verdad? ¡En mates sería imposible!",
+        "Ya lo sabes de la lección 2: el = no significa «igual», significa «guarda aquí».",
+        "El ordenador primero calcula la parte de la derecha: lee la caja (400) y le suma 3 (403). Después guarda el resultado en la caja de la izquierda, que es la misma.",
+        "En el fotograma siguiente vuelve a empezar: lee 403, suma 3, guarda 406… ¡y así 60 veces por segundo! Cuando lo tengas claro, pulsa Continúa."
+      ]
+    },
+    "diagonal": {
+      "prompt": [
+        "Ahora la pelota va hacia la derecha. ¡Hagamos que también baje! (Si la 🐢 está encendida, todo va despacio. Púlsala para apagarla.)",
+        "Recuerda la cuadrícula: más abajo significa una y más grande.",
+        "En la línea vacía de la zona amarilla, haz que `pilotaY` también crezca en cada fotograma."
+      ],
+      "hints": [
+        "Copia la idea de la línea de `pilotaX`, pero con `pilotaY`.",
+        "Tienes que guardar en `pilotaY` lo que ya hay en `pilotaY`, más 2.",
+        "`pilotaY = pilotaY + 2;`"
+      ],
+      "success": "¡En diagonal! Ya parece un Pong de verdad. 🎾"
+    },
+    "left": {
+      "prompt": [
+        "¿Y si la quiero hacia la izquierda?",
+        "A la izquierda, la x es más pequeña. Haz que la pelota vaya hacia allí."
+      ],
+      "hints": [
+        "Ahora en cada fotograma le sumas 3. ¿Qué tienes que hacer para que la x se haga más pequeña?",
+        "Cambia el + por un -.",
+        "`pilotaX = pilotaX - 3;`"
+      ],
+      "success": "¡Hacia la izquierda! Sumar la hace ir a la derecha, y restar, a la izquierda."
+    },
+    "speed": {
+      "prompt": [
+        "¡Último reto! Ahora el bucle dice `pilotaX = pilotaX + velX;`… pero la caja `velX` no existe. Por eso la máquina hace nieve.",
+        "`velX` significa «velocidad en x»: cuántos píxeles avanza la pelota hacia los lados en cada fotograma.",
+        "Crea la caja `velX` en la línea amarilla, con un número entre -20 y 20 que no sea 0 (prueba con un 4)."
+      ],
+      "hints": [
+        "Hazlo igual que las otras cajas: `int nombre = valor;`",
+        "El nombre es `velX` y el valor, un número que no sea 0.",
+        "`int velX = 4;`"
+      ],
+      "success": "¡Perfecto! Y si pones un número negativo, como -4, irá hacia la izquierda. En la lección 6 la haremos rebotar solo cambiando el signo de `velX`. 😉"
+    }
+  },
+  "checks": {
+    "adds": "La pelota ha saltado de golpe y se ha quedado quieta: has guardado un número en la caja en lugar de sumárselo. Escribe `pilotaX = pilotaX + …;`",
+    "addsY": "La pelota ha saltado de golpe: has guardado un número en `pilotaY` en lugar de sumárselo. Escribe `pilotaY = pilotaY + …;`",
+    "faster": "La pelota todavía va demasiado despacio: el número después del + tiene que ser 2 o más.",
+    "notTooFast": "¡Va tan rápido que ni se ve! Prueba un número entre 2 y 20.",
+    "yMoves": "La pelota todavía no baja: añade `pilotaY = pilotaY + …;` con un número positivo.",
+    "xStillMoves": "La pelota también tiene que seguir yendo hacia la derecha: deja la línea de `pilotaX` como estaba.",
+    "goesLeft": "La pelota todavía no va hacia la izquierda. Para ir a la izquierda, la x tiene que hacerse más pequeña.",
+    "declaresSpeed": "Falta crear la caja `velX`, por ejemplo `int velX = 4;`",
+    "speedNotZero": "¡Con `velX` igual a 0, la pelota no se mueve! Pon otro número.",
+    "speedNotTooFast": "¡Con esta `velX` la pelota sale de la pantalla antes de que la veas! Prueba un número entre -20 y 20.",
+    "usesSpeed": "La pelota tiene que avanzar `velX` píxeles en cada fotograma."
+  }
+}

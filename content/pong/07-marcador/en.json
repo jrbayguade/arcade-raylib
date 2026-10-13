@@ -1,0 +1,84 @@
+{
+  "title": "Scoreboard",
+  "folds": {
+    "preparar": "set up the game",
+    "pales": "move the paddles and their limits (lessons 4 and 5)",
+    "moviment": "move the ball and make it bounce",
+    "dibuixar": "start drawing: background, paddles and ball",
+    "tancar": "close the game"
+  },
+  "steps": {
+    "count": {
+      "prompt": [
+        "New lesson! A Pong without a scoreboard isn't a Pong. Today we'll count the points. 🔢",
+        "Look at the top: there are two new boxes, `puntsEsquerra` and `puntsDreta` (punts = points, esquerra = left, dreta = right), which start at 0. And further down, `DrawText` writes the numbers on the screen.",
+        "The yellow line says: «if the ball goes out on the right, add 1 to `puntsEsquerra` and put the ball back in the center». Click the game and move the right paddle out of the way with ↑: you'll see the score go up.",
+        "Adding 1 to a box is so common that there's a short way to write it: `puntsEsquerra++;`. Change `puntsEsquerra = puntsEsquerra + 1;` to `puntsEsquerra++;` and press ▶ Run."
+      ],
+      "hints": [
+        "You only need to change the part that adds, the one before `pilotaX = 400;`.",
+        "`++` stuck to the name of the box means «add 1 to it».",
+        "`if (pilotaX > 800) { puntsEsquerra++; pilotaX = 400; }`"
+      ],
+      "success": "The scoreboard works! And now you know the `++` shortcut."
+    },
+    "counterCard": {
+      "prompt": [
+        "A box that keeps adding 1 at a time is called a counter. It starts at 0 and, every time something happens, adds 1.",
+        "`puntsEsquerra++;` is the same as `puntsEsquerra = puntsEsquerra + 1;`: it reads the box, adds 1 and stores it.",
+        "There's also `+=`: `puntsEsquerra += 2;` adds 2. And `--` subtracts 1.",
+        "To draw a number we use `TextFormat(\"%d\", box)`: it turns the number into text so `DrawText` can write it. When it's clear, press Continue."
+      ]
+    },
+    "rightScore": {
+      "prompt": [
+        "Now the ball heads off to the left. When it goes out on the left, no point is counted yet!",
+        "Write an `if` that, when `pilotaX` (pilota = ball) is less than 0, adds 1 to `puntsDreta` and puts the ball back in the center (`pilotaX = 400;`).",
+        "You can put both commands inside the same braces, like on the line above. To test it, click the game and hold down W: the left paddle moves out of the way and the ball gets past."
+      ],
+      "hints": [
+        "Copy the line above and change the question and the points box.",
+        "The question is `pilotaX < 0`, and the point goes to `puntsDreta`.",
+        "`if (pilotaX < 0) { puntsDreta++; pilotaX = 400; }`"
+      ],
+      "success": "Now points count on both sides!"
+    },
+    "drawRight": {
+      "prompt": [
+        "The right side's points are being counted... but you can't see them! Only the left score is drawn.",
+        "On the empty line, draw `puntsDreta` with `DrawText`, at x = 440 (to the right of the center). Copy the line above and change what you need. To test it, click the game and hold down W: the left paddle moves out of the way and the ball gets past."
+      ],
+      "hints": [
+        "The line above draws `puntsEsquerra` at x = 340.",
+        "Change `puntsEsquerra` to `puntsDreta` and 340 to 440.",
+        "`DrawText(TextFormat(\"%d\", puntsDreta), 440, 20, 40, WHITE);`"
+      ],
+      "success": "Scoreboard complete! You can see both players' points now."
+    },
+    "winner": {
+      "prompt": [
+        "Last challenge! Matches have to end sometime.",
+        "When `puntsEsquerra` reaches 5, write a big message in the middle of the screen, for example «GUANYA L'ESQUERRA!» (LEFT WINS!).",
+        "On the empty line, write an `if` with `puntsEsquerra >= 5` and, inside, a `DrawText` with your message in quotes. Test it by holding down ↑ for about 7 seconds, until the left side reaches 5."
+      ],
+      "hints": [
+        "Text you write as-is goes in quotes: `\"GUANYA!\"`.",
+        "`DrawText(\"your message\", 200, 200, 40, YELLOW);` inside an `if` with `puntsEsquerra >= 5`.",
+        "`if (puntsEsquerra >= 5) { DrawText(\"GUANYA L'ESQUERRA!\", 200, 200, 40, YELLOW); }`"
+      ],
+      "success": "You've got a Pong with a scoreboard and a winner! If you like, stop the ball with `velX = 0;` inside the `if`. Only the last challenge left... 🏆"
+    }
+  },
+  "checks": {
+    "scores": "The left score doesn't go up. Inside the braces you need `puntsEsquerra++;` (and also `pilotaX = 400;`).",
+    "shortForm": "It works, but it still uses the long way. Change `puntsEsquerra = puntsEsquerra + 1;` to `puntsEsquerra++;`.",
+    "rightScores": "The right side's points aren't counted properly. The question is `pilotaX < 0`, with `<`, and inside `puntsDreta++;`.",
+    "ballBackToCentre": "The ball doesn't go back to the center after the point. Inside the braces, add `pilotaX = 400;`.",
+    "leftUntouched": "Now the points go into the wrong box: when the ball goes out on the left, the point goes to `puntsDreta`.",
+    "drawsRight": "The right score doesn't show the points. Use `TextFormat(\"%d\", puntsDreta)` inside the `DrawText`, at x = 440.",
+    "leftStillDrawn": "Now you can't see the left score. Leave the line above as it was.",
+    "showsWinner": "When the left side reaches 5 points, no message appears. Write an `if` with `puntsEsquerra >= 5` and a `DrawText` with the message in quotes.",
+    "notTooSoon": "The message appears too soon! It should only appear when `puntsEsquerra` reaches 5.",
+    "ballBack": "After the point, the ball doesn't go back to the center. Inside the braces, also keep `pilotaX = 400;`."
+  }
+}

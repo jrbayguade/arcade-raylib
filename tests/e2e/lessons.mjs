@@ -510,6 +510,27 @@ try {
     await phoneCtx.close();
   }
 
+  // Languages: the hall switches to Spanish or English, remembered, lessons included
+  {
+    const ctx = await browser.newContext({ viewport: { width: 1366, height: 768 } });
+    const lp = await ctx.newPage();
+    lp.on('pageerror', (e) => errors.push(String(e)));
+    await lp.goto(`${base}#/sala`);
+    await lp.locator('.hall').waitFor();
+    check('language: Catalan by default', (await lp.evaluate(() => document.documentElement.lang)) === 'ca' && (await lp.locator('.lang-picker button.on').innerText()) === 'CA');
+    await lp.locator('.lang-picker button', { hasText: 'ES' }).click();
+    await lp.locator('.hall').waitFor();
+    check('language: Spanish after picking ES', (await lp.evaluate(() => document.documentElement.lang)) === 'es' && !(await lp.locator('.hall-continue').innerText()).includes('Comença'));
+    await lp.goto(`${base}#/pong/0/0`);
+    await lp.locator('.cm-editor').waitFor();
+    check('language: the lesson is in Spanish too, the code is not', !(await lp.locator('.top .brand').innerText()).includes('lliçó') && (await lp.evaluate(() => window.__bitArcade.code())).includes('DrawRectangle'));
+    await lp.goto(`${base}#/sala`);
+    await lp.locator('.lang-picker button', { hasText: 'EN' }).click();
+    await lp.locator('.hall').waitFor();
+    check('language: English after picking EN, and it is remembered', (await lp.evaluate(() => document.documentElement.lang)) === 'en' && (await lp.evaluate(() => localStorage.getItem('bitarcade:lang'))) === 'en');
+    await ctx.close();
+  }
+
   // Intro: first visit to the front page, skippable, remembered; #/intro replays it to the end
   {
     const ctx = await browser.newContext({ viewport: { width: 1366, height: 768 } });
@@ -530,7 +551,7 @@ try {
     await fresh.goto(`${base}#/intro`);
     await fresh.reload();
     check('#/intro replays it', await visible(fresh.locator('.intro')));
-    for (let i = 0; i < 6; i++) { await fresh.keyboard.press('Space'); await fresh.waitForTimeout(1350); }
+    for (let i = 0; i < 10 && !(await fresh.getByRole('button', { name: 'Som-hi! ▶' }).isVisible()); i++) { await fresh.keyboard.press('Space'); await fresh.waitForTimeout(1350); }
     check('the last beat offers Som-hi!', await visible(fresh.getByRole('button', { name: 'Som-hi! ▶' })));
     await fresh.getByRole('button', { name: 'Som-hi! ▶' }).click();
     check('Som-hi! starts lesson 0', await visible(fresh.locator('.cm-editor'), 5000));

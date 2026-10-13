@@ -1,0 +1,90 @@
+{
+  "title": "The screen is a grid",
+  "folds": {
+    "preparar": "set up the game",
+    "tancar": "close the game"
+  },
+  "steps": {
+    "observe": {
+      "prompt": [
+        "Let's go! This machine is broken and we're going to fix it together.",
+        "You can only write in the yellow zone. The rest of the code is already done: the grey bars hide chunks of code, and if you click them, they open.",
+        "The grey words x:, y:... aren't code: they just tell you what each number means.",
+        "The yellow line draws the left paddle. Change the 185 to 50 and press ▶ Run. What happens?"
+      ],
+      "hints": [
+        "Look for the number 185 on the yellow line. It's the second number.",
+        "Double-click the 185 to select it and type 50.",
+        "The line should look like this: `DrawRectangle(20, 50, 10, 80, WHITE);`"
+      ],
+      "success": "The paddle went up! You just moved your first object. 🎉"
+    },
+    "grid": {
+      "prompt": [
+        "The game screen is like a sheet of grid paper, 800 × 450 points.",
+        "Each point has two coordinates: x counts to the right from the left edge, and y counts down from the top.",
+        "Careful: y grows downwards! That's why the paddle went up when you used a smaller number.",
+        "The x and y of a rectangle mark its top-left corner.",
+        "Move the mouse (or your finger) over the game and watch the numbers. When it's clear, press Continue."
+      ]
+    },
+    "floor": {
+      "prompt": [
+        "Detective clue: the screen is 450 tall and the paddle is 80.",
+        "Put the paddle touching the floor, right at the bottom. Where does the paddle have to start?"
+      ],
+      "hints": [
+        "You need to change y, which is the second number.",
+        "If the paddle starts at y and is 80 tall, it ends at y + 80. It has to end at 450.",
+        "450 − 80 = 370. Write `DrawRectangle(20, 370, 10, 80, WHITE);`"
+      ],
+      "success": "Perfect, touching the floor! You used coordinates like a pro."
+    },
+    "tall": {
+      "prompt": [
+        "This paddle is too small to stop anything. Make it twice as tall."
+      ],
+      "hints": [
+        "Which number has the grey label height: in front of it?",
+        "The height is 80 right now. Twice 80 is...",
+        "Put 160 as the height: `DrawRectangle(20, 185, 10, 160, WHITE);`"
+      ],
+      "success": "Now that's a real paddle! 💪"
+    },
+    "order": {
+      "prompt": [
+        "Oops! Someone mixed up the code and the left paddle has disappeared.",
+        "The computer runs the instructions one at a time, from top to bottom.",
+        "Why can't you see the paddle? Fix it."
+      ],
+      "hints": [
+        "ClearBackground paints the whole screen black.",
+        "If you draw the paddle first and then paint everything black, what's left?",
+        "Select the `ClearBackground(BLACK);` line, cut it with Ctrl+X, put the cursor at the start of the `DrawRectangle` line and paste it with Ctrl+V."
+      ],
+      "success": "Exactly: order matters! First the screen is cleared, then things are drawn."
+    },
+    "ball": {
+      "prompt": [
+        "A Pong without a ball isn't a Pong!",
+        "The ball is drawn with `DrawCircle`. You write it like `DrawRectangle`, but with 4 values: x, y, radius and color. In a circle, x and y are the center.",
+        "Type Draw..., pick `DrawCircle` from the list with Enter and fill in the gaps (Tab jumps to the next one). Colors are in English and in capitals: `YELLOW`. Put the ball in the middle of the screen!"
+      ],
+      "hints": [
+        "The middle of the screen is half of 800 and half of 450.",
+        "`DrawCircle` needs x, y, radius and color. A radius of 8 looks good.",
+        "On the empty line, under the paddle, write: `DrawCircle(400, 225, 8, YELLOW);`"
+      ],
+      "success": "We've got a ball! The machine is starting to look good. 🏓"
+    }
+  },
+  "checks": {
+    "paddleMoved": "The left paddle hasn't gone up yet: change y (the second number), not x.",
+    "paddleOnFloor": "The paddle isn't touching the floor yet: y has to be 450 − 80 = 370.",
+    "paddleHeight80": "The paddle's height has to stay at 80.",
+    "paddleTall": "The paddle isn't 160 tall yet: change the height (the fourth number).",
+    "paddleVisible": "You still can't see the paddle: `ClearBackground` has to go before `DrawRectangle`.",
+    "ballExists": "There's no visible ball yet: write a `DrawCircle` with a radius of 3 or more and a color that isn't `BLACK`.",
+    "ballCentered": "The ball isn't in the middle yet: the center has to be x = 400, y = 225."
+  }
+}

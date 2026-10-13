@@ -1,0 +1,40 @@
+{
+  "title": "The rival",
+  "folds": {
+    "preparar": "set up the game",
+    "jugador": "your paddle (W and S) and the limits of both",
+    "partida": "move the ball, bounces and points (everything you've done!)",
+    "dibuixar": "draw everything: middle line, paddles, ball and scoreboard",
+    "tancar": "close the game"
+  },
+  "steps": {
+    "rival": {
+      "prompt": [
+        "Final challenge! 🏆 The Pong works from start to finish... but to play it you need someone on the other side.",
+        "You're going to program a rival: the right paddle will move on its own, following the ball. That way you can play against the machine!",
+        "The idea: if the ball is higher than the middle of the paddle (`palaDretaY + 40`, pala dreta = right paddle), the paddle moves up a bit. If it's lower, it moves down a bit.",
+        "Write the two `if`s on the yellow line. Move the paddle 4 pixels each time: any faster and there'd be no way to beat it! (Tip for winning: if the ball hits the edge of your paddle, it comes off at a sharper angle.)"
+      ],
+      "hints": [
+        "The middle of the paddle is `palaDretaY + 40`. Compare `pilotaY` with it.",
+        "One `if` with `pilotaY < palaDretaY + 40` that subtracts 4 from `palaDretaY`, and another with `>` that adds 4.",
+        "`if (pilotaY < palaDretaY + 40) { palaDretaY = palaDretaY - 4; }` and `if (pilotaY > palaDretaY + 40) { palaDretaY = palaDretaY + 4; }`"
+      ],
+      "success": "You've got a real rival! Click the game and play with W and S. Can you beat it?"
+    },
+    "fixed": {
+      "prompt": [
+        "YOU DID IT! The Pong machine works again. 🎉",
+        "You've learned coordinates, variables, the game loop, `if`, comparisons, bounces, `&&`, counters... and you programmed a rival. That's real programming!",
+        "All the code you see is real C, the same that people who make video games with raylib use. And the match goes on: click the game and play against your rival with W and S!",
+        "Press «⬇ Download your main.c» and take your Pong with you: it's yours!",
+        "Thanks for fixing my arcade. Come back to the arcade whenever you like: other machines will light up soon!"
+      ]
+    }
+  },
+  "checks": {
+    "moves": "The right paddle doesn't move. Write two `if`s that make it go up and down depending on where the ball is.",
+    "fair": "The paddle can't teleport! Instead of `palaDretaY = pilotaY`, add or subtract 4 every frame.",
+    "neverMisses": "The right paddle still lets the ball past. Check that it goes up when the ball is higher (`<`) and down when it's lower (`>`)."
+  }
+}

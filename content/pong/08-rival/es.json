@@ -1,0 +1,40 @@
+{
+  "title": "El rival",
+  "folds": {
+    "preparar": "preparar el juego",
+    "jugador": "tu pala (W y S) y los límites de las dos",
+    "partida": "mover la pelota, rebotes y puntos (¡todo lo que has hecho!)",
+    "dibuixar": "dibujarlo todo: línea central, palas, pelota y marcador",
+    "tancar": "cerrar el juego"
+  },
+  "steps": {
+    "rival": {
+      "prompt": [
+        "¡Reto final! 🏆 El Pong ya funciona entero... pero para jugar necesitas a alguien al otro lado.",
+        "Vas a programar un rival: la pala de la derecha se moverá sola, siguiendo la pelota. ¡Así podrás jugar contra la máquina!",
+        "La idea: si la pelota está más arriba que el centro de la pala (`palaDretaY + 40`), la pala sube un poco. Si está más abajo, baja un poco.",
+        "Escribe los dos `if` en la línea amarilla. Mueve la pala 4 píxeles cada vez: si fuera más rápida, ¡no habría manera de ganarle! (Pista para ganar: si la pelota toca el borde de tu pala, sale más inclinada.)"
+      ],
+      "hints": [
+        "El centro de la pala es `palaDretaY + 40`. Compáralo con `pilotaY`.",
+        "Un `if` con `pilotaY < palaDretaY + 40` que reste 4 a `palaDretaY`, y otro con `>` que le sume 4.",
+        "`if (pilotaY < palaDretaY + 40) { palaDretaY = palaDretaY - 4; }` y `if (pilotaY > palaDretaY + 40) { palaDretaY = palaDretaY + 4; }`"
+      ],
+      "success": "¡Tienes un rival de verdad! Haz clic en el juego y juega con la W y la S. ¿Conseguirás ganarle?"
+    },
+    "fixed": {
+      "prompt": [
+        "¡LO HAS CONSEGUIDO! La máquina del Pong vuelve a funcionar. 🎉",
+        "Has aprendido coordenadas, variables, el bucle del juego, `if`, comparaciones, rebotes, `&&`, contadores... y has programado un rival. ¡Esto es programar de verdad!",
+        "Todo el código que ves es C de verdad, el mismo que usa la gente que programa videojuegos con raylib. Y la partida sigue: ¡haz clic en el juego y juega contra tu rival con la W y la S!",
+        "Pulsa «⬇ Descarga tu main.c» y llévate tu Pong: ¡es tuyo!",
+        "Gracias por arreglar mi salón recreativo. Cuando quieras, vuelve a la sala: ¡pronto se encenderán otras máquinas!"
+      ]
+    }
+  },
+  "checks": {
+    "moves": "La pala derecha no se mueve. Escribe dos `if` que la hagan subir y bajar según dónde esté la pelota.",
+    "fair": "¡La pala no se puede teletransportar! En lugar de `palaDretaY = pilotaY`, súmale o réstale 4 en cada fotograma.",
+    "neverMisses": "La pala derecha todavía deja pasar la pelota. Comprueba que sube cuando la pelota está más arriba (`<`) y que baja cuando está más abajo (`>`)."
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "title": "The paddle obeys",
+  "folds": {
+    "preparar": "set up the game",
+    "dibuixar": "start drawing",
+    "tancar": "close the game"
+  },
+  "steps": {
+    "keyW": {
+      "prompt": [
+        "New lesson! The ball takes a break: today we make the paddle obey you. 🎮",
+        "Look at the yellow line: it starts with `if`. We read it like this: «if the W key is pressed, move the paddle up 2 pixels».",
+        "Click the game screen and hold down W. The paddle goes up... very slowly. If you don't press anything, it doesn't move. (On a phone, use the on-screen buttons.) If it escapes off the top, press ▶ Run: in lesson 5 we'll give it limits.",
+        "Make the paddle go up faster: change the 2 to 6 and press ▶ Run. Then click the game and try it with W."
+      ],
+      "hints": [
+        "On the yellow line, look for the number that says how many pixels the paddle goes up.",
+        "You only need to touch one number: the one right after the `-`.",
+        "`if (IsKeyDown(KEY_W)) { palaY = palaY - 6; }`"
+      ],
+      "success": "Now it obeys! Click the game and press W to see it."
+    },
+    "ifCard": {
+      "prompt": [
+        "An `if` is like a fork in the road: the computer asks a question and, depending on the answer, does something or doesn't.",
+        "The question goes in parentheses: `(IsKeyDown(KEY_W))` means «is W pressed?».",
+        "If the answer is yes, it does what's inside the braces `{ }`. If it's no, it skips them and carries on.",
+        "And since the loop repeats 60 times a second, so does the question! While you hold W, the paddle goes up 6 pixels every frame; when you let go, the answer is no and it stops. When it's clear, press Continue."
+      ]
+    },
+    "keyS": {
+      "prompt": [
+        "The paddle already goes up with W. Now it has to go down with S.",
+        "Remember: further down means a bigger y. So here you need to add.",
+        "On the empty line, write an `if` that moves the paddle down when you press S (`KEY_S`)."
+      ],
+      "hints": [
+        "Copy the W line and change two things: the key and the sign.",
+        "The key is `KEY_S` and, to go down, you need to add.",
+        "`if (IsKeyDown(KEY_S)) { palaY = palaY + 6; }`"
+      ],
+      "success": "Up and down! You now control the left paddle."
+    },
+    "right": {
+      "prompt": [
+        "Pong is for two people! The right paddle uses the `palaDretaY` box (pala dreta = right paddle).",
+        "Make it move with the arrows: `KEY_UP` (↑) to go up and `KEY_DOWN` (↓) to go down. You'll need two `if`s."
+      ],
+      "hints": [
+        "They're like the W and S lines, but with `palaDretaY` and the arrows.",
+        "One `if` for `KEY_UP` that subtracts, and another for `KEY_DOWN` that adds.",
+        "`if (IsKeyDown(KEY_UP)) { palaDretaY = palaDretaY - 6; }` and `if (IsKeyDown(KEY_DOWN)) { palaDretaY = palaDretaY + 6; }`"
+      ],
+      "success": "Two paddles, two players! Invite someone to play with you. 🏓"
+    },
+    "space": {
+      "prompt": [
+        "Last challenge! The ball moves with `velX` again and, when it reaches the edge, it escapes.",
+        "Make a magic button: when you press SPACE (`KEY_SPACE`), the ball has to go back to the center, at x = 400.",
+        "Write it on the empty line, under the line that moves the ball."
+      ],
+      "hints": [
+        "It's an `if` like the paddle ones, but with `KEY_SPACE`.",
+        "Inside the braces, store 400 in the `pilotaX` box.",
+        "`if (IsKeyDown(KEY_SPACE)) { pilotaX = 400; }`"
+      ],
+      "success": "Magic button done! Press SPACE when the ball escapes and it'll come back to the center. ✨"
+    }
+  },
+  "checks": {
+    "movesUp": "The paddle doesn't go up when you press W. Inside the braces you need to subtract from `palaY`.",
+    "addsEveryFrame": "The paddle jumped all at once: you stored a number in `palaY` instead of subtracting it. Write `palaY = palaY - …;`",
+    "faster": "The paddle is still too slow: the number after the - has to be 4 or more.",
+    "notTooFast": "The paddle is so fast it flies off! Try a number between 4 and 15.",
+    "stillWithoutKey": "The paddle moves even when you don't press anything! The change has to go inside the `if` braces `{ }`, and there can't be a `;` right after the `)`.",
+    "sMovesDown": "The paddle doesn't go down when you press S. Write an `if` with `KEY_S` that adds to `palaY`.",
+    "wStillUp": "Now W doesn't move the paddle up any more! Leave the W line as it was.",
+    "upMovesRight": "The right paddle doesn't go up properly with ↑. Write an `if` with `KEY_UP` that subtracts from `palaDretaY`: `palaDretaY = palaDretaY - 6;`",
+    "downMovesRight": "The right paddle doesn't go down with ↓. Write an `if` with `KEY_DOWN` that adds to `palaDretaY`.",
+    "keysStayApart": "The keys got mixed up: W and S are for the left paddle (`palaY`), and the arrows are for the right one (`palaDretaY`).",
+    "spaceCentres": "When you press SPACE, the ball doesn't go back to the center. Write an `if` with `KEY_SPACE` that stores 400 in `pilotaX` with a single `=`: store, don't compare.",
+    "ballStillMoves": "Now the ball doesn't move when you don't press anything! The change has to go inside the `if` braces."
+  }
+}

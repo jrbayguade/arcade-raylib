@@ -10,8 +10,18 @@ interface Catalog {
   params: Record<string, string[]>;
 }
 
+/** Catalan, plus every other `<lang>.json` next to it (missing keys fall back to Catalan). */
+const others = import.meta.glob<Catalog>('./*.json', { eager: true, import: 'default' });
 const catalogs: Record<string, Catalog> = { ca };
+for (const [path, catalog] of Object.entries(others)) {
+  const lang = /\/(\w+)\.json$/.exec(path)?.[1];
+  if (lang && lang !== 'ca') catalogs[lang] = catalog;
+}
 let current = 'ca';
+
+export function getLanguage(): string {
+  return current;
+}
 
 export function setLanguage(lang: string): void {
   if (Object.hasOwn(catalogs, lang)) current = lang;
@@ -46,6 +56,6 @@ export function formatDiagnostic(d: Diagnostic): string {
   }
   if (typeof params.feature === 'string') params.feature = lookup('features', params.feature) ?? params.feature;
   let msg = fill(lookup('errors', d.code) ?? d.code, params);
-  if (params.suggestion !== undefined) msg += ' ' + fill(catalogs[current].suggestion, params);
+  if (params.suggestion !== undefined) msg += ' ' + fill(catalogs[current].suggestion ?? catalogs.ca.suggestion, params);
   return msg;
 }

@@ -1,0 +1,71 @@
+{
+  "title": "Choque con la pala",
+  "folds": {
+    "preparar": "preparar el juego",
+    "pales": "mover las palas y sus límites (lecciones 4 y 5)",
+    "parets": "rebotar arriba y abajo (lección 6)",
+    "dibuixar": "empieza a dibujar",
+    "tancar": "cerrar el juego"
+  },
+  "steps": {
+    "partial": {
+      "prompt": [
+        "¡Lección nueva! Ya no hay paredes a la izquierda ni a la derecha: ahora son las palas las que tienen que devolver la pelota. 🏓",
+        "Mira la zona amarilla: el `if` hace dos preguntas, una en cada línea, unidas con `&&`, que significa «y»: «¿la pelota ha llegado a la pala Y está más abajo que el borde de arriba de la pala?». Solo rebota si las dos dicen sí.",
+        "¡Pero falta una pregunta! Pulsa ▶ Ejecuta y, enseguida, mantén pulsada la W (en el móvil, el botón W) hasta que la pala esté arriba del todo: la pelota rebota igualmente, aunque la pala no esté allí.",
+        "`palaY` es el borde de arriba de la pala y `alcada` vale 80, así que `palaY + alcada` es el borde de abajo. Añade una tercera línea de pregunta, justo antes del `)`: `&& pilotaY < palaY + alcada` (la pelota está más arriba que el borde de abajo)."
+      ],
+      "hints": [
+        "La pregunta nueva va dentro de los paréntesis del `if`: ponla en una línea nueva, antes del `)`.",
+        "Debajo de la línea `&& pilotaY > palaY`, escribe `&& pilotaY < palaY + alcada`, y deja el `)` al final.",
+        "Las tres líneas del `if` tienen que quedar: `if (pilotaX < 38`, `&& pilotaY > palaY` y `&& pilotaY < palaY + alcada)`."
+      ],
+      "success": "¡Ahora solo rebota si la pala está allí de verdad! Prueba a esquivar la pelota con la W."
+    },
+    "andCard": {
+      "prompt": [
+        "`&&` une preguntas: la respuesta es sí solo si TODAS dicen sí. Basta con que una diga no para que todo sea no.",
+        "Para rebotar en la pala izquierda, hace falta que la pelota haya llegado a la pala (`pilotaX < 38`), que no pase por encima (`pilotaY > palaY`) y que no pase por debajo (`pilotaY < palaY + alcada`).",
+        "Mira la tarjeta: cada luz es una pregunta. Solo cuando se encienden las tres, la pelota rebota. Cuando lo tengas claro, pulsa Continúa."
+      ]
+    },
+    "right": {
+      "prompt": [
+        "Ahora la pelota sale hacia la derecha, y la pala de la derecha todavía no la devuelve.",
+        "Escribe el `if` de la pala derecha. Las preguntas son parecidas: la pelota llega a la pala cuando `pilotaX > 762` (770 es el borde izquierdo de la pala derecha, y 770 − 8 = 762), y la pala derecha usa `palaDretaY`.",
+        "Hazlo en la línea vacía, con tres preguntas unidas con `&&`. Puedes poner cada pregunta en una línea, como en el `if` de arriba."
+      ],
+      "hints": [
+        "Copia la línea de la pala izquierda y cámbiale la primera pregunta y el nombre de la pala.",
+        "La primera pregunta es `pilotaX > 762`, y donde ponía `palaY` ahora tiene que poner `palaDretaY` (dos veces).",
+        "`if (pilotaX > 762 && pilotaY > palaDretaY && pilotaY < palaDretaY + alcada) { velX = -velX; }` (o en varias líneas, como el de arriba)"
+      ],
+      "success": "Las dos palas ya devuelven la pelota. ¡Esto ya es un Pong de verdad! Invita a alguien a jugar."
+    },
+    "angles": {
+      "prompt": [
+        "¡Último reto! Ahora la pelota siempre va recta. En el Pong de verdad, el punto de la pala donde toca la pelota cambia la dirección.",
+        "Ya tienes hecho el primer `if`: si la pelota toca la mitad de arriba de la pala izquierda, sale hacia arriba (`velY = -3;`).",
+        "La pala mide 80 de alto, y la mitad son 40. La mitad de abajo va de `palaY + 40` hasta `palaY + alcada`. En la línea vacía, escribe el `if` para que, si la pelota toca la mitad de abajo, salga hacia abajo (`velY = 3;`)."
+      ],
+      "hints": [
+        "Copia el `if` de la mitad de arriba y cámbiale la segunda y la tercera pregunta.",
+        "Las preguntas son `pilotaX < 38`, `pilotaY >= palaY + 40` y `pilotaY < palaY + alcada`, y dentro, `velY = 3;`.",
+        "`if (pilotaX < 38 && pilotaY >= palaY + 40 && pilotaY < palaY + alcada) { velY = 3; }`"
+      ],
+      "success": "¡Ahora puedes apuntar adónde va la pelota! Con la mitad de arriba la lanzas hacia arriba, y con la de abajo, hacia abajo. 🎯 Si quieres, haz lo mismo en la pala derecha, con `palaDretaY`."
+    }
+  },
+  "checks": {
+    "bouncesOnPaddle": "La pelota no rebota en la pala izquierda cuando la pala está en el centro. Revisa la pregunta nueva: tiene que ser `pilotaY < palaY + alcada`, con `<`, y unida con `&&`.",
+    "missesAbove": "Si la pala está arriba del todo, la pelota todavía rebota. Falta la pregunta `&& pilotaY < palaY + alcada`.",
+    "missesBelow": "Si la pala está abajo del todo, la pelota todavía rebota. Comprueba la pregunta `pilotaY > palaY`.",
+    "bouncesOnRight": "La pelota no rebota en la pala derecha cuando la pala está en el centro. Revisa las tres preguntas, unidas con `&&`: `pilotaX > 762`, `pilotaY > palaDretaY` y `pilotaY < palaDretaY + alcada`.",
+    "rightMissesAbove": "Si la pala derecha está arriba, la pelota todavía rebota. Comprueba `pilotaY < palaDretaY + alcada`: tiene que decir `palaDretaY`, no `palaY`.",
+    "rightMissesBelow": "Si la pala derecha está abajo, la pelota todavía rebota. Comprueba `pilotaY > palaDretaY`: tiene que decir `palaDretaY`, no `palaY`.",
+    "leftStillWorks": "Ahora la pala izquierda no funciona. Deja la primera línea como estaba.",
+    "stillBounces": "La pelota no rebota en la pala izquierda. Deja las dos primeras líneas como estaban.",
+    "topHalfUp": "Cuando la pelota toca la mitad de arriba, no sale hacia arriba. Comprueba el `if` con `pilotaY < palaY + 40`: tiene que hacer `velY = -3;` (con el menos, que significa arriba).",
+    "bottomHalfDown": "Cuando la pelota toca la mitad de abajo, no sale hacia abajo. Comprueba el `if` con `pilotaY >= palaY + 40`: tiene que hacer `velY = 3;`."
+  }
+}

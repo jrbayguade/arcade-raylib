@@ -1,0 +1,86 @@
+{
+  "title": "Bounces",
+  "folds": {
+    "preparar": "set up the game",
+    "pales": "move the paddles and their limits (lessons 4 and 5)",
+    "dibuixar": "start drawing",
+    "tancar": "close the game"
+  },
+  "steps": {
+    "edge": {
+      "prompt": [
+        "New lesson! Until now the ball kept escaping. Today it'll learn to bounce. 🏓",
+        "Look at the yellow line: when the ball reaches the right, it does `velX = -velX;` (vel = velocity). That flips the sign: if `velX` was 4, now it's -4, and the ball goes back.",
+        "But it bounces too late: `pilotaX` (pilota = ball) is the center of the ball, and the ball has a radius of 8. When the center reaches 800, half the ball is already off the screen. (And on the left it still escapes: we'll fix that two steps from now.)",
+        "Make it bounce right when it touches the edge: change the 800 to 792 (800 − 8) and press ▶ Run."
+      ],
+      "hints": [
+        "You only need to change the number in the question.",
+        "The ball has a radius of 8: 800 − 8.",
+        "`if (pilotaX > 792) { velX = -velX; }`"
+      ],
+      "success": "Perfect bounce! The ball touches the edge and comes back."
+    },
+    "bounceCard": {
+      "prompt": [
+        "How does `velX = -velX;` work? A - stuck to the front of a box means «the same number, but with the sign flipped».",
+        "If `velX` is 4, `-velX` is -4. If `velX` is -4, `-velX` is 4: the opposite of a negative number is positive.",
+        "Remember lesson 3: with a positive `velX` the ball goes right, and with a negative `velX`, left. So by flipping the sign, the ball changes direction. That's a bounce!",
+        "Careful: the - stuck to `velX` (`-velX`) flips the sign. The - between two things (`velX - 1`) subtracts. They're two different jobs!",
+        "When it's clear, press Continue."
+      ]
+    },
+    "left": {
+      "prompt": [
+        "Now the ball starts off to the left (`velX` starts at -4). On the right it already bounces, but on the left it escapes.",
+        "On the left, the edge is at x = 0, and the ball touches it when `pilotaX` is less than 8.",
+        "On the empty line, write an `if` that makes it bounce off the left wall."
+      ],
+      "hints": [
+        "It's like the top line, but with `<` and 8.",
+        "The question is `pilotaX < 8`, and inside you flip the sign of `velX`.",
+        "`if (pilotaX < 8) { velX = -velX; }`"
+      ],
+      "success": "Now it bounces off both walls! It never escapes."
+    },
+    "updown": {
+      "prompt": [
+        "A ball that only goes back and forth in a straight line is boring. Look at the top: there's a new box, `int velY = 3;`, and the line `pilotaY = pilotaY + velY;`. It's like `velX`, but vertical. And it escapes off the top and bottom!",
+        "Do the same as with x: when `pilotaY` is less than 8, flip the sign of `velY`. And when it's greater than 442 (450 − 8), too.",
+        "Write the two `if`s on the empty line."
+      ],
+      "hints": [
+        "They're like the two x bounces, but with `pilotaY`, `velY` and the numbers 8 and 442.",
+        "One `if` for the top (`pilotaY < 8`) and another for the bottom (`pilotaY > 442`).",
+        "`if (pilotaY < 8) { velY = -velY; }` and `if (pilotaY > 442) { velY = -velY; }`"
+      ],
+      "success": "The ball bounces all over the place, like a screensaver! 📺"
+    },
+    "faster": {
+      "prompt": [
+        "Last challenge! Let's make the game more exciting: every time the ball bounces on the right, it goes a bit faster.",
+        "Clue: right now it does `velX = -velX;`. If you also subtract 1 (`-velX - 1`), the ball will head left with more speed.",
+        "Change the first yellow line so that, as well as turning, the ball speeds up."
+      ],
+      "hints": [
+        "After the bounce, `velX` is negative. To go faster to the left, it has to be even more negative.",
+        "Subtract 1 right after `-velX`.",
+        "`if (pilotaX > 792) { velX = -velX - 1; }`"
+      ],
+      "success": "Faster with every bounce! 🔥 In lesson 7, the paddles will make it bounce too."
+    }
+  },
+  "checks": {
+    "bounces": "The ball doesn't come back at the edge. Check the number (792) and that inside the braces there's `velX = -velX;`.",
+    "bouncesAtEdge": "The ball still bounces too late: change the 800 to 792.",
+    "bouncesLeft": "The ball doesn't bounce on the left. Look at the top line: you need the same thing, but with `<` and 8.",
+    "bothWalls": "The ball leaves the screen on one side. Check both `if`s: the right one with `>` and 792, and the left one with `<` and 8.",
+    "bouncesBottom": "The ball doesn't bounce at the bottom. Check the `if` with `pilotaY > 442`: inside, `velY = -velY;`.",
+    "allWalls": "The ball escapes off the top. Check the `if` with `pilotaY < 8`: inside it has to flip the sign of `velY`, not `velX`.",
+    "speedsUp": "The ball doesn't speed up enough. In the right bounce, after flipping the sign, subtract 1.",
+    "notCrazy": "The ball speeds up too much! Make each bounce add only 1: `-velX - 1`.",
+    "stillInside": "Now the ball escapes. Leave the other three bounces as they were.",
+    "bouncesTooEarly": "The ball bounces before touching the edge. The number has to be 792.",
+    "slowsDown": "Now the ball is slower! After flipping the sign, `velX` is negative: to go faster, subtract 1."
+  }
+}

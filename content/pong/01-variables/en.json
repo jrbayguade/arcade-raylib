@@ -1,0 +1,89 @@
+{
+  "title": "Variables",
+  "folds": {
+    "preparar": "set up the game",
+    "bucle": "repeats every frame: start drawing",
+    "tancar": "close the game"
+  },
+  "steps": {
+    "warmup": {
+      "prompt": [
+        "Hi again! To warm up: put the left paddle at y = 100."
+      ],
+      "hints": [
+        "y is the second number in `DrawRectangle`.",
+        "Change the 185 to 100.",
+        "`DrawRectangle(20, 100, 10, 80, WHITE);`"
+      ],
+      "success": "Like clockwork! You've mastered coordinates."
+    },
+    "observe": {
+      "prompt": [
+        "Look at the code: now the left paddle doesn't use a number, it uses `palaY` (pala = paddle).",
+        "Change the 185 on the yellow line to 300, press ▶ Run and look at the `palaY` box, under the game."
+      ],
+      "hints": [
+        "You only need to change the number on the yellow line.",
+        "Double-click the 185 and type 300.",
+        "The line should end up as `int palaY = 300;`"
+      ],
+      "success": "The `palaY` box now holds 300, and the paddle went where the box says!"
+    },
+    "box": {
+      "prompt": [
+        "A variable is like a box with a name written on the outside. Inside, you keep a value.",
+        "When the code says `palaY`, the computer opens the box and uses whatever is inside.",
+        "The word `int` means only whole numbers fit in the box.",
+        "The = sign means «store in it»: `int palaY = 185;` reads as «make a box for whole numbers called palaY and store 185 in it».",
+        "Careful: the computer tells capitals and lowercase apart. `palaY` and `palay` are different boxes! When it's clear, press Continue."
+      ]
+    },
+    "together": {
+      "prompt": [
+        "Now both paddles use the same box, `palaY`.",
+        "Make both of them go right up to the top (a y of 100 or less) by changing just one number."
+      ],
+      "hints": [
+        "Both paddles read the `palaY` box.",
+        "Right at the top means a small y. Try a number between 0 and 100.",
+        "For example: `int palaY = 60;`"
+      ],
+      "success": "One change and both of them moved! That's the superpower of variables. 🦸"
+    },
+    "height": {
+      "prompt": [
+        "Now both paddles use a box called `alcada` (alçada = height) to know how tall they are... but that box doesn't exist yet! If you press ▶ Run, you'll see the error.",
+        "Write `alcada` with a c, not ç: names can't have ç or accents.",
+        "Create the `alcada` box in the yellow zone, with a value other than 80, for example 120."
+      ],
+      "hints": [
+        "Do it the same way as `palaY`: `int name = value;`",
+        "Add a new line under the `palaY` one, with the name `alcada`.",
+        "The yellow zone should end up as: `int palaY = 185;` and below it `int alcada = 120;`"
+      ],
+      "success": "Now if you want taller or shorter paddles, you just change one number and both change. That's smart programming! 🧠"
+    },
+    "ball": {
+      "prompt": [
+        "Last challenge! `DrawCircle` already uses `pilotaX` and `pilotaY` (pilota = ball), but those boxes don't exist yet.",
+        "Create them in the yellow zone so the ball sits in the middle of the screen."
+      ],
+      "hints": [
+        "Do it like with `alcada`: one `int name = value;` line for each variable.",
+        "The middle of the screen is x = 400 and y = 225.",
+        "Add `int pilotaX = 400;` and `int pilotaY = 225;` at the end of the yellow zone."
+      ],
+      "success": "Well done! Soon these boxes will change value on their own and the ball will move. But that's the next lesson... 😉"
+    }
+  },
+  "checks": {
+    "paddleAt100": "The left paddle isn't at y = 100 yet.",
+    "paddleMoved": "The paddle is still at 185: change the number on the yellow line.",
+    "bothTogether": "The two paddles aren't at the same height.",
+    "bothUp": "The paddles aren't at the top yet: y has to be between 0 and 100.",
+    "declaresHeight": "You haven't created the `alcada` box yet: write `int alcada = 120;`",
+    "heightUsed": "The `alcada` box has to hold a number greater than 0.",
+    "declaresBall": "The `pilotaX` and `pilotaY` boxes (of type `int`) are still missing.",
+    "ballCentered": "The ball isn't in the middle yet: `pilotaX` has to be 400 and `pilotaY` 225."
+  }
+}

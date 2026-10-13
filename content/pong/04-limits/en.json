@@ -1,0 +1,85 @@
+{
+  "title": "Inside the screen",
+  "folds": {
+    "preparar": "set up the game",
+    "dibuixar": "start drawing",
+    "tancar": "close the game"
+  },
+  "steps": {
+    "top": {
+      "prompt": [
+        "You've got the paddles working with W, S, ↑ and ↓. But if you press for too long, the paddle leaves the screen! 🙈",
+        "The yellow line fixes it: «if `palaY` (pala = paddle) is less than 0, put it back to 0». The `<` sign means «less than».",
+        "Click the game and hold W: the paddle stops right at the top. (On a phone, use the on-screen buttons.)",
+        "Leave a gap: make it stop at y = 20. Change both 0s to 20 and press ▶ Run."
+      ],
+      "hints": [
+        "There are two 0s on the line: the one in the question and the one that gets stored.",
+        "Both have to be 20.",
+        "`if (palaY < 20) { palaY = 20; }`"
+      ],
+      "success": "Now the paddle has a limit! It can't escape off the top any more."
+    },
+    "compareCard": {
+      "prompt": [
+        "`if`s can ask questions with numbers: they compare two values and the answer is yes or no.",
+        "`palaY < 20` asks «is `palaY` less than 20?». If the paddle is at y = 10, the answer is yes; if it's at y = 100, it's no.",
+        "There are six ways to compare: `<`, `>`, `<=`, `>=`, `==` and `!=`. You've got them on the card.",
+        "Careful: to ask «is it equal?» you write two equals signs, `==`. A single = means «store in it»! When it's clear, press Continue."
+      ]
+    },
+    "bottom": {
+      "prompt": [
+        "It can't escape off the top any more. What about the bottom?",
+        "`palaY` is the top edge of the paddle, and the paddle is 80 tall going down. The screen is 450: if we let it go down to 370 (450 − 80), it'll touch the bottom edge. But we left a 20 gap at the top, right? So the same at the bottom: 350.",
+        "On the empty line, write an `if` so `palaY` never goes past 350. Clue: here the question is «greater than», `>`."
+      ],
+      "hints": [
+        "It's like the top line, but with `>` and 350.",
+        "If `palaY` is greater than 350, put it back to 350.",
+        "`if (palaY > 350) { palaY = 350; }`"
+      ],
+      "success": "The left paddle can't escape off the top or the bottom any more! 🧱"
+    },
+    "rightLimits": {
+      "prompt": [
+        "Now it's the right paddle's turn, which still escapes.",
+        "Give it the same two limits, but with `palaDretaY` (pala dreta = right paddle). You'll need two `if`s."
+      ],
+      "hints": [
+        "Copy the two lines of the left paddle.",
+        "Change `palaY` to `palaDretaY` everywhere (four times).",
+        "`if (palaDretaY < 20) { palaDretaY = 20; }` and `if (palaDretaY > 350) { palaDretaY = 350; }`"
+      ],
+      "success": "Both paddles stay inside the screen. It's starting to look like a real game!"
+    },
+    "wrap": {
+      "prompt": [
+        "Last challenge! The ball is racing to the right again... and off it goes.",
+        "Let's use a video game trick: when it leaves on the right, it comes back in on the left.",
+        "On the empty line, write an `if` that, when `pilotaX` (pilota = ball) goes past 800, puts it back to 0."
+      ],
+      "hints": [
+        "The question is «is `pilotaX` greater than 800?».",
+        "If it is, store 0 in `pilotaX`.",
+        "`if (pilotaX > 800) { pilotaX = 0; }`"
+      ],
+      "success": "Magic! The ball leaves on the right and comes back on the left, like in Pac-Man. 🌀"
+    }
+  },
+  "checks": {
+    "staysOnScreen": "The paddle still leaves off the top. Check that the question is `palaY < …`.",
+    "stopsAt20": "The paddle has to stop at y = 20: put 20 in the question and also as the number that gets stored.",
+    "stillMoves": "The paddle jumps straight to y = 20! Look at the sign in the question: it has to be `<`.",
+    "staysAboveBottom": "The paddle still goes down too far. Remember that `palaY` is the top edge of the paddle: the paddle reaches down to `palaY + 80`, and we want a 20 gap.",
+    "reachesBottom": "The paddle stops too high: it has to be able to go down to y = 350.",
+    "topStillWorks": "Now the top limit doesn't work any more! Leave the first line as it was.",
+    "rightTop": "The right paddle still leaves off the top. Check the top `if`: `palaDretaY` has to appear twice, in the question and inside the braces.",
+    "rightBottom": "The right paddle still goes down too far (or stops too high). Check the bottom `if`: `palaDretaY` has to appear twice, and the number is 350.",
+    "leftUntouched": "Now the left paddle doesn't work properly. Use `palaDretaY` in the two new `if`s.",
+    "wrapsAround": "The ball still escapes on the right. Write an `if` with `pilotaX > 800`.",
+    "comesBackLeft": "The ball has to come back in on the left: store 0 in `pilotaX`.",
+    "movesBeforeEdge": "Now the ball does strange things before reaching the edge. The question has to be `pilotaX > 800`.",
+    "noJump": "The paddle jumps straight to the bottom! In the question you wrote `=`, which means «store in it». To compare, use `>`."
+  }
+}

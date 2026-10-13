@@ -1,0 +1,85 @@
+{
+  "title": "Dentro de la pantalla",
+  "folds": {
+    "preparar": "preparar el juego",
+    "dibuixar": "empieza a dibujar",
+    "tancar": "cerrar el juego"
+  },
+  "steps": {
+    "top": {
+      "prompt": [
+        "Ya tienes las palas con W, S, ↑ y ↓. Pero si pulsas demasiado rato, ¡la pala sale de la pantalla! 🙈",
+        "La línea amarilla lo arregla: «si `palaY` es menor que 0, vuelve a ponerla en 0». El signo `<` significa «menor que».",
+        "Haz clic en el juego y mantén la W: la pala se detiene justo arriba del todo. (En el móvil, usa los botones de la pantalla.)",
+        "Déjale un margen: haz que se detenga en la y = 20. Cambia los dos 0 por 20 y pulsa ▶ Ejecuta."
+      ],
+      "hints": [
+        "Hay dos 0 en la línea: el de la pregunta y el que se guarda.",
+        "Los dos tienen que ser 20.",
+        "`if (palaY < 20) { palaY = 20; }`"
+      ],
+      "success": "¡Ahora la pala tiene un límite! Ya no se escapa por arriba."
+    },
+    "compareCard": {
+      "prompt": [
+        "Los `if` pueden hacer preguntas con números: comparan dos valores y la respuesta es sí o no.",
+        "`palaY < 20` pregunta «¿`palaY` es menor que 20?». Si la pala está en la y = 10, la respuesta es sí; si está en la y = 100, es no.",
+        "Hay seis maneras de comparar: `<`, `>`, `<=`, `>=`, `==` y `!=`. Las tienes en la tarjeta.",
+        "Ojo: para preguntar «¿es igual?» se escriben dos iguales, `==`. ¡Un solo = significa «guarda aquí»! Cuando lo tengas claro, pulsa Continúa."
+      ]
+    },
+    "bottom": {
+      "prompt": [
+        "Por arriba ya no se escapa. ¿Y por abajo?",
+        "`palaY` es el borde de arriba de la pala, y la pala mide 80 hacia abajo. La pantalla mide 450: si la dejamos bajar hasta 370 (450 − 80), tocará el borde de abajo. Pero arriba hemos dejado 20 de margen, ¿verdad? Pues abajo también: 350.",
+        "En la línea vacía, escribe un `if` para que `palaY` no pase nunca de 350. Pista: aquí la pregunta es «mayor que», `>`."
+      ],
+      "hints": [
+        "Es como la línea de arriba, pero con `>` y 350.",
+        "Si `palaY` es mayor que 350, vuelve a ponerla en 350.",
+        "`if (palaY > 350) { palaY = 350; }`"
+      ],
+      "success": "¡La pala de la izquierda ya no se escapa ni por arriba ni por abajo! 🧱"
+    },
+    "rightLimits": {
+      "prompt": [
+        "Ahora le toca a la pala de la derecha, que todavía se escapa.",
+        "Ponle los mismos dos límites, pero con `palaDretaY`. Necesitarás dos `if`."
+      ],
+      "hints": [
+        "Copia las dos líneas de la pala izquierda.",
+        "Cambia `palaY` por `palaDretaY` en todas partes (cuatro veces).",
+        "`if (palaDretaY < 20) { palaDretaY = 20; }` y `if (palaDretaY > 350) { palaDretaY = 350; }`"
+      ],
+      "success": "Las dos palas se quedan dentro de la pantalla. ¡Ya empieza a parecer un juego de verdad!"
+    },
+    "wrap": {
+      "prompt": [
+        "¡Último reto! La pelota vuelve a correr hacia la derecha... y se va.",
+        "Hagamos un truco de videojuego: cuando salga por la derecha, que vuelva a aparecer por la izquierda.",
+        "En la línea vacía, escribe un `if` que, cuando `pilotaX` pase de 800, la vuelva a poner en 0."
+      ],
+      "hints": [
+        "La pregunta es «¿`pilotaX` es mayor que 800?».",
+        "Si lo es, guarda 0 en `pilotaX`.",
+        "`if (pilotaX > 800) { pilotaX = 0; }`"
+      ],
+      "success": "¡Magia! La pelota sale por la derecha y vuelve por la izquierda, como en el Pac-Man. 🌀"
+    }
+  },
+  "checks": {
+    "staysOnScreen": "La pala todavía sale por arriba. Comprueba que la pregunta es `palaY < …`.",
+    "stopsAt20": "La pala tiene que detenerse en la y = 20: pon 20 en la pregunta y también en el número que se guarda.",
+    "stillMoves": "¡La pala salta de golpe a la y = 20! Mira el signo de la pregunta: tiene que ser `<`.",
+    "staysAboveBottom": "La pala todavía baja demasiado. Recuerda que `palaY` es el borde de arriba de la pala: la pala llega hasta `palaY + 80`, y queremos 20 de margen.",
+    "reachesBottom": "La pala se detiene demasiado arriba: tiene que poder bajar hasta la y = 350.",
+    "topStillWorks": "¡Ahora el límite de arriba ya no funciona! Deja la primera línea como estaba.",
+    "rightTop": "La pala de la derecha todavía sale por arriba. Revisa el `if` de arriba: `palaDretaY` tiene que aparecer dos veces, en la pregunta y dentro de las llaves.",
+    "rightBottom": "La pala de la derecha todavía baja demasiado (o se detiene demasiado arriba). Revisa el `if` de abajo: `palaDretaY` tiene que aparecer dos veces, y el número es 350.",
+    "leftUntouched": "Ahora la pala de la izquierda no funciona bien. Usa `palaDretaY` en los dos `if` nuevos.",
+    "wrapsAround": "La pelota todavía se escapa por la derecha. Escribe un `if` con `pilotaX > 800`.",
+    "comesBackLeft": "La pelota tiene que volver a aparecer por la izquierda: guarda 0 en `pilotaX`.",
+    "movesBeforeEdge": "Ahora la pelota hace cosas raras antes de llegar al borde. La pregunta tiene que ser `pilotaX > 800`.",
+    "noJump": "¡La pala salta de golpe abajo! En la pregunta has puesto `=`, que significa «guarda aquí». Para comparar, usa `>`."
+  }
+}

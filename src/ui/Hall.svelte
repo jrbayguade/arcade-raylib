@@ -6,6 +6,7 @@
   import { download, mainC } from '../lessons/export';
   import { lessonDone, lessonStars, resumeStep, unlockedCount } from '../lessons/progress';
   import BitFace from './BitFace.svelte';
+  import LanguagePicker from './LanguagePicker.svelte';
   import { clearProgress, progress } from './progressStore.svelte';
 
   /** The arcade hall: the Pong cabinet with its lessons, the machines still to come, and "Continua". */
@@ -61,6 +62,7 @@
 </script>
 
 <div class="hall">
+  <LanguagePicker />
   <h1 class="hall-sign">BIT ARCADE</h1>
   <div class="hall-floor">
     <section class="hall-pong cabinet" class:fixed={allDone} aria-label="PONG">

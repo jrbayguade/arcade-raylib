@@ -1,0 +1,89 @@
+{
+  "title": "Variables",
+  "folds": {
+    "preparar": "preparar el juego",
+    "bucle": "se repite en cada fotograma: empieza a dibujar",
+    "tancar": "cerrar el juego"
+  },
+  "steps": {
+    "warmup": {
+      "prompt": [
+        "¡Hola de nuevo! Para calentar: pon la pala de la izquierda en la y = 100."
+      ],
+      "hints": [
+        "La y es el segundo número de `DrawRectangle`.",
+        "Cambia el 185 por 100.",
+        "`DrawRectangle(20, 100, 10, 80, WHITE);`"
+      ],
+      "success": "¡Como un reloj! Ya dominas las coordenadas."
+    },
+    "observe": {
+      "prompt": [
+        "Mira el código: ahora la pala de la izquierda no usa un número, usa `palaY` (la y de la pala).",
+        "Cambia el 185 de la línea amarilla por un 300, pulsa ▶ Ejecuta y mira la caja `palaY`, debajo del juego."
+      ],
+      "hints": [
+        "Solo tienes que cambiar el número de la línea amarilla.",
+        "Haz doble clic en el 185 y escribe 300.",
+        "La línea tiene que quedar `int palaY = 300;`"
+      ],
+      "success": "La caja `palaY` ahora guarda un 300, ¡y la pala ha ido donde dice la caja!"
+    },
+    "box": {
+      "prompt": [
+        "Una variable es como una caja con un nombre escrito por fuera. Dentro guardas un valor.",
+        "Cuando el código dice `palaY`, el ordenador abre la caja y usa lo que hay dentro.",
+        "La palabra `int` significa que en la caja solo caben números enteros.",
+        "El signo = significa «guarda aquí»: `int palaY = 185;` se lee «crea una caja de enteros que se llama palaY y guarda 185 en ella».",
+        "Ojo: el ordenador distingue mayúsculas y minúsculas. ¡`palaY` y `palay` son cajas distintas! Cuando lo tengas claro, pulsa Continúa."
+      ]
+    },
+    "together": {
+      "prompt": [
+        "Ahora las dos palas usan la misma caja, `palaY`.",
+        "Haz que suban las dos hasta arriba del todo (una y de 100 o menos) cambiando un solo número."
+      ],
+      "hints": [
+        "Las dos palas leen la caja `palaY`.",
+        "Arriba del todo significa una y pequeña. Prueba un número entre 0 y 100.",
+        "Por ejemplo: `int palaY = 60;`"
+      ],
+      "success": "¡Un solo cambio y se han movido las dos! Este es el superpoder de las variables. 🦸"
+    },
+    "height": {
+      "prompt": [
+        "Ahora las dos palas usan una caja `alcada` (altura, en catalán) para saber lo altas que son... ¡pero esa caja todavía no existe! Si pulsas ▶ Ejecuta, verás el error.",
+        "Escribe `alcada` con c, sin ç: en los nombres no se pueden poner ç, ñ ni tildes.",
+        "Crea la caja `alcada` en la zona amarilla, con un valor distinto de 80, por ejemplo 120."
+      ],
+      "hints": [
+        "Hazlo igual que `palaY`: `int nombre = valor;`",
+        "Añade una línea nueva debajo de la de `palaY`, con el nombre `alcada`.",
+        "La zona amarilla tiene que quedar: `int palaY = 185;` y debajo `int alcada = 120;`"
+      ],
+      "success": "Ahora, si quieres palas más altas o más bajas, solo cambias un número y cambian las dos. ¡Esto es programar con cabeza! 🧠"
+    },
+    "ball": {
+      "prompt": [
+        "¡Último reto! El `DrawCircle` ya usa `pilotaX` y `pilotaY` (pilota = pelota), pero esas cajas todavía no existen.",
+        "Créalas en la zona amarilla para que la pelota quede en el centro de la pantalla."
+      ],
+      "hints": [
+        "Haz como con `alcada`: una línea `int nombre = valor;` para cada variable.",
+        "El centro de la pantalla es x = 400 e y = 225.",
+        "Añade `int pilotaX = 400;` e `int pilotaY = 225;` al final de la zona amarilla."
+      ],
+      "success": "¡Muy bien! Pronto estas cajas cambiarán de valor solas y la pelota se moverá. Pero eso es la lección siguiente... 😉"
+    }
+  },
+  "checks": {
+    "paddleAt100": "La pala de la izquierda todavía no está en la y = 100.",
+    "paddleMoved": "La pala todavía está en 185: cambia el número de la línea amarilla.",
+    "bothTogether": "Las dos palas no están a la misma altura.",
+    "bothUp": "Las palas todavía no están arriba del todo: la y tiene que estar entre 0 y 100.",
+    "declaresHeight": "Todavía no has creado la caja `alcada`: escribe `int alcada = 120;`",
+    "heightUsed": "La caja `alcada` tiene que guardar un número mayor que 0.",
+    "declaresBall": "Todavía faltan las cajas `pilotaX` y `pilotaY` (de tipo `int`).",
+    "ballCentered": "La pelota todavía no está en el centro: `pilotaX` tiene que valer 400 y `pilotaY`, 225."
+  }
+}

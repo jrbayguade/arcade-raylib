@@ -1,0 +1,71 @@
+{
+  "title": "Hitting the paddle",
+  "folds": {
+    "preparar": "set up the game",
+    "pales": "move the paddles and their limits (lessons 4 and 5)",
+    "parets": "bounce at the top and bottom (lesson 6)",
+    "dibuixar": "start drawing",
+    "tancar": "close the game"
+  },
+  "steps": {
+    "partial": {
+      "prompt": [
+        "New lesson! There are no walls on the left or right any more: now the paddles have to send the ball back. 🏓",
+        "Look at the yellow zone: the `if` asks two questions, one on each line, joined with `&&`, which means «and»: «has the ball reached the paddle AND is it below the top edge of the paddle?». It only bounces if both say yes.",
+        "But one question is missing! Press ▶ Run and straight away hold down W (on a phone, the W button) until the paddle is right at the top: the ball bounces anyway, even though the paddle isn't there.",
+        "`palaY` (pala = paddle) is the top edge of the paddle and `alcada` (alçada = height) is 80, so `palaY + alcada` is the bottom edge. Add a third question line, just before the `)`: `&& pilotaY < palaY + alcada` (the ball is above the bottom edge)."
+      ],
+      "hints": [
+        "The new question goes inside the `if` parentheses: put it on a new line, before the `)`.",
+        "Under the `&& pilotaY > palaY` line, write `&& pilotaY < palaY + alcada`, and leave the `)` at the end.",
+        "The three lines of the `if` should end up as: `if (pilotaX < 38`, `&& pilotaY > palaY` and `&& pilotaY < palaY + alcada)`."
+      ],
+      "success": "Now it only bounces if the paddle is really there! Try dodging the ball with W."
+    },
+    "andCard": {
+      "prompt": [
+        "`&&` joins questions: the answer is yes only if ALL of them say yes. Just one saying no is enough to make the whole thing no.",
+        "To bounce off the left paddle, the ball has to have reached the paddle (`pilotaX < 38`), not go over it (`pilotaY > palaY`) and not go under it (`pilotaY < palaY + alcada`).",
+        "Look at the card: each light is a question. Only when all three light up does the ball bounce. When it's clear, press Continue."
+      ]
+    },
+    "right": {
+      "prompt": [
+        "Now the ball heads off to the right, and the right paddle doesn't send it back yet.",
+        "Write the `if` for the right paddle. The questions are similar: the ball reaches the paddle when `pilotaX > 762` (770 is the left edge of the right paddle, and 770 − 8 = 762), and the right paddle uses `palaDretaY` (pala dreta = right paddle).",
+        "Do it on the empty line, with three questions joined with `&&`. You can put each question on its own line, like in the `if` above."
+      ],
+      "hints": [
+        "Copy the left paddle line and change the first question and the paddle name.",
+        "The first question is `pilotaX > 762`, and where it said `palaY` it now has to say `palaDretaY` (twice).",
+        "`if (pilotaX > 762 && pilotaY > palaDretaY && pilotaY < palaDretaY + alcada) { velX = -velX; }` (or over several lines, like the one above)"
+      ],
+      "success": "Both paddles send the ball back now. This is a real Pong! Invite someone to play."
+    },
+    "angles": {
+      "prompt": [
+        "Last challenge! Right now the ball always goes straight. In real Pong, the spot on the paddle where the ball hits changes its direction.",
+        "The first `if` is already done: if the ball hits the top half of the left paddle, it goes off upwards (`velY = -3;`).",
+        "The paddle is 80 tall, and half of that is 40. The bottom half goes from `palaY + 40` to `palaY + alcada`. On the empty line, write the `if` so that, if the ball hits the bottom half, it goes off downwards (`velY = 3;`)."
+      ],
+      "hints": [
+        "Copy the top-half `if` and change the second and third questions.",
+        "The questions are `pilotaX < 38`, `pilotaY >= palaY + 40` and `pilotaY < palaY + alcada`, and inside, `velY = 3;`.",
+        "`if (pilotaX < 38 && pilotaY >= palaY + 40 && pilotaY < palaY + alcada) { velY = 3; }`"
+      ],
+      "success": "Now you can aim the ball! With the top half you send it up, and with the bottom half, down. 🎯 If you like, do the same on the right paddle, with `palaDretaY`."
+    }
+  },
+  "checks": {
+    "bouncesOnPaddle": "The ball doesn't bounce off the left paddle when the paddle is in the middle. Check the new question: it has to be `pilotaY < palaY + alcada`, with `<`, and joined with `&&`.",
+    "missesAbove": "If the paddle is right at the top, the ball still bounces. The question `&& pilotaY < palaY + alcada` is missing.",
+    "missesBelow": "If the paddle is right at the bottom, the ball still bounces. Check the question `pilotaY > palaY`.",
+    "bouncesOnRight": "The ball doesn't bounce off the right paddle when the paddle is in the middle. Check the three questions, joined with `&&`: `pilotaX > 762`, `pilotaY > palaDretaY` and `pilotaY < palaDretaY + alcada`.",
+    "rightMissesAbove": "If the right paddle is at the top, the ball still bounces. Check `pilotaY < palaDretaY + alcada`: it has to say `palaDretaY`, not `palaY`.",
+    "rightMissesBelow": "If the right paddle is at the bottom, the ball still bounces. Check `pilotaY > palaDretaY`: it has to say `palaDretaY`, not `palaY`.",
+    "leftStillWorks": "Now the left paddle doesn't work. Leave the first line as it was.",
+    "stillBounces": "The ball doesn't bounce off the left paddle. Leave the first two lines as they were.",
+    "topHalfUp": "When the ball hits the top half, it doesn't go off upwards. Check the `if` with `pilotaY < palaY + 40`: it has to do `velY = -3;` (with the minus, which means up).",
+    "bottomHalfDown": "When the ball hits the bottom half, it doesn't go off downwards. Check the `if` with `pilotaY >= palaY + 40`: it has to do `velY = 3;`."
+  }
+}

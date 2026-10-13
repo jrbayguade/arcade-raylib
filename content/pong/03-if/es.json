@@ -1,0 +1,84 @@
+{
+  "title": "La pala obedece",
+  "folds": {
+    "preparar": "preparar el juego",
+    "dibuixar": "empieza a dibujar",
+    "tancar": "cerrar el juego"
+  },
+  "steps": {
+    "keyW": {
+      "prompt": [
+        "¡Lección nueva! La pelota se toma un descanso: hoy toca que la pala te obedezca. 🎮",
+        "Mira la línea amarilla: empieza con `if`, que significa «si». La leemos así: «si la tecla W está pulsada, sube la pala 2 píxeles».",
+        "Haz clic en la pantalla del juego y mantén pulsada la W. La pala sube... muy despacio. Si no pulsas nada, no se mueve. (En el móvil, usa los botones de la pantalla.) Si se te escapa por arriba, pulsa ▶ Ejecuta: en la lección 5 le pondremos límites.",
+        "Haz que la pala suba más rápido: cambia el 2 por un 6 y pulsa ▶ Ejecuta. Después, haz clic en el juego y pruébalo con la W."
+      ],
+      "hints": [
+        "Busca en la línea amarilla el número que dice cuántos píxeles sube la pala.",
+        "Solo tienes que tocar un número: el que hay justo después del `-`.",
+        "`if (IsKeyDown(KEY_W)) { palaY = palaY - 6; }`"
+      ],
+      "success": "¡Ahora sí que obedece! Haz clic en el juego y pulsa la W para verlo."
+    },
+    "ifCard": {
+      "prompt": [
+        "Un `if` es como un cruce de caminos: el ordenador hace una pregunta y, según la respuesta, hace una cosa o no la hace.",
+        "La pregunta va entre paréntesis: `(IsKeyDown(KEY_W))` significa «¿está pulsada la W?».",
+        "Si la respuesta es sí, hace lo que hay entre las llaves `{ }`. Si es no, se las salta y sigue.",
+        "Y como el bucle se repite 60 veces por segundo, ¡la pregunta también! Mientras mantienes la W, la pala sube 6 píxeles en cada fotograma; cuando la sueltas, la respuesta es no y se detiene. Cuando lo tengas claro, pulsa Continúa."
+      ]
+    },
+    "keyS": {
+      "prompt": [
+        "La pala ya sube con la W. Ahora tiene que bajar con la S.",
+        "Recuerda: más abajo significa una y más grande. Por lo tanto, aquí tienes que sumar.",
+        "En la línea vacía, escribe un `if` que haga bajar la pala cuando pulsas la S (`KEY_S`)."
+      ],
+      "hints": [
+        "Copia la línea de la W y cámbiale dos cosas: la tecla y el signo.",
+        "La tecla es `KEY_S` y, para bajar, tienes que sumar.",
+        "`if (IsKeyDown(KEY_S)) { palaY = palaY + 6; }`"
+      ],
+      "success": "¡Arriba y abajo! Ya controlas la pala de la izquierda."
+    },
+    "right": {
+      "prompt": [
+        "¡El Pong es para dos personas! La pala de la derecha usa la caja `palaDretaY` (dreta = derecha).",
+        "Haz que se mueva con las flechas: `KEY_UP` (↑) para subir y `KEY_DOWN` (↓) para bajar. Necesitarás dos `if`."
+      ],
+      "hints": [
+        "Son como las líneas de la W y la S, pero con `palaDretaY` y las flechas.",
+        "Un `if` para `KEY_UP` que reste, y otro para `KEY_DOWN` que sume.",
+        "`if (IsKeyDown(KEY_UP)) { palaDretaY = palaDretaY - 6; }` y `if (IsKeyDown(KEY_DOWN)) { palaDretaY = palaDretaY + 6; }`"
+      ],
+      "success": "¡Dos palas, para jugar a dos! Invita a alguien a jugar contigo. 🏓"
+    },
+    "space": {
+      "prompt": [
+        "¡Último reto! La pelota vuelve a moverse con `velX` y, cuando llega al borde, se escapa.",
+        "Haz un botón mágico: cuando pulses el ESPACIO (`KEY_SPACE`), la pelota tiene que volver al centro, a la x = 400.",
+        "Escríbelo en la línea vacía, debajo de la línea que mueve la pelota."
+      ],
+      "hints": [
+        "Es un `if` como los de las palas, pero con `KEY_SPACE`.",
+        "Dentro de las llaves, guarda 400 en la caja `pilotaX`.",
+        "`if (IsKeyDown(KEY_SPACE)) { pilotaX = 400; }`"
+      ],
+      "success": "¡Botón mágico hecho! Pulsa el ESPACIO cuando la pelota se escape y volverá al centro. ✨"
+    }
+  },
+  "checks": {
+    "movesUp": "La pala no sube cuando pulsas la W. Dentro de las llaves tienes que restar a `palaY`.",
+    "addsEveryFrame": "La pala ha saltado de golpe: has guardado un número en `palaY` en lugar de restárselo. Escribe `palaY = palaY - …;`",
+    "faster": "La pala todavía va demasiado despacio: el número después del - tiene que ser 4 o más.",
+    "notTooFast": "¡La pala va tan rápido que sale volando! Prueba un número entre 4 y 15.",
+    "stillWithoutKey": "¡La pala se mueve aunque no pulses nada! El cambio tiene que ir dentro de las llaves `{ }` del `if`, y justo después del `)` no puede haber ningún `;`.",
+    "sMovesDown": "La pala no baja cuando pulsas la S. Escribe un `if` con `KEY_S` que sume a `palaY`.",
+    "wStillUp": "¡Ahora la W ya no hace subir la pala! Deja la línea de la W como estaba.",
+    "upMovesRight": "La pala de la derecha no sube bien con ↑. Escribe un `if` con `KEY_UP` que reste a `palaDretaY`: `palaDretaY = palaDretaY - 6;`",
+    "downMovesRight": "La pala de la derecha no baja con ↓. Escribe un `if` con `KEY_DOWN` que sume a `palaDretaY`.",
+    "keysStayApart": "Las teclas se han mezclado: la W y la S son para la pala izquierda (`palaY`), y las flechas, para la derecha (`palaDretaY`).",
+    "spaceCentres": "Cuando pulsas el ESPACIO, la pelota no vuelve al centro. Escribe un `if` con `KEY_SPACE` que guarde 400 en `pilotaX` con un solo `=`: guarda, no compares.",
+    "ballStillMoves": "¡Ahora la pelota no se mueve cuando no pulsas nada! El cambio tiene que ir dentro de las llaves del `if`."
+  }
+}
